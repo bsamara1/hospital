@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cancelamento de Consultas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Agostinho Neto</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -26,7 +25,7 @@
         }
 
         /* ==========================================================================
-           Header / Navbar
+           Header / Navbar (Azul Escuro e Branco)
            ========================================================================== */
         .navbar {
             display: flex;
@@ -50,7 +49,7 @@
 
         .logo i {
             font-size: 1.8rem;
-            color: #00d4ff;
+            color: #00d4ff; /* Um toque ciano para destacar o ícone */
         }
 
         .logo strong {
@@ -62,7 +61,7 @@
             display: flex;
             list-style: none;
             align-items: center;
-            gap: 15px;
+            gap: 28px;
         }
 
         .nav-links a {
@@ -75,123 +74,128 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 8px; /* Espaço entre ícone e texto */
         }
 
-        .nav-links a:hover:not(.btn-logout) {
+        /* Hover nos links normais */
+        .nav-links a:hover:not(.btn-logout), 
+        .nav-links a.active {
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
-        /* Link Ativo na página de Cancelamento */
-        .nav-links li:nth-child(4) a {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        /* Botão de Logout */
+        /* Botão de Logout Especial (Vermelho) */
         .nav-links .btn-logout {
-            background-color: #dc3545;
+            background-color: #dc3545; /* Vermelho */
             color: white;
             font-weight: 600;
         }
 
         .nav-links .btn-logout:hover {
-            background-color: #bd2130;
+            background-color: #bd2130; /* Vermelho mais escuro no hover */
             box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
         }
 
         /* ==========================================================================
-           Estrutura de Conteúdo
+           Seção Banner / Boas-Vindas
            ========================================================================== */
-        .container {
-            max-width: 1100px;
-            margin: 40px auto 50px auto;
-            padding: 0 20px;
+        .banner {
+            min-height: 75vh;
+            background: linear-gradient(135deg, rgba(10, 37, 64, 0.95), rgba(20, 55, 90, 0.85)), 
+                        url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
         }
 
-        h2 {
-            color: #0a2540;
-            font-size: 1.5rem;
-            font-weight: 600;
+        .banner-content {
+            max-width: 700px;
+            color: #ffffff;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .banner-content h2 {
+            font-size: 2.8rem;
+            font-weight: 700;
             margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .banner-content p {
+            font-size: 1.1rem;
+            color: #d1dbe5;
+            margin-bottom: 35px;
+        }
+
+        /* Botões do Banner */
+        .banner-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: #ffffff;
+            color: #0a2540;
+            padding: 13px 28px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #e6ecf2;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #ffffff;
+            padding: 13px 28px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid #ffffff;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Animação de Entrada */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* ==========================================================================
-           Tabela de Consultas para Cancelamento
+           Responsividade (Para Celulares)
            ========================================================================== */
-        #tabelaCancelamento {
-            width: 100%;
-            border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-
-        #tabelaCancelamento th {
-            background-color: #0a2540;
-            color: #ffffff;
-            text-align: left;
-            padding: 15px 20px;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        #tabelaCancelamento td {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-            font-size: 0.95rem;
-        }
-
-        #tabelaCancelamento tr:last-child td {
-            border-bottom: none;
-        }
-
-        #tabelaCancelamento tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        /* Botão Vermelho de Cancelar na tabela */
-        #tabelaCancelamento button {
-            height: 36px;
-            padding: 0 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        #tabelaCancelamento button:hover {
-            background-color: #bd2130;
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
-            transform: translateY(-1px);
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
             .navbar {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
             }
+
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            #tabelaCancelamento th, #tabelaCancelamento td {
-                padding: 12px 10px;
-                font-size: 0.85rem;
+
+            .banner-content h2 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
-
 <body>
 
     <header class="navbar">
@@ -201,10 +205,8 @@
         </div>
         <nav>
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Início</a></li>
                 <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
-                <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
-                <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
                 <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
                 <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
                 <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
@@ -212,29 +214,19 @@
         </nav>
     </header>
 
-    <div class="container">
-        
-        <h2>Selecione a Consulta para Cancelar</h2>
+    <main>
+        <section class="banner">
+            <div class="banner-content">
+                <h2>Bem-vindo ao Sistema Hospitalar</h2>
+                <p>Gerencie suas consultas e marcações online com rapidez, segurança e total comodidade.</p>
+                <div class="banner-buttons">
+                    <a href="marcacao.html" class="btn-primary">Ver Consulta</a>
+                    <a href="medicos.html" class="btn-secondary">Ver Médicos</a>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        <table id="tabelaCancelamento">
-            <thead>
-                <tr>
-                    <th>Paciente</th>
-                    <th>Médico</th>
-                    <th>Especialidade</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
-
-    </div>
-
-    <script src="js/storage.js"></script>
-    <script src="js/cancelamento.js"></script>
+    <script src="js/app.js"></script>
 </body>
-
 </html>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reagendamento</title>
+    <title>Corpo Médico - Hospital Agostinho Neto</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -83,8 +83,8 @@
             color: #ffffff;
         }
 
-        /* Link Ativo na página de Reagendamento */
-        .nav-links li:nth-child(3) a {
+        /* Link Ativo na página de Médicos */
+        .nav-links li:nth-child(5) a {
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
@@ -106,7 +106,7 @@
            ========================================================================== */
         .container {
             max-width: 1100px;
-            margin: 0 auto 50px auto;
+            margin: 40px auto 50px auto;
             padding: 0 20px;
         }
 
@@ -114,109 +114,22 @@
             color: #0a2540;
             font-size: 1.5rem;
             font-weight: 600;
-            margin: 30px 0 15px 0;
-        }
-
-        /* FORMULÁRIO DE REAGENDAMENTO (Agora Visível Diretamente) */
-        #formReagendamento {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-bottom: 35px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .form-group {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #4a5568;
-            margin-bottom: 6px;
-        }
-
-        input[type="date"],
-        input[type="time"] {
-            width: 100%;
-            height: 46px;
-            padding: 0 15px;
-            font-size: 0.95rem;
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            color: #333;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input:focus {
-            border-color: #0a2540;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
-        }
-
-        /* Botões */
-        .btn-box {
-            margin-top: 25px;
-            display: flex;
-            gap: 15px;
-        }
-
-        button {
-            height: 46px;
-            padding: 0 28px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
-        .btn-save {
-            background-color: #0a2540;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
-        }
-
-        .btn-save:hover {
-            background-color: #14375a;
-            transform: translateY(-1px);
-        }
-
-        .btn-cancel {
-            background-color: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .btn-cancel:hover {
-            background-color: #cbd5e1;
+            margin-bottom: 20px;
         }
 
         /* ==========================================================================
-           Tabela de Consultas para Reagendar
+           Tabela de Médicos e Especialidades
            ========================================================================== */
-        #tabelaReagendamento {
+        #tabelaMedicos {
             width: 100%;
             border-collapse: collapse;
             background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-top: 15px;
         }
 
-        #tabelaReagendamento th {
+        #tabelaMedicos th {
             background-color: #0a2540;
             color: #ffffff;
             text-align: left;
@@ -225,32 +138,30 @@
             font-size: 0.95rem;
         }
 
-        #tabelaReagendamento td {
+        #tabelaMedicos td {
             padding: 15px 20px;
             border-bottom: 1px solid #e2e8f0;
             color: #4a5568;
             font-size: 0.95rem;
         }
 
-        #tabelaReagendamento tr:last-child td {
+        #tabelaMedicos tr:last-child td {
             border-bottom: none;
         }
 
-        #tabelaReagendamento tr:hover td {
+        #tabelaMedicos tr:hover td {
             background-color: #f8fafc;
         }
 
-        /* Botão selecionar da tabela */
-        #tabelaReagendamento button {
-            height: 36px;
-            padding: 0 16px;
-            font-size: 0.85rem;
-            background-color: #0a2540;
-            color: white;
-        }
-
-        #tabelaReagendamento button:hover {
-            background-color: #14375a;
+        /* Emblema de Disponibilidade/Status */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 20px;
+            background-color: #e6f7ed;
+            color: #1f9254;
         }
 
         /* Responsividade */
@@ -264,11 +175,7 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            .form-row {
-                flex-direction: column;
-                gap: 15px;
-            }
-            #tabelaReagendamento th, #tabelaReagendamento td {
+            #tabelaMedicos th, #tabelaMedicos td {
                 padding: 12px 10px;
                 font-size: 0.85rem;
             }
@@ -298,56 +205,49 @@
 
     <div class="container">
         
-        <h2>Definir Nova Data e Hora</h2>
-        
-        <div id="formReagendamento">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nova Data</label>
-                    <input type="date" id="editData" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Nova Hora</label>
-                    <input type="time" id="editHora" required>
-                </div>
-            </div>
-            
-            <div class="btn-box">
-                <button class="btn-save" onclick="guardarEdicao()">Guardar Alterações</button>
-                <button class="btn-cancel" onclick="limparCampos()" style="background:#e2e8f0; color:#4a5568;">Cancelar</button>
-            </div>
-        </div>
+        <h2>Equipa Médica Disponível</h2>
 
-        <h2>Selecione a Consulta para Reagendar</h2>
-
-        <table id="tabelaReagendamento">
+        <table id="tabelaMedicos">
             <thead>
                 <tr>
-                    <th>Paciente</th>
-                    <th>Médico</th>
+                    <th>Médico(a)</th>
                     <th>Especialidade</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Ação</th>
+                    <th>Horário de Atendimento</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                </tbody>
+                <tr>
+                    <td>Dr. João Silva</td>
+                    <td>Cardiologia</td>
+                    <td>Segunda a Sexta - 08:00 às 14:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dra. Maria Lopes</td>
+                    <td>Pediatria</td>
+                    <td>Terça e Quinta - 09:00 às 16:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dr. Carlos Monteiro</td>
+                    <td>Ortopedia</td>
+                    <td>Segunda e Quarta - 14:00 às 20:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dra. Ana Fernandes</td>
+                    <td>Medicina Geral</td>
+                    <td>Segunda a Sexta - 08:00 às 18:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+            </tbody>
         </table>
 
     </div>
 
     <script src="js/storage.js"></script>
-    <script src="js/reagendamento.js"></script>
-    
-    <script>
-        // Função auxiliar para limpar os campos sem precisar de modal
-        function limparCampos() {
-            document.getElementById('editData').value = '';
-            document.getElementById('editHora').value = '';
-        }
-    </script>
+    <script src="js/medicos.js"></script>
 </body>
 
 </html>

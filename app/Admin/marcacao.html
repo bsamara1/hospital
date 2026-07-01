@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reagendamento</title>
+    <title>Painel Admin - Consultas Marcadas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -26,18 +26,19 @@
         }
 
         /* ==========================================================================
-           Header / Navbar
+           Header / Navbar (Ocupa a tela toda de ponta a ponta)
            ========================================================================== */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #0a2540; /* Azul Escuro Hospitalar */
-            padding: 15px 4%;
+            background-color: #0a2540;
+            padding: 15px 2%;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
+            width: 100%;
         }
 
         .logo {
@@ -62,7 +63,7 @@
             display: flex;
             list-style: none;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .nav-links a {
@@ -83,13 +84,12 @@
             color: #ffffff;
         }
 
-        /* Link Ativo na página de Reagendamento */
-        .nav-links li:nth-child(3) a {
+        /* Link Ativo na página de Marcação */
+        .nav-links li:nth-child(2) a {
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
-        /* Botão de Logout */
         .nav-links .btn-logout {
             background-color: #dc3545;
             color: white;
@@ -102,42 +102,42 @@
         }
 
         /* ==========================================================================
-           Estrutura de Conteúdo
+           Estrutura de Conteúdo Ampla (Tela Inteira)
            ========================================================================== */
-        .container {
-            max-width: 1100px;
-            margin: 0 auto 50px auto;
-            padding: 0 20px;
+        .main-content {
+            width: 100%;
+            padding: 30px 2%;
+            margin: 0 auto;
         }
 
         h2 {
             color: #0a2540;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 600;
-            margin: 30px 0 15px 0;
+            margin-bottom: 15px;
+            margin-top: 10px;
         }
 
-        /* FORMULÁRIO DE REAGENDAMENTO (Agora Visível Diretamente) */
-        #formReagendamento {
+        /* SECÇÃO DE FILTROS LADO A LADO */
+        .filtros {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 30px;
+            padding: 20px;
             background: #ffffff;
-            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-bottom: 35px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
             flex-wrap: wrap;
+            align-items: flex-end;
         }
 
-        .form-group {
+        .filtro-group {
             flex: 1;
-            min-width: 250px;
+            min-width: 220px;
         }
 
-        label {
+        .filtro-group label {
             display: block;
             font-size: 0.9rem;
             font-weight: 500;
@@ -145,8 +145,9 @@
             margin-bottom: 6px;
         }
 
+        input[type="text"],
         input[type="date"],
-        input[type="time"] {
+        select {
             width: 100%;
             height: 46px;
             padding: 0 15px;
@@ -159,56 +160,34 @@
             transition: all 0.2s ease;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: #0a2540;
             background-color: #ffffff;
             box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
         }
 
-        /* Botões */
-        .btn-box {
-            margin-top: 25px;
-            display: flex;
-            gap: 15px;
-        }
-
         button {
             height: 46px;
-            padding: 0 28px;
+            padding: 0 30px;
             font-size: 0.95rem;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: none;
-        }
-
-        .btn-save {
-            background-color: #0a2540;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
-        }
-
-        .btn-save:hover {
-            background-color: #14375a;
-            transform: translateY(-1px);
-        }
-
-        .btn-cancel {
             background-color: #e2e8f0;
             color: #4a5568;
         }
 
-        .btn-cancel:hover {
+        button:hover {
             background-color: #cbd5e1;
         }
 
         /* ==========================================================================
-           Tabela de Consultas para Reagendar
+           Tabela de Consultas Espalhada na Tela
            ========================================================================== */
-        #tabelaReagendamento {
+        .table-container {
             width: 100%;
-            border-collapse: collapse;
             background: #ffffff;
             border-radius: 12px;
             overflow: hidden;
@@ -216,61 +195,56 @@
             margin-top: 15px;
         }
 
-        #tabelaReagendamento th {
-            background-color: #0a2540;
-            color: #ffffff;
+        #tabelaConsultas {
+            width: 100%;
+            border-collapse: collapse;
             text-align: left;
-            padding: 15px 20px;
-            font-weight: 500;
-            font-size: 0.95rem;
         }
 
-        #tabelaReagendamento td {
-            padding: 15px 20px;
+        #tabelaConsultas th {
+            background-color: #0a2540;
+            color: #ffffff;
+            padding: 18px 20px;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        #tabelaConsultas td {
+            padding: 16px 20px;
             border-bottom: 1px solid #e2e8f0;
             color: #4a5568;
             font-size: 0.95rem;
         }
 
-        #tabelaReagendamento tr:last-child td {
+        #tabelaConsultas tr:last-child td {
             border-bottom: none;
         }
 
-        #tabelaReagendamento tr:hover td {
+        #tabelaConsultas tr:hover td {
             background-color: #f8fafc;
         }
 
-        /* Botão selecionar da tabela */
-        #tabelaReagendamento button {
-            height: 36px;
-            padding: 0 16px;
-            font-size: 0.85rem;
-            background-color: #0a2540;
-            color: white;
-        }
-
-        #tabelaReagendamento button:hover {
-            background-color: #14375a;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
+        /* Responsividade Básica */
+        @media (max-width: 992px) {
             .navbar {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+                padding: 15px 4%;
             }
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
             }
-            .form-row {
+            .filtros {
                 flex-direction: column;
-                gap: 15px;
+                align-items: stretch;
             }
-            #tabelaReagendamento th, #tabelaReagendamento td {
-                padding: 12px 10px;
-                font-size: 0.85rem;
+            .filtro-group {
+                width: 100%;
+            }
+            button {
+                width: 100%;
             }
         }
     </style>
@@ -287,8 +261,6 @@
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
                 <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
-                <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
-                <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
                 <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
                 <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
                 <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
@@ -296,58 +268,57 @@
         </nav>
     </header>
 
-    <div class="container">
+    <main class="main-content">
         
-        <h2>Definir Nova Data e Hora</h2>
+        <h2>Filtros de Pesquisa</h2>
         
-        <div id="formReagendamento">
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Nova Data</label>
-                    <input type="date" id="editData" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Nova Hora</label>
-                    <input type="time" id="editHora" required>
-                </div>
+        <div class="filtros">
+            <div class="filtro-group">
+                <label for="pesquisaNome">Paciente</label>
+                <input type="text" id="pesquisaNome" placeholder="Pesquisar por nome...">
             </div>
-            
-            <div class="btn-box">
-                <button class="btn-save" onclick="guardarEdicao()">Guardar Alterações</button>
-                <button class="btn-cancel" onclick="limparCampos()" style="background:#e2e8f0; color:#4a5568;">Cancelar</button>
+
+            <div class="filtro-group">
+                <label for="filtroMedico">Médico</label>
+                <select id="filtroMedico">
+                    <option value="">Todos os médicos</option>
+                    <option>Dr. João Silva</option>
+                    <option>Dra. Maria Lopes</option>
+                    <option>Dr. Carlos Monteiro</option>
+                    <option>Dra. Ana Fernandes</option>
+                </select>
             </div>
+
+            <div class="filtro-group">
+                <label for="filtroData">Data da Consulta</label>
+                <input type="date" id="filtroData">
+            </div>
+
+            <button onclick="limparFiltros()"><i class="fa-solid fa-broom"></i> Limpar</button>
         </div>
 
-        <h2>Selecione a Consulta para Reagendar</h2>
+        <h2>Consultas Marcadas</h2>
 
-        <table id="tabelaReagendamento">
-            <thead>
-                <tr>
-                    <th>Paciente</th>
-                    <th>Médico</th>
-                    <th>Especialidade</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+        <div class="table-container">
+            <table id="tabelaConsultas">
+                <thead>
+                    <tr>
+                        <th><i class="fa-solid fa-user"></i> Paciente</th>
+                        <th><i class="fa-solid fa-stethoscope"></i> Especialidade</th>
+                        <th><i class="fa-solid fa-user-doctor"></i> Médico</th>
+                        <th><i class="fa-solid fa-calendar-day"></i> Data</th>
+                        <th><i class="fa-solid fa-clock"></i> Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
 
-    </div>
+    </main>
 
     <script src="js/storage.js"></script>
-    <script src="js/reagendamento.js"></script>
-    
-    <script>
-        // Função auxiliar para limpar os campos sem precisar de modal
-        function limparCampos() {
-            document.getElementById('editData').value = '';
-            document.getElementById('editHora').value = '';
-        }
-    </script>
+    <script src="js/marcacao.js"></script>
 </body>
 
 </html>
