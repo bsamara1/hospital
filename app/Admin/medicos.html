@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Corpo Médico - Hospital Agostinho Neto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           Configurações Globais (Reset & Fontes)
+           ========================================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+        }
+
+        /* ==========================================================================
+           Header / Navbar
+           ========================================================================== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0a2540; /* Azul Escuro Hospitalar */
+            padding: 15px 4%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+            font-size: 1.3rem;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: #00d4ff;
+        }
+
+        .logo strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #e0e6ed;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover:not(.btn-logout) {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* Link Ativo na página de Médicos */
+        .nav-links li:nth-child(5) a {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* Botão de Logout */
+        .nav-links .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-links .btn-logout:hover {
+            background-color: #bd2130;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        /* ==========================================================================
+           Estrutura de Conteúdo
+           ========================================================================== */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto 50px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #0a2540;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================================================
+           Tabela de Médicos e Especialidades
+           ========================================================================== */
+        #tabelaMedicos {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        #tabelaMedicos th {
+            background-color: #0a2540;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px 20px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        #tabelaMedicos td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        #tabelaMedicos tr:last-child td {
+            border-bottom: none;
+        }
+
+        #tabelaMedicos tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Emblema de Disponibilidade/Status */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 20px;
+            background-color: #e6f7ed;
+            color: #1f9254;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            #tabelaMedicos th, #tabelaMedicos td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-hospital-user"></i>
+            <span>Hospital <strong>Agostinho Neto</strong></span>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
+                <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
+                <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
+                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
+                <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <h2>Equipa Médica Disponível</h2>
+
+        <table id="tabelaMedicos">
+            <thead>
+                <tr>
+                    <th>Médico(a)</th>
+                    <th>Especialidade</th>
+                    <th>Horário de Atendimento</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dr. João Silva</td>
+                    <td>Cardiologia</td>
+                    <td>Segunda a Sexta - 08:00 às 14:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dra. Maria Lopes</td>
+                    <td>Pediatria</td>
+                    <td>Terça e Quinta - 09:00 às 16:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dr. Carlos Monteiro</td>
+                    <td>Ortopedia</td>
+                    <td>Segunda e Quarta - 14:00 às 20:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+                <tr>
+                    <td>Dra. Ana Fernandes</td>
+                    <td>Medicina Geral</td>
+                    <td>Segunda a Sexta - 08:00 às 18:00</td>
+                    <td><span class="status-badge">Disponível</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/medicos.js"></script>
+</body>
+
+</html>
