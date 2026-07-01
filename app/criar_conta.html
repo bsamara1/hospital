@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <title>Criar Conta - Hospital Agostinho Neto</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -11,79 +11,55 @@
 
 <body>
 
-<div class="container">
+<div class="register-container">
 
     <!-- LADO ESQUERDO -->
-    <div class="left-panel">
+    <div class="register-left">
 
-        <div class="logo-box">
-            <div class="branding">
-                <img src="../app/assets/img/logo.png" class="logo" alt="Logo HAN">
+        <div class="register-logo-box">
+
+            <div class="register-branding">
+                <img src="../app/assets/img/logo.png" class="register-logo" alt="Logo HAN">
                 <h1>HAN</h1>
             </div>
 
-            <p class="p1">Hospital Agostinho Neto</p>
+            <p class="hospital-name">Hospital Agostinho Neto</p>
             <p>Sistema de Gestão Hospitalar</p>
+
         </div>
 
-        <img src="../app/assets/img/hospital.png" class="illustration" alt="Hospital">
+        <img src="../app/assets/img/hospital.png" class="register-image" alt="Hospital">
 
     </div>
 
     <!-- LADO DIREITO -->
-    <div class="right-panel">
+    <div class="register-right">
 
-        <div class="login-card">
+        <div class="register-card">
 
             <h2>Criar Conta</h2>
 
-            <p>
-                Preencha os campos abaixo para criar a sua conta.
-            </p>
+            <p>Preencha os campos abaixo para criar a sua conta.</p>
 
             <form id="criarContaForm">
 
                 <label for="nomeCompleto">Nome Completo</label>
-                <input
-                    type="text"
-                    id="nomeCompleto"
-                    placeholder="Digite o nome completo"
-                    required>
+                <input type="text" id="nomeCompleto" placeholder="Digite o nome completo" required>
 
                 <label for="utilizador">Nome de Utilizador</label>
-                <input
-                    type="text"
-                    id="utilizador"
-                    placeholder="Digite o nome de utilizador"
-                    required>
+                <input type="text" id="utilizador" placeholder="Digite o nome de utilizador" required>
 
                 <label for="email">Email</label>
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Digite o email"
-                    required>
+                <input type="email" id="email" placeholder="Digite o email" required>
 
                 <label for="telefone">Telefone</label>
-                <input
-                    type="tel"
-                    id="telefone"
-                    placeholder="Digite o número de telefone"
-                    required>
+                <input type="tel" id="telefone" placeholder="Digite o número de telefone" required>
 
                 <label for="senha">Palavra-passe</label>
-                <input
-                    type="password"
-                    id="senha"
-                    placeholder="Digite a palavra-passe"
-                    required>
+                <input type="password" id="senha" placeholder="Digite a palavra-passe" required>
 
                 <label for="confirmarSenha">Confirmar Palavra-passe</label>
-                <input
-                    type="password"
-                    id="confirmarSenha"
-                    placeholder="Confirme a palavra-passe"
-                    required>
+                <input type="password" id="confirmarSenha" placeholder="Confirme a palavra-passe" required>
 
                 <button type="submit">
                     Criar Conta
@@ -91,7 +67,7 @@
 
             </form>
 
-            <p class="conta">
+            <p class="register-footer">
                 Já tem uma conta?
                 <a href="login.html">Entrar</a>
             </p>
