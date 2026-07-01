@@ -1,66 +1,53 @@
-const utilizadores=[
+document.getElementById("loginForm").addEventListener("submit", async function (e) {
 
-{
+    e.preventDefault();
 
-username:"admin",
+    const utilizador = document.getElementById("utilizador").value.trim();
+    const senha = document.getElementById("senha").value;
 
-password:"1234",
+    try {
 
-nome:"Administrador"
+        const resposta = await fetch("http://127.0.0.1:5000/login", {
 
-},
+            method: "POST",
 
-{
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-username:"rececao",
+            body: JSON.stringify({
 
-password:"hospital",
+                utilizador: utilizador,
+                senha: senha
 
-nome:"Receção"
+            })
 
-}
+        });
 
-];
+        const dados = await resposta.json();
 
-document
-.getElementById("loginForm")
-.addEventListener("submit",function(e){
+        if (dados.sucesso) {
 
-e.preventDefault();
+            localStorage.setItem("utilizador", utilizador);
 
-const user=
-document.getElementById("utilizador").value;
+            // 👇 AQUI É ONDE ENTRA O CÓDIGO
+            if (dados.tipo === "admin") {
+                window.location.href = "admin.html";
+            } else {
+                window.location.href = "index.html";
+            }
 
-const pass=
-document.getElementById("senha").value;
+        } else {
 
-const encontrado=
-utilizadores.find(u=>
+            document.getElementById("mensagem").style.color = "red";
+            document.getElementById("mensagem").innerHTML = dados.mensagem;
+        }
 
-u.username===user &&
+    } catch (erro) {
 
-u.password===pass
+        document.getElementById("mensagem").style.color = "red";
+        document.getElementById("mensagem").innerHTML = "Erro ao comunicar com o servidor.";
 
-);
-
-if(encontrado){
-
-localStorage.setItem(
-
-"utilizador",
-
-JSON.stringify(encontrado)
-
-);
-
-window.location.href="index.html";
-
-}else{
-
-document.getElementById("mensagem").innerHTML=
-
-"Utilizador ou senha incorretos.";
-
-}
+    }
 
 });
