@@ -2,86 +2,352 @@
 <html lang="pt">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reagendamento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           Configurações Globais (Reset & Fontes)
+           ========================================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-<meta charset="UTF-8">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+        }
 
-<title>Reagendamento</title>
+        /* ==========================================================================
+           Header / Navbar
+           ========================================================================== */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #0a2540; /* Azul Escuro Hospitalar */
+            padding: 15px 4%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-<link rel="stylesheet" href="css/style.css">
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ffffff;
+            font-size: 1.3rem;
+        }
 
+        .logo i {
+            font-size: 1.8rem;
+            color: #00d4ff;
+        }
+
+        .logo strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            color: #e0e6ed;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a:hover:not(.btn-logout) {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* Link Ativo na página de Reagendamento */
+        .nav-links li:nth-child(3) a {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        /* Botão de Logout */
+        .nav-links .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-links .btn-logout:hover {
+            background-color: #bd2130;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        /* ==========================================================================
+           Estrutura de Conteúdo
+           ========================================================================== */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto 50px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            color: #0a2540;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 30px 0 15px 0;
+        }
+
+        /* FORMULÁRIO DE REAGENDAMENTO (Agora Visível Diretamente) */
+        #formReagendamento {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-bottom: 35px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            width: 100%;
+            height: 46px;
+            padding: 0 15px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            color: #333;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: #0a2540;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+        }
+
+        /* Botões */
+        .btn-box {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            height: 46px;
+            padding: 0 28px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-save {
+            background-color: #0a2540;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
+        }
+
+        .btn-save:hover {
+            background-color: #14375a;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancel {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-cancel:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* ==========================================================================
+           Tabela de Consultas para Reagendar
+           ========================================================================== */
+        #tabelaReagendamento {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            margin-top: 15px;
+        }
+
+        #tabelaReagendamento th {
+            background-color: #0a2540;
+            color: #ffffff;
+            text-align: left;
+            padding: 15px 20px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        #tabelaReagendamento td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        #tabelaReagendamento tr:last-child td {
+            border-bottom: none;
+        }
+
+        #tabelaReagendamento tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Botão selecionar da tabela */
+        #tabelaReagendamento button {
+            height: 36px;
+            padding: 0 16px;
+            font-size: 0.85rem;
+            background-color: #0a2540;
+            color: white;
+        }
+
+        #tabelaReagendamento button:hover {
+            background-color: #14375a;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            #tabelaReagendamento th, #tabelaReagendamento td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-hospital-user"></i>
+            <span>Hospital <strong>Agostinho Neto</strong></span>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
+                <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
+                <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
+                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
+                <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<h1>Reagendamento de Consultas</h1>
+    <div class="container">
+        
+        <h2>Definir Nova Data e Hora</h2>
+        
+        <div id="formReagendamento">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nova Data</label>
+                    <input type="date" id="editData" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nova Hora</label>
+                    <input type="time" id="editHora" required>
+                </div>
+            </div>
+            
+            <div class="btn-box">
+                <button class="btn-save" onclick="guardarEdicao()">Guardar Alterações</button>
+                <button class="btn-cancel" onclick="limparCampos()" style="background:#e2e8f0; color:#4a5568;">Cancelar</button>
+            </div>
+        </div>
 
-<a href="index.html">Voltar</a>
+        <h2>Selecione a Consulta para Reagendar</h2>
 
-</header>
+        <table id="tabelaReagendamento">
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidade</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
 
-<div class="container">
+    </div>
 
-<table id="tabelaReagendamento">
-
-<thead>
-
-<tr>
-
-<th>Paciente</th>
-
-<th>Médico</th>
-
-<th>Especialidade</th>
-
-<th>Data</th>
-
-<th>Hora</th>
-
-<th>Ação</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-</tbody>
-
-</table>
-
-</div>
-
-<script src="js/storage.js"></script>
-
-<script src="js/reagendamento.js"></script>
-
-<div id="modal" class="modal">
-
-<div class="modal-content">
-
-<h2>Editar Consulta</h2>
-
-<label>Data</label>
-<input type="date" id="editData">
-
-<label>Hora</label>
-<input type="time" id="editHora">
-
-<div class="modal-actions">
-
-<button onclick="guardarEdicao()">Guardar</button>
-<button onclick="fecharModal()" style="background:#777;">Cancelar</button>
-
-</div>
-
-</div>
-
-</div>
-
+    <script src="js/storage.js"></script>
+    <script src="js/reagendamento.js"></script>
+    
+    <script>
+        // Função auxiliar para limpar os campos sem precisar de modal
+        function limparCampos() {
+            document.getElementById('editData').value = '';
+            document.getElementById('editHora').value = '';
+        }
+    </script>
 </body>
 
 </html>
