@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Reagendamento</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Reagendamento de Consultas</h1>
+
+<a href="index.html">Voltar</a>
+
+</header>
+
+<div class="container">
+
+<table id="tabelaReagendamento">
+
+<thead>
+
+<tr>
+
+<th>Paciente</th>
+
+<th>Médico</th>
+
+<th>Especialidade</th>
+
+<th>Data</th>
+
+<th>Hora</th>
+
+<th>Ação</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script src="js/storage.js"></script>
+
+<script src="js/reagendamento.js"></script>
+
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<h2>Editar Consulta</h2>
+
+<label>Data</label>
+<input type="date" id="editData">
+
+<label>Hora</label>
+<input type="time" id="editHora">
+
+<div class="modal-actions">
+
+<button onclick="guardarEdicao()">Guardar</button>
+<button onclick="fecharModal()" style="background:#777;">Cancelar</button>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

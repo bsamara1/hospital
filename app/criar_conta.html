@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Criar Conta - Hospital Agostinho Neto</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LADO ESQUERDO -->
+    <div class="left-panel">
+
+        <div class="logo-box">
+            <div class="branding">
+                <img src="../app/assets/img/logo.png" class="logo" alt="Logo HAN">
+                <h1>HAN</h1>
+            </div>
+
+            <p class="p1">Hospital Agostinho Neto</p>
+            <p>Sistema de Gestão Hospitalar</p>
+        </div>
+
+        <img src="../app/assets/img/hospital.png" class="illustration" alt="Hospital">
+
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="right-panel">
+
+        <div class="login-card">
+
+            <h2>Criar Conta</h2>
+
+            <p>
+                Preencha os campos abaixo para criar a sua conta.
+            </p>
+
+            <form id="criarContaForm">
+
+                <label for="nomeCompleto">Nome Completo</label>
+                <input
+                    type="text"
+                    id="nomeCompleto"
+                    placeholder="Digite o nome completo"
+                    required>
+
+                <label for="utilizador">Nome de Utilizador</label>
+                <input
+                    type="text"
+                    id="utilizador"
+                    placeholder="Digite o nome de utilizador"
+                    required>
+
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Digite o email"
+                    required>
+
+                <label for="telefone">Telefone</label>
+                <input
+                    type="tel"
+                    id="telefone"
+                    placeholder="Digite o número de telefone"
+                    required>
+
+                <label for="senha">Palavra-passe</label>
+                <input
+                    type="password"
+                    id="senha"
+                    placeholder="Digite a palavra-passe"
+                    required>
+
+                <label for="confirmarSenha">Confirmar Palavra-passe</label>
+                <input
+                    type="password"
+                    id="confirmarSenha"
+                    placeholder="Confirme a palavra-passe"
+                    required>
+
+                <button type="submit">
+                    Criar Conta
+                </button>
+
+            </form>
+
+            <p class="conta">
+                Já tem uma conta?
+                <a href="login.html">Entrar</a>
+            </p>
+
+            <p id="mensagem"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/criar_conta.js"></script>
+
+</body>
+</html>
