@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Marcação de Consultas</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Marcação de Consultas</h1>
+
+<a href="index.html">Voltar ao Menu</a>
+
+</header>
+<h2>Filtros de Pesquisa</h2>
+
+<div class="filtros">
+
+<input type="text" id="pesquisaNome" placeholder="Pesquisar paciente...">
+
+<select id="filtroMedico">
+<option value="">Todos os médicos</option>
+<option>Dr. João Silva</option>
+<option>Dra. Maria Lopes</option>
+<option>Dr. Carlos Monteiro</option>
+<option>Dra. Ana Fernandes</option>
+</select>
+
+<input type="date" id="filtroData">
+
+<button onclick="limparFiltros()">Limpar</button>
+
+</div>
+
+<div class="container">
+
+<form id="formConsulta">
+
+<label>Nome do Paciente</label>
+
+<input
+type="text"
+id="nome"
+required>
+
+<label>Especialidade</label>
+
+<select id="especialidade">
+
+<option>Cardiologia</option>
+
+<option>Pediatria</option>
+
+<option>Ortopedia</option>
+
+<option>Medicina Geral</option>
+
+<option>Neurologia</option>
+
+</select>
+
+<label>Médico</label>
+
+<select id="medico">
+
+<option>Dr. João Silva</option>
+
+<option>Dra. Maria Lopes</option>
+
+<option>Dr. Carlos Monteiro</option>
+
+<option>Dra. Ana Fernandes</option>
+
+</select>
+
+<label>Data</label>
+
+<input
+type="date"
+id="data"
+required>
+
+<label>Hora</label>
+
+<input
+type="time"
+id="hora"
+required>
+
+<button type="submit">
+
+Marcar Consulta
+
+</button>
+
+</form>
+
+<hr>
+<label>Prioridade</label>
+
+<select id="prioridade">
+<option value="Baixa">Baixa</option>
+<option value="Média">Média</option>
+<option value="Alta">Alta</option>
+<option value="Urgente">Urgente</option>
+</select>
+
+<h2>Consultas Marcadas</h2>
+
+<table id="tabelaConsultas">
+
+<thead>
+
+<tr>
+
+<th>Paciente</th>
+
+<th>Especialidade</th>
+
+<th>Médico</th>
+
+<th>Data</th>
+
+<th>Hora</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+</div>
+
+<script src="js/storage.js"></script>
+
+<script src="js/marcacao.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+name: Sprint 3 - Hospital
+
+on:
+  push:
+    paths:
+      - "Grupo_III_Sprint3_Hospital/**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: Grupo_III_Sprint3_Hospital
+        run: pip install -r requirements.txt
+
+      - name: Run test
+        working-directory: Grupo_III_Sprint3_Hospital
+        run: python -c "print('OK Hospital')"

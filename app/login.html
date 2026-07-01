@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - Hospital Agostinho Neto</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LADO ESQUERDO -->
+    <div class="left-panel">
+
+        <div class="logo-box">
+            <img src="../app/assets/img/logo.png" class="logo">
+
+            <h1>HAN</h1>
+
+            <p>
+                Hospital Agostinho Neto
+            </p>
+        </div>
+
+        <img src="../app/assets/img/hospital.png" class="illustration">
+
+    </div>
+
+
+    <!-- LADO DIREITO -->
+    <div class="right-panel">
+
+        <div class="login-card">
+
+            <h2>Bem-vindo de volta!</h2>
+
+            <p>
+                Inicie sessão para continuar
+            </p>
+
+            <form id="loginForm">
+
+                <label>Utilizador</label>
+
+                <input
+                type="text"
+                id="utilizador"
+                placeholder="Digite o utilizador"
+                required>
+
+                <label>Palavra-passe</label>
+
+                <input
+                type="password"
+                id="senha"
+                placeholder="Digite a palavra-passe"
+                required>
+
+                <div class="options">
+
+                    <label>
+                        <input type="checkbox">
+                        Lembrar-me
+                    </label>
+
+                    <a href="#">
+                        Esqueceu a senha?
+                    </a>
+
+                </div>
+
+                <button type="submit">
+                    Entrar
+                </button>
+
+            </form>
+
+            <p class="conta">
+                Não tem conta?
+                <a href="criar_conta.html">Criar conta</a>
+            </p>
+
+            <p id="mensagem"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/login.js"></script>
+
+</body>
+</html>
