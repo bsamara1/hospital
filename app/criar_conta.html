@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <title>Criar Conta - Hospital Agostinho Neto</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -11,76 +12,74 @@
 
 <body>
 
-<div class="register-container">
+    <div class="register-container">
 
-    <!-- LADO ESQUERDO -->
-    <div class="register-left">
+        <!-- LADO ESQUERDO -->
+        <div class="register-left">
 
-        <div class="register-logo-box">
+            <div class="register-logo-box">
 
-            <div class="register-branding">
-                <img src="../app/assets/img/logo.png" class="register-logo" alt="Logo HAN">
-                <h1>HAN</h1>
+                <div class="register-branding">
+                    <img src="../app/assets/img/logo.png" class="register-logo" alt="Logo HAN">
+                    <h1>HAN</h1>
+                </div>
+
+                <p class="p1">Hospital Agostinho Neto</p>
+                <p class="p1">Sistema de Gestão Hospitalar</p>
             </div>
 
-            <p class="hospital-name">Hospital Agostinho Neto</p>
-            <p>Sistema de Gestão Hospitalar</p>
+            <img src="../app/assets/img/hospital.png" class="register-image" alt="Hospital">
 
         </div>
 
-        <img src="../app/assets/img/hospital.png" class="register-image" alt="Hospital">
+        <!-- LADO DIREITO -->
+        <div class="register-right">
 
-    </div>
+            <div class="register-card">
 
-    <!-- LADO DIREITO -->
-    <div class="register-right">
+                <h2>Criar Conta</h2>
 
-        <div class="register-card">
+                <p>Preencha os campos abaixo para criar a sua conta.</p>
 
-            <h2>Criar Conta</h2>
+                <form id="criarContaForm">
 
-            <p>Preencha os campos abaixo para criar a sua conta.</p>
+                    
+                    <label for="utilizador">Nome de Utilizador</label>
+                    <input type="text" id="utilizador" placeholder="Digite o nome de utilizador" required>
 
-            <form id="criarContaForm">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Digite o email" required>
 
-                <label for="nomeCompleto">Nome Completo</label>
-                <input type="text" id="nomeCompleto" placeholder="Digite o nome completo" required>
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" placeholder="Digite o número de telefone" required>
 
-                <label for="utilizador">Nome de Utilizador</label>
-                <input type="text" id="utilizador" placeholder="Digite o nome de utilizador" required>
+                    <label for="senha">Palavra-passe</label>
+                    <input type="password" id="senha" placeholder="Digite a palavra-passe" required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Digite o email" required>
+                    <label for="confirmarSenha">Confirmar Palavra-passe</label>
+                    <input type="password" id="confirmarSenha" placeholder="Confirme a palavra-passe" required>
 
-                <label for="telefone">Telefone</label>
-                <input type="tel" id="telefone" placeholder="Digite o número de telefone" required>
+                    <button type="submit">
+                        Criar Conta
+                    </button>
 
-                <label for="senha">Palavra-passe</label>
-                <input type="password" id="senha" placeholder="Digite a palavra-passe" required>
+                </form>
 
-                <label for="confirmarSenha">Confirmar Palavra-passe</label>
-                <input type="password" id="confirmarSenha" placeholder="Confirme a palavra-passe" required>
+                <p class="register-footer">
+                    Já tem uma conta?
+                    <a href="login.html">Entrar</a>
+                </p>
 
-                <button type="submit">
-                    Criar Conta
-                </button>
+                <p id="mensagem"></p>
 
-            </form>
-
-            <p class="register-footer">
-                Já tem uma conta?
-                <a href="login.html">Entrar</a>
-            </p>
-
-            <p id="mensagem"></p>
+            </div>
 
         </div>
 
     </div>
 
-</div>
-
-<script src="js/criar_conta.js"></script>
+    <script src="js/criar_conta.js"></script>
 
 </body>
+
 </html>
