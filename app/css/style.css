@@ -402,6 +402,52 @@ button:hover {
     height: 100%;
     background: #2A3F5F;
 }
+/* CAMPOS LADO A LADO */
+
+.linha-dupla{
+    display:flex;
+    gap:15px;
+}
+
+.linha-dupla .campo{
+    flex:1;
+}
+
+/* Apenas para a página de criar conta */
+
+.register-card input,
+.register-card select{
+
+    width:100%;
+    height:52px;
+
+    border:1px solid #D9E0EE;
+
+    border-radius:10px;
+
+    padding:0 16px;
+
+    margin-bottom:18px;
+
+    font-size:15px;
+
+    outline:none;
+
+    background:#fff;
+}
+
+.register-card input:focus,
+.register-card select:focus{
+
+    border-color:#2F66F6;
+
+    box-shadow:0 0 0 4px rgba(47,102,246,.12);
+
+}
+
+.register-card select{
+    cursor:pointer;
+}
 
 /* LOGO */
 
@@ -456,13 +502,15 @@ button:hover {
 
 /* CARD */
 
-.register-card {
-    width: 500px;
-    background: #fff;
-    padding: 50px;
+.register-card{
+    width:520px;
+    background:#fff;
     padding:30px 40px;
-    border-radius: 18px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+    border-radius:18px;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+
+    max-height:85vh;
+    overflow-y:auto;
 }
 
 .register-card h2 {
@@ -489,6 +537,7 @@ button:hover {
     color: #235BEB;
     text-decoration: none;
 }
+
 
 /* RESPONSIVO */
 
@@ -693,4 +742,12 @@ body {
     .banner-content h2 {
         font-size: 2rem;
     }
+}
+@media(max-width:700px){
+
+    .linha-dupla{
+        flex-direction:column;
+        gap:0;
+    }
+
 }

@@ -1,7 +1,7 @@
 const utilizador = JSON.parse(localStorage.getItem("utilizador"));
 
 if (!utilizador) {
-window.location.href = "login.html";
+    window.location.href = "login.html";
 }
 const consultas = carregar("consultas") || [];
 
