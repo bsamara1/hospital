@@ -1,13 +1,9 @@
 console.log("Sistema Hospital Agostinho Neto iniciado.");
 
-const utilizador=
+const utilizador = JSON.parse(localStorage.getItem("utilizador"));
 
-JSON.parse(localStorage.getItem("utilizador"));
-
-if(!utilizador){
-
-window.location.href="login.html";
-
+if (!utilizador) {
+    window.location.href = "login.html";
 }
 
 function logout(){
