@@ -3,5 +3,9 @@ rececao;rececao@hospital.cv;99223344;hospital;Receção
 Benedita Samara  Tavares;btadr@gsmskf;9876543;1234567
 Benedita Tavares;1234567@gfds;234567;12345
 Aline;aline@gmail.com;9876543;1234
+<<<<<<< HEAD
+Mileida;mileydalopes6@gmail.com;765432;4321
+=======
 Helio Lopes;heliolopes@gmail.com;9876543;heliolopes
 bsamara;btavares.l23@us.edu.cv;9725189;teste2
+>>>>>>> 25e472fa57669f63aeb6298bfe6b6bcf988674e5
