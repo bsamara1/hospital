@@ -517,7 +517,8 @@ button:hover {
     text-align: center;
     font-size: 34px;
     color: #163A74;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-weight:700;
 }
 
 .register-card p {

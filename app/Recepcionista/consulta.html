@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacientes - Rececionista</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI", sans-serif;
+}
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:10px;
+font-weight:bold;
+color:#fff;
+}
+.logo span{
+  font-size:32px;
+  font-weight:bold;
+}
+
+.logo img{
+width:50px;
+height:50px;
+object-fit:contain;
+}
+
+body{
+display:flex;
+background:#f5f7fb;
+height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:260px;
+background:#0b2a4a;
+color:#fff;
+display:flex;
+flex-direction:column;
+padding:20px;
+height:100vh;
+}
+.bottom{
+  margin-top:auto; 
+}
+
+.sidebar a img{
+  width:20px;
+  height:20px;
+  object-fit:contain;
+}
+
+.sidebar .logo{
+font-size:22px;
+font-weight:bold;
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+padding:12px 15px;
+margin:5px 0;
+display:flex;
+align-items:center;
+gap:10px;
+border-radius:8px;
+transition:0.3s;
+font-size:18px;
+}
+
+.sidebar a:hover{
+background:#163a63;
+color:#fff;
+}
+
+.sidebar .logout{
+  color:#ff6b6b;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 15px;
+  border-radius:8px;
+}
+.logout:hover{
+  background:#163a63;
+}
+
+.divider{
+  height:1px;
+  background:rgba(255,255,255,0.15);
+  margin:12px 0;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:25px;
+overflow:auto;
+}
+
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.add-btn{
+  background:#054a93;
+  border-radius:6px;
+  color:#fff; 
+  font-size:16px;
+  font-weight:600;
+  height: 45px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.3s;
+}
+
+.add-btn:hover{
+  opacity:0.7;
+}
+
+.header h2{
+font-size:20px;
+color:#333;
+}
+
+.header-line{
+margin-left:-25px;
+margin-right:-25px;
+height:1px;
+background:rgba(0,0,0,0.08);
+margin-top:15px;
+margin-bottom:25px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+margin-bottom:25px;
+}
+
+.card{
+background:#fff;
+padding:18px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card h4{
+font-size:13px;
+color:#666;
+}
+
+.card p{
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* TABLE */
+.table-card{
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+th{
+text-align:left;
+color:#666;
+}
+
+/* BUTTONS */
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+}
+
+
+
+.edit{
+background:#007bff;
+color:#fff;
+}
+
+.confirm{background:#28a745;color:#fff;}
+.edit{background:#007bff;color:#fff;}
+.cancel{background:#dc3545;color:#fff;}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+      <img src="../assets/img/logo.png" alt="Logo HAN">
+      <span>HAN</span>
+  </div>
+
+  <a href="index.html">
+      <img src="../assets/icons/casa.png" alt="Home" style="width:20px;height:20px;">
+      Painel Principal
+  </a>
+
+  <a href="pacientes.html">
+      <img src="../assets/icons/perfil.png" alt="Pacientes" style="width:20px;height:20px;">
+      Pacientes
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/agendar.png" alt="Consultas" style="width:20px;height:20px;">
+      Consultas
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/utilizadores.png" alt="Médicos" style="width:20px;height:20px;">
+      Médicos
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/notificacoes.png" alt="Notificações" style="width:20px;height:20px;">
+      Notificações
+  </a>
+
+  <div class="bottom">
+      <div class="divider"></div>
+
+      <a class="logout" href="../login.html">
+          <img src="../assets/icons/sair.png" alt="Sair" style="width:20px;height:20px;">
+          Terminar sessão
+      </a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="header">
+
+    <h2>Gestão de Consultas</h2>
+
+    <button class="add-btn">
+        <i class="fa fa-plus"></i> Adicionar Consulta
+    </button>
+
+</div>
+<div class="header-line"></div>
+
+<!-- CARDS -->
+<div class="cards">
+
+<div class="card">
+<h4>Pendentes</h4>
+<p>120</p>
+</div>
+
+<div class="card">
+<h4>Confirmadas</h4>
+<p>98</p>
+</div>
+
+<div class="card">
+<h4>Canceladas</h4>
+<p>12</p>
+</div>
+
+</div>
+
+<!-- TABLE -->
+<div class="table-card">
+
+
+
+<table>
+
+<tr>
+<th>Paciente</th>
+<th>Médico</th>
+<th>Data</th>
+<th>Hora</th>
+<th>Status</th>
+<th>Ações</th>
+</tr>
+
+<tr>
+<td>João Silva</td>
+<td>Dr. Mendes</td>
+<td>02/07</td>
+<td>09:00</td>
+<td><span style="color:#856404;background:#fff3cd;padding:4px 8px;border-radius:10px;">Pendente</span></td>
+<td>
+<button class="confirm">Confirmar</button>
+<button class="edit">Reagendar</button>
+<button class="cancel">Cancelar</button>
+</td>
+</tr>
+
+<tr>
+<td>Ana Costa</td>
+<td>Dr. Sousa</td>
+<td>02/07</td>
+<td>10:30</td>
+<td><span style="color:#155724;background:#d4edda;padding:4px 8px;border-radius:10px;">Confirmada</span></td>
+<td>
+<button class="edit">Reagendar</button>
+<button class="cancel">Cancelar</button>
+</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>
