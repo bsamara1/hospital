@@ -1,94 +1,69 @@
-let consultaAtual = null;
-const tabela =
-document.querySelector("#tabelaReagendamento tbody");
+const tbody = document.querySelector("#tabelaReagendamento tbody");
 
-mostrar();
+let consultaSelecionada = null;
 
-function mostrar(){
+listar();
 
-let consultas = carregar("consultas");
+function listar(){
 
-tabela.innerHTML="";
+    tbody.innerHTML="";
 
-consultas.forEach(c=>{
+    obterConsultas().forEach(c=>{
 
-tabela.innerHTML +=`
+        tbody.innerHTML += `
+        <tr>
+            <td>${c.paciente}</td>
+            <td>${c.medico}</td>
+            <td>${c.especialidade}</td>
+            <td>${c.data}</td>
+            <td>${c.hora}</td>
+            <td>
+                <button onclick="selecionar(${c.id})">
+                    Selecionar
+                </button>
+            </td>
+        </tr>`;
 
-<tr>
-
-<td>${c.nome}</td>
-<td>${c.medico}</td>
-<td>${c.especialidade}</td>
-<td>${c.data}</td>
-<td>${c.hora}</td>
-
-<td>
-
-<button onclick="editar(${c.id})">
-Editar
-</button>
-
-<button onclick="cancelar(${c.id})" style="background:red;color:white;margin-left:5px;">
-Cancelar
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
+    });
 
 }
 
-function editar(id){
+function selecionar(id){
 
-let consultas = carregar("consultas");
+    consultaSelecionada=id;
 
-consultaAtual = consultas.find(c => c.id == id);
-
-document.getElementById("editData").value = consultaAtual.data;
-document.getElementById("editHora").value = consultaAtual.hora;
-
-document.getElementById("modal").style.display = "flex";
 }
+
 function guardarEdicao(){
 
-let consultas = carregar("consultas");
+    if(consultaSelecionada==null){
+        alert("Selecione uma consulta.");
+        return;
+    }
 
-consultaAtual.data = document.getElementById("editData").value;
-consultaAtual.hora = document.getElementById("editHora").value;
+    let consultas = obterConsultas();
 
-consultas = consultas.map(c =>
-c.id === consultaAtual.id ? consultaAtual : c
-);
+    consultas = consultas.map(c=>{
 
-guardar("consultas", consultas);
+        if(c.id==consultaSelecionada){
 
-fecharModal();
-mostrar();
+            c.data=document.getElementById("editData").value;
+            c.hora=document.getElementById("editHora").value;
 
-alert("Consulta atualizada com sucesso.");
-}
+        }
 
-function cancelar(id){
+        return c;
 
-let confirmacao = confirm("Tens a certeza que queres cancelar esta consulta?");
+    });
 
-if(!confirmacao) return;
+    guardarConsultas(consultas);
 
-let consultas = carregar("consultas");
+    listar();
 
-consultas = consultas.filter(c => c.id !== id);
+    alert("✅ Consulta reagendada com sucesso!");
 
-guardar("consultas", consultas);
+    consultaSelecionada=null;
 
-mostrar();
+    limparCampos();
 
-alert("Consulta cancelada com sucesso.");
-}
-
-function fecharModal(){
-document.getElementById("modal").style.display = "none";
 }

@@ -1,11 +1,9 @@
-function guardar(chave,dados){
+const CHAVE = "consultas";
 
-localStorage.setItem(chave,JSON.stringify(dados));
-
+function obterConsultas() {
+    return JSON.parse(localStorage.getItem(CHAVE)) || [];
 }
 
-function carregar(chave){
-
-return JSON.parse(localStorage.getItem(chave)) || [];
-
+function guardarConsultas(lista) {
+    localStorage.setItem(CHAVE, JSON.stringify(lista));
 }
