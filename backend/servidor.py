@@ -55,29 +55,46 @@ def criar_conta():
 
     dados = request.get_json()
 
-    utilizador = dados["utilizador"]
+    nome = dados["nome"].strip()
+    bi = dados["bi"].strip().upper()
+    data_nascimento = dados["dataNascimento"]
+    sexo = dados["sexo"]
+    telefone = dados["telefone"].strip()
     email = dados["email"].strip().lower()
-    telefone = dados["telefone"]
     senha = dados["senha"]
 
     with open(ARQUIVO, "r", encoding="utf-8") as f:
+
         for linha in f:
+
             campos = linha.strip().split(";")
 
-            if len(campos) < 4:
+            if len(campos) < 7:
                 continue
 
-            if campos[0] == utilizador:
-                return jsonify({"sucesso": False, "mensagem": "Utilizador já existe."})
+            # BI já existe
+            if campos[1].upper() == bi:
+                return jsonify({
+                    "sucesso": False,
+                    "mensagem": "Já existe uma conta com este BI."
+                })
 
-            if campos[1].strip().lower() == email:
-                return jsonify({"sucesso": False, "mensagem": "Email já registado."})
+            # Email já existe
+            if campos[5].lower() == email:
+                return jsonify({
+                    "sucesso": False,
+                    "mensagem": "Este e-mail já está registado."
+                })
 
     with open(ARQUIVO, "a", encoding="utf-8") as f:
-        f.write(f"{utilizador};{email};{telefone};{senha}\n")
+        f.write(
+            f"{nome};{bi};{data_nascimento};{sexo};{telefone};{email};{senha}\n"
+        )
 
-    return jsonify({"sucesso": True, "mensagem": "Conta criada com sucesso."})
-
+    return jsonify({
+        "sucesso": True,
+        "mensagem": "Conta criada com sucesso."
+    })
 
 # =========================
 # LOGIN + 2FA
@@ -107,11 +124,11 @@ def login():
 
             campos = linha.strip().split(";")
 
-            if len(campos) < 4:
+            if len(campos) < 7:
                 continue
 
-            email_bd = campos[1].strip().lower()
-            senha_bd = campos[3]
+            email_bd = campos[5].strip().lower()
+            senha_bd = campos[6]
 
             if email_bd == email and senha_bd == senha:
 
@@ -252,11 +269,11 @@ def alterar_senha():
 
             campos = linha.strip().split(";")
 
-            if len(campos) < 4:
+            if len(campos) < 7:
                 continue
 
-            if campos[1].strip().lower() == email:
-                campos[3] = nova_senha
+            if campos[5].strip().lower() == email:
+                campos[6] = nova_senha
 
             linhas.append(";".join(campos))
 
@@ -309,7 +326,7 @@ def esqueceu_senha():
 
             campos = linha.strip().split(";")
 
-            if len(campos) < 4:
+            if len(campos) < 7:
                 continue
 
             if campos[1].strip().lower() == email:
