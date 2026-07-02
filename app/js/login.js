@@ -2,8 +2,9 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     e.preventDefault();
 
-    const utilizador = document.getElementById("utilizador").value.trim();
+    const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value;
+    const lembrar = document.getElementById("lembrar").checked;
 
     try {
 
@@ -16,10 +17,8 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             },
 
             body: JSON.stringify({
-
-                utilizador: utilizador,
-                senha: senha
-
+                email,
+                senha
             })
 
         });
@@ -28,11 +27,18 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
         if (dados.sucesso) {
 
-            localStorage.setItem("utilizador", utilizador);
+            // Guardar ou remover o email
+            if (lembrar) {
+                localStorage.setItem("email", email);
+            } else {
+                localStorage.removeItem("email");
+            }
 
-            // 👇 AQUI É ONDE ENTRA O CÓDIGO
-            if (dados.tipo === "admin") {
-                window.location.href = "admin.html";
+            localStorage.setItem("utilizador", JSON.stringify(dados));
+
+            // Redirecionamento
+            if (email.toLowerCase() === "admin@hospital.cv") {
+                window.location.href = "Admin/index.html";
             } else {
                 window.location.href = "index.html";
             }
@@ -41,6 +47,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
             document.getElementById("mensagem").style.color = "red";
             document.getElementById("mensagem").innerHTML = dados.mensagem;
+
         }
 
     } catch (erro) {
@@ -48,6 +55,19 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         document.getElementById("mensagem").style.color = "red";
         document.getElementById("mensagem").innerHTML = "Erro ao comunicar com o servidor.";
 
+    }
+    
+
+});
+
+// Carregar email guardado
+window.addEventListener("load", () => {
+
+    const emailGuardado = localStorage.getItem("email");
+
+    if (emailGuardado) {
+        document.getElementById("email").value = emailGuardado;
+        document.getElementById("lembrar").checked = true;
     }
 
 });

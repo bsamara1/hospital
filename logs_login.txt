@@ -1,0 +1,3 @@
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-02 14:46:37
+admin@hospital.cv;BLOQUEADO_2FA;2026-07-02 15:32:26
+btavares.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-02 15:42:54
