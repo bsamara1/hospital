@@ -5,27 +5,34 @@ form.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    const utilizador = document.getElementById("utilizador").value.trim();
-    const email = document.getElementById("email").value.trim();
+    const nome = document.getElementById("nome").value.trim();
+    const bi = document.getElementById("bi").value.trim();
+    const dataNascimento = document.getElementById("dataNascimento").value;
+    const sexo = document.getElementById("sexo").value;
     const telefone = document.getElementById("telefone").value.trim();
+    const email = document.getElementById("email").value.trim();
     const senha = document.getElementById("senha").value;
     const confirmarSenha = document.getElementById("confirmarSenha").value;
 
     mensagem.innerHTML = "";
 
-    if (utilizador === "" || email === "" || telefone === "" || senha === "") {
-
+    if (
+        nome === "" ||
+        bi === "" ||
+        dataNascimento === "" ||
+        sexo === "" ||
+        telefone === "" ||
+        email === "" ||
+        senha === ""
+    ) {
         mensagem.style.color = "red";
         mensagem.innerHTML = "Preencha todos os campos.";
-
         return;
     }
 
     if (senha !== confirmarSenha) {
-
         mensagem.style.color = "red";
         mensagem.innerHTML = "As palavras-passe não coincidem.";
-
         return;
     }
 
@@ -40,12 +47,13 @@ form.addEventListener("submit", async (e) => {
             },
 
             body: JSON.stringify({
-
-                utilizador,
-                email,
+                nome,
+                bi,
+                dataNascimento,
+                sexo,
                 telefone,
+                email,
                 senha
-
             })
 
         });
@@ -57,7 +65,6 @@ form.addEventListener("submit", async (e) => {
         if (dados.sucesso) {
 
             mensagem.style.color = "green";
-
             form.reset();
 
         } else {
