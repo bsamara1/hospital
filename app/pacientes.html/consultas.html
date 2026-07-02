@@ -58,7 +58,6 @@ display:flex;
 align-items:center;
 gap:10px;
 border-radius:8px;
-font-size:18px;
 transition:0.3s;
 }
 
@@ -109,11 +108,10 @@ cursor:pointer;
 display:flex;
 align-items:center;
 gap:6px;
-transition:0.3s;
 }
 
 .add-btn:hover{
-opacity:0.8;
+opacity:0.85;
 }
 
 .header-line{
@@ -173,26 +171,9 @@ color:#666;
 }
 
 /* STATUS */
-.pendente{
-background:#fff3cd;
-color:#856404;
-padding:4px 8px;
-border-radius:10px;
-}
-
-.confirmada{
-background:#d4edda;
-color:#155724;
-padding:4px 8px;
-border-radius:10px;
-}
-
-.cancelada{
-background:#f8d7da;
-color:#721c24;
-padding:4px 8px;
-border-radius:10px;
-}
+.pendente{background:#fff3cd;color:#856404;padding:4px 8px;border-radius:10px;}
+.confirmada{background:#d4edda;color:#155724;padding:4px 8px;border-radius:10px;}
+.cancelada{background:#f8d7da;color:#721c24;padding:4px 8px;border-radius:10px;}
 
 /* BUTTONS */
 button{
@@ -206,6 +187,55 @@ font-size:12px;
 .confirm{background:#28a745;color:#fff;}
 .edit{background:#007bff;color:#fff;}
 .cancel{background:#dc3545;color:#fff;}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+z-index:999;
+}
+
+.modal-content{
+background:#fff;
+padding:25px;
+border-radius:12px;
+width:400px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.modal-content input,
+.modal-content select{
+padding:10px;
+border:1px solid #ddd;
+border-radius:6px;
+}
+
+.btn-save{
+background:#28a745;
+color:#fff;
+padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.btn-cancel{
+background:#dc3545;
+color:#fff;
+padding:10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
 
 </style>
 </head>
@@ -236,15 +266,12 @@ font-size:12px;
 <!-- MAIN -->
 <div class="main">
 
-  <!-- HEADER -->
   <div class="header">
-
       <h2>Gestão de Consultas</h2>
 
       <button class="add-btn" onclick="marcarConsulta()">
           <i class="fa fa-plus"></i> Marcar Consulta
       </button>
-
   </div>
 
   <div class="header-line"></div>
@@ -273,7 +300,6 @@ font-size:12px;
   <div class="table-card">
 
       <table>
-
           <thead>
               <tr>
                   <th>Paciente</th>
@@ -286,9 +312,7 @@ font-size:12px;
               </tr>
           </thead>
 
-          <tbody id="tabela-consultas">
-              <!-- JS vai preencher -->
-          </tbody>
+          <tbody id="tabela-consultas"></tbody>
 
       </table>
 
@@ -296,44 +320,40 @@ font-size:12px;
 
 </div>
 
-<!-- JS -->
-<script src="../js/consultas.js"></script>
-<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000070; justify-content:center; align-items:center;">
+<!-- MODAL -->
+<div id="modal" class="modal">
 
-  <div style="background:#fff; padding:20px; border-radius:10px; width:400px;">
+  <div class="modal-content">
 
     <h3>Marcar Consulta</h3>
 
-    <input id="paciente" placeholder="Paciente" style="width:100%; margin:5px 0;">
-    
-    <select id="medico" style="width:100%; margin:5px 0;" onchange="carregarHorarios()">
+    <input id="paciente" placeholder="Paciente">
+
+    <select id="medico" onchange="carregarHorarios()">
       <option value="">Selecionar Médico</option>
-      <option value="Dr. Mendes">Dr. Mendes</option>
-      <option value="Dr. Sousa">Dr. Sousa</option>
     </select>
 
-    <select id="especialidade" style="width:100%; margin:5px 0;">
-      <option>Cardiologia</option>
-      <option>Ortopedia</option>
-      <option>Dermatologia</option>
+    <select id="especialidade">
+      <option value="Cardiologia">Cardiologia</option>
+      <option value="Ortopedia">Ortopedia</option>
+      <option value="Dermatologia">Dermatologia</option>
     </select>
 
-    <input type="date" id="data" style="width:100%; margin:5px 0;" onchange="carregarHorarios()">
+    <input type="date" id="data" onchange="carregarHorarios()">
 
-    <select id="hora" style="width:100%; margin:5px 0;">
+    <select id="hora">
       <option value="">Selecionar hora</option>
     </select>
 
-    <button onclick="guardarConsulta()" style="background:#28a745; color:#fff; width:100%; margin-top:10px;">
-      Guardar
-    </button>
-
-    <button onclick="fecharModal()" style="width:100%; margin-top:5px;">
-      Cancelar
-    </button>
+    <button class="btn-save" onclick="guardarConsulta()">Guardar</button>
+    <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
 
   </div>
 
 </div>
+
+<!-- JS -->
+<script src="../js/consultas.js"></script>
+
 </body>
 </html>
