@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Médicos</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{display:flex;background:#f5f7fb;min-height:100vh;}
+.sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
+.sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
+.sidebar .logo img{width:50px;height:50px;object-fit:contain;}
+.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;font-size:18px;transition:0.3s;}
+.sidebar a:hover,.sidebar a.active{background:#163a63;}
+.sidebar .bottom{margin-top:auto;}
+.logout{color:#ff6b6b;}
+.divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
+.main{flex:1;padding:25px;overflow:auto;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.header-line{height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
+.header h2{font-size:24px;color:#333;}
+.table-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
+.table-card h3{margin-bottom:15px;}
+#listaMedicos .medicos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
+#listaMedicos .medico-card{border:1px solid #e1e8f0;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.04);background:#fff;display:flex;flex-direction:column;gap:12px;}
+.medico-photo{width:100%;height:180px;border-radius:16px;object-fit:cover;}
+.medico-info{display:grid;gap:8px;}
+.medico-nome{font-size:20px;font-weight:700;color:#1f3566;}
+.medico-especialidade{font-size:15px;color:#555;}
+.medico-meta{font-size:14px;color:#555;}
+.medico-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.medico-tag{padding:8px 12px;border-radius:999px;background:#eef4ff;color:#1d3f7a;font-size:13px;}
+.medico-actions{display:flex;justify-content:flex-end;}
+.medico-actions button{padding:10px 16px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;transition:0.2s;}
+.medico-actions button:hover{opacity:0.95;}
+input#pesquisaMedico{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;}
+button.search-btn{padding:12px 18px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,42,74,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.modal-content{background:#fff;border-radius:18px;width:min(720px,95%);padding:24px;box-shadow:0 18px 50px rgba(0,0,0,0.18);}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.modal-header h3{margin:0;color:#17224a;}
+.modal-close{background:transparent;border:none;font-size:28px;line-height:1;color:#555;cursor:pointer;}
+.modal-body{display:grid;gap:14px;}
+.modal-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.modal-row strong{color:#333;}
+.modal-section{background:#f8faff;padding:18px;border-radius:14px;}
+.modal-footer{display:flex;justify-content:flex-end;margin-top:20px;}
+.modal-footer button{padding:12px 18px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
+    <a href="index.html">🏠 Início</a>
+    <a href="consultas.html">📋 Minhas Consultas</a>
+    <a href="reagendamentos.html">🔄 Reagendar</a>
+    <a href="cancelamentos.html">❌ Cancelar</a>
+    <a href="consultas.html#historico">📜 Histórico</a>
+    <a href="medicos.html" class="active">👨‍⚕️ Médicos</a>
+    <a href="notificacoes.html">🔔 Notificações</a>
+    <a href="perfil.html">👤 Meu Perfil</a>
+    <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html">🚪 Terminar sessão</a></div>
+</div>
+<div class="main">
+    <div class="header">
+        <h2>Todos os Médicos</h2>
+    </div>
+    <div class="header-line"></div>
+    <div class="table-card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <input id="pesquisaMedico" placeholder="Pesquisar por nome, especialidade ou horário" oninput="renderMedicos()">
+    </div>
+    <div id="listaMedicos" class="table-card"></div>
+
+    <div id="modalAgenda" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalMedicoNome">Agenda do Médico</h3>
+                <button class="modal-close" onclick="fecharModalMedico()">×</button>
+            </div>
+            <div class="modal-body" id="modalMedicoDetalhes"></div>
+            <div class="modal-footer">
+                <button onclick="fecharModalMedico()">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../js/consultas.js"></script>
+</body>
+</html>

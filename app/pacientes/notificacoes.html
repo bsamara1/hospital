@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notificações</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
+body{display:flex;background:#f5f7fb;min-height:100vh;}
+.sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
+.sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
+.sidebar .logo img{width:50px;height:50px;object-fit:contain;}
+.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;font-size:18px;transition:0.3s;}
+.sidebar a:hover,.sidebar a.active{background:#163a63;}
+.sidebar .bottom{margin-top:auto;}
+.logout{color:#ff6b6b;}
+.divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
+.main{flex:1;padding:25px;overflow:auto;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.header h2{font-size:24px;color:#333;}
+.header-line{height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
+.table-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
+.notificacao{padding:18px;border:1px solid #eef2f7;border-radius:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:15px;}
+.notificacao.nova{background:#e9f5ff;border-color:#9cc9ff;}
+.notificacao.lida{background:#f7f7f7;border-color:#ddd;}
+.notificacao-texto{font-size:15px;color:#333;flex:1;}
+.notificacao button{padding:10px 16px;border:none;border-radius:10px;background:#007bff;color:#fff;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
+    <a href="index.html">🏠 Início</a>
+    <a href="consultas.html">📋 Minhas Consultas</a>
+    <a href="reagendamentos.html">🔄 Reagendar</a>
+    <a href="cancelamentos.html">❌ Cancelar</a>
+    <a href="consultas.html#historico">📜 Histórico</a>
+    <a href="medicos.html">👨‍⚕️ Médicos</a>
+    <a href="notificacoes.html" class="active">🔔 Notificações</a>
+    <a href="perfil.html">👤 Meu Perfil</a>
+    <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html">🚪 Terminar sessão</a></div>
+</div>
+<div class="main">
+    <div class="header">
+        <h2>Notificações</h2>
+        <button onclick="marcarTodasNotificacoesLidas()">Marcar todas como lidas</button>
+    </div>
+    <div class="header-line"></div>
+    <div id="listaNotificacoes" class="table-card"></div>
+</div>
+<script src="../js/consultas.js"></script>
+</body>
+</html>

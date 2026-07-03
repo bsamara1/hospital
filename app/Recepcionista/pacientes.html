@@ -38,7 +38,7 @@ object-fit:contain;
 body{
 display:flex;
 background:#f5f7fb;
-height:100vh;
+min-height:100vh;
 }
 
 /* SIDEBAR */
@@ -49,10 +49,10 @@ color:#fff;
 display:flex;
 flex-direction:column;
 padding:20px;
-height:100vh;
+min-height:100vh;
 }
 .bottom{
-  margin-top:auto; 
+  margin-top:auto;
 }
 
 .sidebar a img{
@@ -111,7 +111,6 @@ padding:25px;
 overflow:auto;
 }
 
-
 /* HEADER */
 .header{
   display:flex;
@@ -122,7 +121,7 @@ overflow:auto;
 .add-btn{
   background:#054a93;
   border-radius:6px;
-  color:#fff; 
+  color:#fff;
   font-size:16px;
   font-weight:600;
   height: 45px;
@@ -183,6 +182,7 @@ background:#fff;
 padding:20px;
 border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.05);
+margin-bottom:25px;
 }
 
 table{
@@ -211,8 +211,6 @@ cursor:pointer;
 font-size:12px;
 }
 
-
-
 .edit{
 background:#007bff;
 color:#fff;
@@ -221,6 +219,70 @@ color:#fff;
 .delete{
 background:#dc3545;
 color:#fff;
+}
+
+.search-row{
+display:flex;
+gap:10px;
+margin-bottom:20px;
+flex-wrap:wrap;
+}
+
+.search-row input{
+flex:1;
+padding:10px 12px;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.55);
+display:none;
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:1000;
+}
+
+.modal-card{
+background:#fff;
+border-radius:14px;
+width:100%;
+max-width:520px;
+padding:24px;
+position:relative;
+}
+
+.modal-card h3{
+margin-bottom:18px;
+}
+
+.modal-card input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:12px;
+}
+
+.modal-actions{
+display:flex;
+gap:10px;
+justify-content:flex-end;
+margin-top:10px;
+}
+
+.modal-close{
+position:absolute;
+top:18px;
+right:18px;
+border:none;
+background:none;
+font-size:22px;
+cursor:pointer;
+color:#444;
 }
 
 </style>
@@ -277,29 +339,218 @@ color:#fff;
 
     <h2>Gestão de Pacientes</h2>
 
-    <button class="add-btn">
+    <button id="btnAbrirModal" class="add-btn" onclick="abrirModal()">
         <i class="fa fa-plus"></i> Adicionar Paciente
     </button>
 
 </div>
 <div class="header-line"></div>
 
+<div class="search-row">
+    <input id="pesquisaPaciente" type="text" placeholder="🔍 Pesquisar por nome, email ou telefone">
+</div>
+
 <!-- CARDS -->
 <div class="cards">
 
 <div class="card">
 <h4>Total de Pacientes</h4>
-<p>120</p>
+<p id="totalPacientes">0</p>
 </div>
 
 <div class="card">
-<h4>Pacientes Ativos</h4>
-<p>98</p>
+<h4>Pacientes com Login</h4>
+<p id="pacientesLogin">0</p>
 </div>
 
 <div class="card">
 <h4>Novos este mês</h4>
-<p>12</p>
+<p id="novosMes">0</p>
+</div>
+
+</div>
+
+<div class="table-card">
+    <h3>Pacientes</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="pacientesTabela"></tbody>
+    </table>
+</div>
+
+<div class="table-card">
+    <h3>Histórico de Login</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody id="historicoLogin"></tbody>
+    </table>
+</div>
+
+</div>
+
+<div id="modalPaciente" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" onclick="fecharModal()">×</button>
+    <h3 id="modalTitle">Adicionar Paciente</h3>
+    <input id="pacienteNome" type="text" placeholder="Nome completo">
+    <input id="pacienteEmail" type="email" placeholder="Email">
+    <input id="pacienteTelefone" type="text" placeholder="Telefone">
+    <input id="pacienteSenha" type="password" placeholder="Senha">
+    <div class="modal-actions">
+      <button class="delete" type="button" onclick="fecharModal()">Cancelar</button>
+      <button class="add-btn" type="button" onclick="salvarPaciente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="pacientes.js"></script>
+</body>
+</html>
+
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.55);
+display:none;
+justify-content:center;
+align-items:center;
+padding:20px;
+z-index:1000;
+}
+
+.modal-card{
+background:#fff;
+border-radius:14px;
+width:100%;
+max-width:520px;
+padding:24px;
+position:relative;
+}
+
+.modal-card h3{
+margin-bottom:18px;
+}
+
+.modal-card input{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid #ddd;
+margin-bottom:12px;
+}
+
+.modal-actions{
+display:flex;
+gap:10px;
+justify-content:flex-end;
+margin-top:10px;
+}
+
+.modal-close{
+position:absolute;
+top:18px;
+right:18px;
+border:none;
+background:none;
+font-size:22px;
+cursor:pointer;
+color:#444;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="logo">
+      <img src="../assets/img/logo.png" alt="Logo HAN">
+      <span>HAN</span>
+  </div>
+
+  <a href="index.html">
+      <img src="../assets/icons/casa.png" alt="Home" style="width:20px;height:20px;">
+      Painel Principal
+  </a>
+
+  <a href="pacientes.html">
+      <img src="../assets/icons/perfil.png" alt="Pacientes" style="width:20px;height:20px;">
+      Pacientes
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/agendar.png" alt="Consultas" style="width:20px;height:20px;">
+      Consultas
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/utilizadores.png" alt="Médicos" style="width:20px;height:20px;">
+      Médicos
+  </a>
+
+  <a href="#">
+      <img src="../assets/icons/notificacoes.png" alt="Notificações" style="width:20px;height:20px;">
+      Notificações
+  </a>
+
+  <div class="bottom">
+      <div class="divider"></div>
+
+      <a class="logout" href="../login.html">
+          <img src="../assets/icons/sair.png" alt="Sair" style="width:20px;height:20px;">
+          Terminar sessão
+      </a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="header">
+
+    <h2>Gestão de Pacientes</h2>
+
+    <button id="btnAbrirModal" class="add-btn" onclick="abrirModal()">
+        <i class="fa fa-plus"></i> Adicionar Paciente
+    </button>
+
+</div>
+<div class="header-line"></div>
+
+<div class="search-row">
+    <input id="pesquisaPaciente" type="text" placeholder="🔍 Pesquisar por nome, email ou telefone">
+</div>
+
+<!-- CARDS -->
+<div class="cards">
+
+<div class="card">
+<h4>Total de Pacientes</h4>
+<p id="totalPacientes">0</p>
+</div>
+
+<div class="card">
+<h4>Pacientes com Login</h4>
+<p id="pacientesLogin">0</p>
+</div>
+
+<div class="card">
+<h4>Novos este mês</h4>
+<p id="novosMes">0</p>
 </div>
 
 </div>
