@@ -99,3 +99,5 @@ rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:17:41
 rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:17:45
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 12:18:45
 >>>>>>> 26fd8fdeca2bdd8276b6cd8d9f750a9f8c6a1f25
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 15:18:56
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 16:14:45
