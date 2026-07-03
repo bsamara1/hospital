@@ -6,7 +6,9 @@
     "especialidade": "Cardiologia",
     "data": "2026-07-11",
     "hora": "09:00",
-    "estado": "cancelada"
+    "estado": "cancelada",
+    "prioridade": "alta",
+    "sintomas": ["febre-alta", "dor-cabeca"]
   },
   {
     "id": 1783031677253,
@@ -15,7 +17,9 @@
     "especialidade": "Cardiologia",
     "data": "2026-07-10",
     "hora": "10:00",
-    "estado": "cancelada"
+    "estado": "cancelada",
+    "prioridade": "baixa",
+    "sintomas": ["rotina"]
   },
   {
     "id": 1783031708735,
@@ -24,7 +28,9 @@
     "especialidade": "Ortopedia",
     "data": "2026-07-24",
     "hora": "13:00",
-    "estado": "cancelada"
+    "estado": "cancelada",
+    "prioridade": "media",
+    "sintomas": ["tosse"]
   },
   {
     "id": 1783031923496,
@@ -33,7 +39,9 @@
     "especialidade": "Cardiologia",
     "data": "2026-07-25",
     "hora": "10:00",
-    "estado": "pendente"
+    "estado": "pendente",
+    "prioridade": "urgente",
+    "sintomas": ["dor-peito", "falta-ar"]
   },
   {
     "id": 1783034070238,
@@ -42,6 +50,8 @@
     "especialidade": "Ortopedia",
     "data": "2026-07-18",
     "hora": "15:00",
-    "estado": "cancelada"
+    "estado": "cancelada",
+    "prioridade": "media",
+    "sintomas": ["tosse"]
   }
 ]
