@@ -1,45 +1,58 @@
 let consultas = [];
 let medicos = [];
 
+// Variável para controlar qual o filtro ativo ('hoje', 'pendente', 'cancelada' ou null)
+let filtroAtivo = null;
+
 /* =======================
 CARREGAR MÉDICOS
 ======================= */
 async function carregarMedicos() {
-    const res = await fetch("../data/medicos.txt");
-    const data = await res.text();
-    medicos = JSON.parse(data);
-
-    carregarListaMedicos();
+    try {
+        const res = await fetch("../data/medicos.txt");
+        const data = await res.text();
+        medicos = JSON.parse(data);
+        carregarListaMedicos();
+    } catch (e) {
+        console.error("Erro ao carregar médicos:", e);
+    }
 }
 
 /* =======================
 CARREGAR CONSULTAS
 ======================= */
 async function carregarConsultas() {
-    const res = await fetch("../data/consultas.txt");
-    const data = await res.text();
-
-    consultas = JSON.parse(data);
-
-    renderTabela();
-    atualizarCards();
+    try {
+        const res = await fetch("../data/consultas.txt");
+        const data = await res.text();
+        consultas = JSON.parse(data);
+        
+        // Renderiza e atualiza os contadores
+        aplicarFiltroAtual();
+        atualizarCards();
+    } catch (e) {
+        console.error("Erro ao carregar consultas do arquivo. Tentando localStorage...", e);
+        // Tenta buscar do localStorage como alternativa caso o arquivo falhe
+        const localData = localStorage.getItem("consultas");
+        consultas = localData ? JSON.parse(localData) : [];
+        
+        aplicarFiltroAtual();
+        atualizarCards();
+    }
 }
 
 /* =======================
 LISTA MÉDICOS
 ======================= */
 function carregarListaMedicos() {
-
     const select = document.getElementById("medico");
+    if (!select) return;
     select.innerHTML = "";
 
     medicos
     .filter(m => m.status === "ativo")
     .forEach(m => {
-        select.innerHTML += `
-        <option value="${m.nome}">
-            ${m.nome} - ${m.especialidade}
-        </option>`;
+        select.innerHTML += `<option value="${m.nome}">${m.nome} - ${m.especialidade}</option>`;
     });
 }
 
@@ -49,122 +62,150 @@ HORÁRIOS
 function obterHorarios(nome) {
     const medico = medicos.find(m => m.nome === nome);
     if (!medico) return [];
-    return medico.horarios.split(",");
-}
-
-function carregarHorarios() {
-
-    const medico = document.getElementById("medico").value;
-    const data = document.getElementById("data").value;
-    const hora = document.getElementById("hora");
-
-    hora.innerHTML = "";
-
-    if (!medico || !data) return;
-
-    obterHorarios(medico).forEach(h => {
-        hora.innerHTML += `<option>${h}</option>`;
-    });
+    return medico.horarios || [];
 }
 
 /* =======================
-TABELA
+RENDERIZAR TABELA
 ======================= */
-function renderTabela() {
-
+function renderTabela(listaParaRenderizar = consultas) {
     const tbody = document.getElementById("tabela-consultas");
+    if (!tbody) return;
+
     tbody.innerHTML = "";
 
-    consultas.forEach(c => {
+    if (listaParaRenderizar.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px; color: #888;">Nenhuma consulta encontrada com este critério.</td></tr>`;
+        return;
+    }
+
+    listaParaRenderizar.forEach(c => {
         tbody.innerHTML += `
         <tr>
-        <td>${c.paciente}</td>
-        <td>${c.medico}</td>
-        <td>${c.especialidade}</td>
-        <td>${c.data}</td>
-        <td>${c.hora}</td>
-        <td><span class="${c.estado}">${c.estado}</span></td>
-        <td>
-            <button class="confirm" onclick="confirmar(${c.id})">✔</button>
-            <button class="edit" onclick="reagendar(${c.id})">✏️</button>
-            <button class="cancel" onclick="cancelar(${c.id})">❌</button>
-        </td>
+            <td>${c.paciente || c.nome}</td>
+            <td>${c.medico}</td>
+            <td>${c.especialidade || 'Geral'}</td>
+            <td>${c.data}</td>
+            <td>${c.hora}</td>
+            <td><span class="status ${c.estado}">${c.estado}</span></td>
+            <td>
+                ${c.estado === 'pendente' ? `<button class="confirm" onclick="confirmar(${c.id})">Confirmar</button>` : ''}
+                <button class="edit" onclick="reagendar(${c.id})">Reagendar</button>
+                ${c.estado !== 'cancelada' ? `<button class="cancel" onclick="cancelar(${c.id})">Cancelar</button>` : ''}
+            </td>
         </tr>`;
     });
 }
 
 /* =======================
-CARDS
+ATUALIZAR CARDS (Totais dinâmicos)
 ======================= */
 function atualizarCards() {
-    document.getElementById("pendentes").innerText =
-    consultas.filter(c => c.estado==="pendente").length;
+    // Pega a data de hoje no formato YYYY-MM-DD
+    const hojeObj = new Date();
+    const ano = hojeObj.getFullYear();
+    const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(hojeObj.getDate()).padStart(2, '0');
+    const hojeData = `${ano}-${mes}-${dia}`;
 
-    document.getElementById("confirmadas").innerText =
-    consultas.filter(c => c.estado==="confirmada").length;
+    const totalHoje = consultas.filter(c => c.data === hojeData).length;
+    const totalPendentes = consultas.filter(c => c.estado === "pendente").length;
+    const totalCanceladas = consultas.filter(c => c.estado === "cancelada").length;
 
-    document.getElementById("canceladas").innerText =
-    consultas.filter(c => c.estado==="cancelada").length;
+    // Cálculo dinâmico do Total de Pacientes Únicos
+    const listaNomes = consultas.map(c => c.paciente || c.nome);
+    const pacientesUnicos = [...new Set(listaNomes)].filter(Boolean).length;
+
+    if(document.getElementById("consultasHoje")) document.getElementById("consultasHoje").innerText = totalHoje;
+    if(document.getElementById("pendentes")) document.getElementById("pendentes").innerText = totalPendentes;
+    if(document.getElementById("canceladas")) document.getElementById("canceladas").innerText = totalCanceladas;
+    if(document.getElementById("totalPacientes")) document.getElementById("totalPacientes").innerText = pacientesUnicos;
+}
+
+/* =======================
+FILTROS ALTERNÁVEIS (Ligar/Desligar)
+======================= */
+function filtrarTabelaPorEstado(estadoSelecionado) {
+    // 1. Liga/Desliga o filtro
+    if (filtroAtivo === estadoSelecionado) {
+        filtroAtivo = null;
+    } else {
+        filtroAtivo = estadoSelecionado;
+    }
+
+    // 2. Atualiza a classe ativa visual nos cards
+    document.querySelectorAll('.card').forEach(card => card.classList.remove('active-filter'));
+    
+    if (filtroAtivo) {
+        const cardSelecionado = document.getElementById(`card-${filtroAtivo}`);
+        if (cardSelecionado) cardSelecionado.classList.add('active-filter');
+    }
+
+    // 3. Renderiza a tabela filtrada
+    aplicarFiltroAtual();
+}
+
+function aplicarFiltroAtual() {
+    const titulo = document.getElementById("titulo-tabela");
+    
+    if (filtroAtivo === null) {
+        if (titulo) titulo.innerText = "Todas as Consultas";
+        renderTabela(consultas);
+        return;
+    }
+
+    let listaFiltrada = [];
+
+    if (filtroAtivo === 'hoje') {
+        const hojeObj = new Date();
+        const ano = hojeObj.getFullYear();
+        const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+        const dia = String(hojeObj.getDate()).padStart(2, '0');
+        const hojeData = `${ano}-${mes}-${dia}`;
+        
+        listaFiltrada = consultas.filter(c => c.data === hojeData);
+        if (titulo) titulo.innerText = "Consultas de Hoje";
+    } else {
+        listaFiltrada = consultas.filter(c => c.estado === filtroAtivo);
+        if (titulo) titulo.innerText = `Consultas: ${filtroAtivo.charAt(0).toUpperCase() + filtroAtivo.slice(1)}s`;
+    }
+
+    renderTabela(listaFiltrada);
 }
 
 /* =======================
 AÇÕES
 ======================= */
 function confirmar(id){
-consultas = consultas.map(c=>c.id===id?{...c,estado:"confirmada"}:c);
-renderTabela();atualizarCards();
+    consultas = consultas.map(c => c.id === id ? {...c, estado: "confirmada"} : c);
+    localStorage.setItem("consultas", JSON.stringify(consultas));
+    aplicarFiltroAtual();
+    atualizarCards();
 }
 
 function cancelar(id){
-consultas = consultas.map(c=>c.id===id?{...c,estado:"cancelada"}:c);
-renderTabela();atualizarCards();
+    if(!confirm("Tem a certeza que deseja cancelar esta consulta?")) return;
+    consultas = consultas.map(c => c.id === id ? {...c, estado: "cancelada"} : c);
+    localStorage.setItem("consultas", JSON.stringify(consultas));
+    aplicarFiltroAtual();
+    atualizarCards();
 }
 
 function reagendar(id){
-const d=prompt("Data");const h=prompt("Hora");
-consultas=consultas.map(c=>c.id===id?{...c,data:d,hora:h}:c);
-renderTabela();atualizarCards();
+    const d = prompt("Introduza a nova Data (AAAA-MM-DD):");
+    const h = prompt("Introduza a nova Hora (HH:MM):");
+    if(!d || !h) return;
+    
+    consultas = consultas.map(c => c.id === id ? {...c, data: d, hora: h} : c);
+    localStorage.setItem("consultas", JSON.stringify(consultas));
+    aplicarFiltroAtual();
+    atualizarCards();
 }
 
 /* =======================
-MODAL
+INICIALIZAÇÃO
 ======================= */
-function abrirModal(){
-document.getElementById("modal").style.display="flex";
-}
-
-function fecharModal(){
-document.getElementById("modal").style.display="none";
-}
-
-/* =======================
-GUARDAR
-======================= */
-function guardarConsulta(){
-
-const nova = {
-id:Date.now(),
-paciente:paciente.value,
-medico:medico.value,
-especialidade:especialidade.value,
-data:data.value,
-hora:hora.value,
-estado:"pendente"
-};
-
-consultas.push(nova);
-
-renderTabela();
-atualizarCards();
-fecharModal();
-}
-
-/* =======================
-INIT
-======================= */
-async function init(){
-await carregarMedicos();
-await carregarConsultas();
-}
-
-init();
+window.addEventListener("DOMContentLoaded", () => {
+    carregarMedicos();
+    carregarConsultas();
+});

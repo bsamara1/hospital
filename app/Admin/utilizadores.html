@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - Utilizadores</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            display: flex;
+            background: #f5f7fb;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #0b2a4a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .logo span {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .bottom {
+            margin-top: auto;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #163a63;
+        }
+
+        .sidebar .logout {
+            color: #ff6b6b;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 12px 0;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 25px;
+            margin-left: 260px;
+            overflow: auto;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-line {
+            margin-left: -25px;
+            margin-right: -25px;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        /* CARDS FILTROS (TOGGLE) */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.active-filter {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+
+        .card h4 {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* FORMULÁRIO */
+        .form-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .form-card h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* TABELA */
+        .table-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-card h3 {
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            color: #666;
+        }
+
+        /* PERFIL & ESTADO */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            display: inline-block;
+        }
+
+        .perfil-paciente {
+            background: #e2f0d9;
+            color: #385723;
+        }
+
+        .perfil-medico {
+            background: #fce4d6;
+            color: #c65911;
+        }
+
+        .perfil-recepcionista {
+            background: #fff2cc;
+            color: #7f6000;
+        }
+
+        .status-ativo {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-desativado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* BOTÕES */
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .btn-status {
+            background: #17a2b8;
+            color: #fff;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: #fff;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="../assets/img/logo.png" alt="Logo HAN">
+            <span>HAN</span>
+        </div>
+        <a href="admin.html"><i class="fa fa-chart-pie"></i> Dashboard</a>
+        <a href="utilizadores.html" class="active"><i class="fa fa-users"></i> Utilizadores</a>
+        <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+        <a href="especialidades.html"><i class="fa fa-tags"></i> Especialidades</a>
+        <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+        <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+
+        <div class="bottom">
+            <div class="divider"></div>
+            <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
+        </div>
+    </div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h2>Gestão de Utilizadores</h2>
+            <div class="user-box" style="color: #555;">
+                <i class="fa fa-user-circle"></i> <span>Administrador</span>
+            </div>
+        </div>
+
+        <div class="header-line"></div>
+
+        <div class="cards">
+            <div class="card" id="card-todos" onclick="gerirFiltroUtilizadores('todos', this)">
+                <h4>Ver Todos</h4>
+                <p id="totalGeral">0</p>
+            </div>
+            <div class="card" id="card-paciente" onclick="gerirFiltroUtilizadores('paciente', this)">
+                <h4>Pacientes</h4>
+                <p id="totalPacientes">0</p>
+            </div>
+            <div class="card" id="card-medico" onclick="gerirFiltroUtilizadores('medico', this)">
+                <h4>Médicos</h4>
+                <p id="totalMedicos">0</p>
+            </div>
+            <div class="card" id="card-recepcionista" onclick="gerirFiltroUtilizadores('recepcionista', this)">
+                <h4>Recepcionistas</h4>
+                <p id="totalRecepcionistas">0</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <h3 id="form-titulo">Adicionar Novo Utilizador</h3>
+            <form id="form-user" class="form-inline" onsubmit="adicionarUtilizadorForm(event)">
+                <div class="form-group">
+                    <label for="user-nome">Nome Completo</label>
+                    <input type="text" id="user-nome" placeholder="Ex: Maria Silva" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">E-mail</label>
+                    <input type="email" id="user-email" placeholder="Ex: maria@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-perfil">Perfil do Sistema</label>
+                    <select id="user-perfil" required onchange="mostrarEspecialidade(this.value)">
+                        <option value="paciente">Paciente</option>
+                        <option value="medico">Médico</option>
+                        <option value="recepcionista">Recepcionista</option>
+                    </select>
+                </div>
+
+                <!-- NOVO CAMPO DE ESPECIALIDADE (só aparece para médicos) -->
+                <div class="form-group" id="grupo-especialidade" style="display: none;">
+                    <label for="user-especialidade">Especialidade</label>
+                    <select id="user-especialidade">
+                        <!-- Será preenchido automaticamente -->
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-submeter">Adicionar</button>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h3 id="titulo-tabela">Todos os Utilizadores</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-utilizadores"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="javascript/storage.js"></script>
+
+    <script>
+        let filtroAtivo = "todos";
+
+        // Mapeamento dinâmico e seguro para proteger contra diferenças de nomenclatura entre funções
+        function obterListaSegura() {
+            if (typeof obterUsuariosGerais === "function") return obterUsuariosGerais();
+            if (typeof obterUtilizadores === "function") return obterUtilizadores();
+            // Fallback caso a chave local do storage mude
+            return JSON.parse(localStorage.getItem("han_db_utilizadores")) || [];
+        }
+
+        function salvarListaSegura(lista) {
+            if (typeof salvarUsuariosGerais === "function") {
+                salvarUsuariosGerais(lista);
+                return;
+            }
+            if (typeof guardarUtilizadores === "function") {
+                guardarUtilizadores(lista);
+                return;
+            }
+            localStorage.setItem("han_db_utilizadores", JSON.stringify(lista));
+        }
+
+        // Função para carregar e renderizar os dados respeitando o filtro ativo
+        function render() {
+            const lista = obterListaSegura();
+
+            // 1. Atualizar contadores nos cards superiores
+            document.getElementById("totalGeral").innerText = lista.length;
+            document.getElementById("totalPacientes").innerText = lista.filter(u => u.perfil === "paciente").length;
+            document.getElementById("totalMedicos").innerText = lista.filter(u => u.perfil === "medico").length;
+            document.getElementById("totalRecepcionistas").innerText = lista.filter(u => u.perfil === "recepcionista").length;
+
+            // 2. Filtrar a lista para a tabela
+            let listaFiltrada = lista;
+            if (filtroAtivo !== "todos") {
+                listaFiltrada = lista.filter(u => u.perfil === filtroAtivo);
+            }
+
+            // 3. Montar as linhas na tabela
+            const tbody = document.getElementById("tabela-utilizadores");
+            tbody.innerHTML = "";
+
+            if (listaFiltrada.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Nenhum utilizador registado nesta categoria.</td></tr>`;
+                return;
+            }
+
+            listaFiltrada.forEach(u => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td><b>${u.nome}</b></td>
+                        <td>${u.email}</td>
+                        <td><span class="badge perfil-${u.perfil}">${u.perfil}</span></td>
+                        <td><span class="badge status-${u.estado || 'ativo'}">${u.estado || 'ativo'}</span></td>
+                        <td>
+                            <button class="btn-status" onclick="alternarEstadoLocal(${u.id})">
+                                <i class="fa fa-sync-alt"></i> Alternar Estado
+                            </button>
+                            <button class="btn-delete" onclick="removerUsuarioLocal(${u.id})">
+                                <i class="fa fa-trash"></i> Remover
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Função de Gestão do Clique nos Cards (Efeito Toggle e Mudança de Títulos)
+        function gerirFiltroUtilizadores(perfil, elementoCard) {
+            const todosCards = document.querySelectorAll('.cards .card');
+            const h3Titulo = document.getElementById('titulo-tabela');
+
+            if (filtroAtivo === perfil && perfil !== 'todos') {
+                filtroAtivo = "todos";
+                todosCards.forEach(c => c.classList.remove('active-filter'));
+                document.getElementById('card-todos').classList.add('active-filter');
+                h3Titulo.innerText = "Todos os Utilizadores";
+                render();
+                return;
+            }
+
+            filtroAtivo = perfil;
+            todosCards.forEach(c => c.classList.remove('active-filter'));
+            elementoCard.classList.add('active-filter');
+
+            if (perfil === 'todos') h3Titulo.innerText = "Todos os Utilizadores";
+            if (perfil === 'paciente') h3Titulo.innerText = "Lista de Pacientes Inscritos";
+            if (perfil === 'medico') h3Titulo.innerText = "Lista de Médicos Inscritos";
+            if (perfil === 'recepcionista') h3Titulo.innerText = "Lista de Recepcionistas Inscritos";
+
+            render();
+        }
+
+        // Função para submeter o Formulário e Adicionar Utilizadores de forma ilimitada
+        function adicionarUtilizadorForm(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById("user-nome").value.trim();
+            const email = document.getElementById("user-email").value.trim();
+            const perfil = document.getElementById("user-perfil").value;
+
+            let lista = obterListaSegura();
+
+            // Cria um novo utilizador de forma limpa e com ID único incremental
+            const novoUtilizador = {
+                id: lista.length > 0 ? Math.max(...lista.map(u => u.id)) + 1 : 1,
+                nome: nome,
+                email: email,
+                perfil: perfil,
+                estado: "ativo"
+            };
+
+            lista.push(novoUtilizador);
+            salvarListaSegura(lista);
+
+            if (typeof registrarLogAcesso === "function") {
+                registrarLogAcesso("Administrador", `Adicionou o utilizador: ${nome} (${perfil})`);
+            }
+
+            // Limpa o formulário de forma correta
+            document.getElementById("form-user").reset();
+
+            // Força a tabela a renderizar o novo elemento imediatamente na lista!
+            render();
+        }
+
+        // Ações locais seguras
+        function alternarEstadoLocal(id) {
+            let lista = obterListaSegura();
+            lista = lista.map(u => {
+                if (u.id === id) {
+                    u.estado = (u.estado === "desativado") ? "ativo" : "desativado";
+                }
+                return u;
+            });
+            salvarListaSegura(lista);
+            render();
+        }
+
+        function removerUsuarioLocal(id) {
+            if (!confirm("Tem a certeza que deseja remover este utilizador do sistema?")) return;
+            let lista = obterListaSegura();
+            lista = lista.filter(u => u.id !== id);
+            salvarListaSegura(lista);
+            render();
+        }
+
+        // Executa a montagem inicial do ecrã mal a página termine de carregar
+        window.onload = function () {
+            document.getElementById('card-todos').classList.add('active-filter');
+            render();
+        };
+    </script>
+</body>
+
+</html>
