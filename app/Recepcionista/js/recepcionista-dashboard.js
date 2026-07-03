@@ -1,11 +1,17 @@
 async function initRecepcionistaDashboard() {
+    marcarSidebarAtiva("index");
+
     const consultas = await loadConsultas();
     const pacientes = await loadPacientes();
 
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
 
-    const consultasHoje = consultas.filter(c => parseDate(c.data) && parseDate(c.data).getTime() === hoje.getTime()).length;
+    const consultasHoje = consultas.filter(c => {
+        const data = parseDate(c.data);
+        return data && data.getTime() === hoje.getTime();
+    }).length;
+
     const pendentes = consultas.filter(c => c.estado === "pendente").length;
     const canceladas = consultas.filter(c => c.estado === "cancelada").length;
     const medicosServico = new Set(consultas.filter(c => {
@@ -14,7 +20,7 @@ async function initRecepcionistaDashboard() {
     }).map(c => c.medico)).size;
     const presentes = consultas.filter(c => {
         const data = parseDate(c.data);
-        return data && data.getTime() === hoje.getTime() && c.estado === "confirmada";
+        return data && data.getTime() === hoje.getTime() && c.estado === "presente";
     }).length;
 
     document.getElementById("consultasHoje").innerText = consultasHoje;
@@ -27,46 +33,7 @@ async function initRecepcionistaDashboard() {
     renderProximasConsultas(consultas);
     renderAvisosDoDia(consultas);
     renderAgendaMedica(consultas);
-    renderUltimosRegistos(pacientes);
     renderUltimasNotificacoes(consultas);
-}
-
-async function loadConsultas() {
-    try {
-        const res = await fetch("../../consultas.txt");
-        if (!res.ok) throw new Error();
-        return await res.json();
-    } catch (error) {
-        console.warn("Não foi possível carregar consultas.txt:", error);
-        return [];
-    }
-}
-
-async function loadPacientes() {
-    try {
-        const res = await fetch("../../utilizadores.txt");
-        if (!res.ok) throw new Error();
-        const text = await res.text();
-        return parsePacientes(text);
-    } catch (error) {
-        console.warn("Não foi possível carregar utilizadores.txt:", error);
-        return [];
-    }
-}
-
-function parsePacientes(text) {
-    return text
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(line => line && !line.startsWith("admin;") && !line.startsWith("rececao;") && line.includes("@"))
-        .map(line => {
-            const parts = line.split(";").map(p => p.trim());
-            return {
-                nome: parts[0] || "",
-                email: parts[1] || "",
-                telefone: parts[2] || ""
-            };
-        });
 }
 
 function renderProximasConsultas(consultas) {
@@ -83,16 +50,16 @@ function renderProximasConsultas(consultas) {
         .slice(0, 5);
 
     if (proximas.length === 0) {
-        lista.innerHTML = '<p>Nenhuma próxima consulta encontrada.</p>';
+        lista.innerHTML = "<p>Nenhuma próxima consulta encontrada.</p>";
         return;
     }
 
     lista.innerHTML = proximas.map(c => `
         <div class="item-row">
-            <span class="item-time">${c.hora}</span>
-            <span class="item-paciente">${c.paciente}</span>
-            <span class="item-medico">${c.medico}</span>
-            <span class="item-estado ${c.estado}">${capitalize(c.estado)}</span>
+            <span class="item-time">${escapeHtml(c.hora)}</span>
+            <span>${escapeHtml(c.paciente)}</span>
+            <span>${escapeHtml(c.medico)}</span>
+            <span class="badge ${c.estado}">${capitalize(c.estado)}</span>
         </div>
     `).join("");
 }
@@ -111,9 +78,9 @@ function renderAvisosDoDia(consultas) {
 
     const avisos = [
         `${confirmacoesPendentes} consultas aguardam confirmação`,
-        `${conflitos} conflito${conflitos === 1 ? "o" : "s"} de horário detectado${conflitos === 1 ? "" : "s"}`,
-        `${canceladasHoje} consultas canceladas hoje`
-    ].filter(Boolean);
+        `${conflitos} conflito${conflitos === 1 ? "" : "s"} de horário detectado${conflitos === 1 ? "" : "s"}`,
+        `${canceladasHoje} consulta${canceladasHoje === 1 ? "" : "s"} cancelada${canceladasHoje === 1 ? "" : "s"} hoje`
+    ];
 
     container.innerHTML = `<ul class="warning-list">${avisos.map(aviso => `<li>${aviso}</li>`).join("")}</ul>`;
 }
@@ -132,21 +99,18 @@ function renderAgendaMedica(consultas) {
         .slice(0, 5);
 
     if (agenda.length === 0) {
-        container.innerHTML = '<p>Sem agenda médica disponível.</p>';
+        container.innerHTML = "<p>Sem agenda médica disponível.</p>";
         return;
     }
 
-    container.innerHTML = agenda.map(c => `<div class="agenda-item"><strong>${c.hora}</strong> - ${c.medico}</div>`).join("");
-}
-
-function renderUltimosRegistos(pacientes) {
-    const container = document.getElementById("ultimosRegistos");
-    const ultimos = pacientes.slice(-3).reverse();
-    if (ultimos.length === 0) {
-        container.innerHTML = '<p>Sem registos recentes.</p>';
-        return;
-    }
-    container.innerHTML = `<div class="pill-list">${ultimos.map(p => `<span>${p.nome}</span>`).join("")}</div>`;
+    container.innerHTML = agenda.map(c => `
+        <div class="item-row">
+            <span class="item-time">${escapeHtml(c.hora)}</span>
+            <span>${escapeHtml(c.medico)}</span>
+            <span>${escapeHtml(c.especialidade || "")}</span>
+            <span class="badge ${c.estado}">${capitalize(c.estado)}</span>
+        </div>
+    `).join("");
 }
 
 function renderUltimasNotificacoes(consultas) {
@@ -156,17 +120,19 @@ function renderUltimasNotificacoes(consultas) {
         .sort((a, b) => compareConsultas(b, a))
         .map(c => {
             if (c.estado === "confirmada") return `Consulta confirmada: ${c.paciente}`;
-            if (c.estado === "pending" || c.estado === "pendente") return `Consulta pendente: ${c.paciente}`;
-            return `Consulta cancelada: ${c.paciente}`;
+            if (c.estado === "pendente") return `Consulta pendente: ${c.paciente}`;
+            if (c.estado === "presente") return `Presença confirmada: ${c.paciente}`;
+            if (c.estado === "cancelada") return `Consulta cancelada: ${c.paciente}`;
+            return `Consulta atualizada: ${c.paciente}`;
         })
-        .slice(0, 3);
+        .slice(0, 5);
 
     if (eventos.length === 0) {
-        lista.innerHTML = '<p>Sem notificações recentes.</p>';
+        lista.innerHTML = "<p>Sem notificações recentes.</p>";
         return;
     }
 
-    lista.innerHTML = `<div class="notification-list">${eventos.map(ev => `<div>${ev}</div>`).join("")}</div>`;
+    lista.innerHTML = `<div class="notification-list">${eventos.map(ev => `<div>${escapeHtml(ev)}</div>`).join("")}</div>`;
 }
 
 function countConflitos(consultas) {
@@ -177,26 +143,6 @@ function countConflitos(consultas) {
         agendas[key] = (agendas[key] || 0) + 1;
     });
     return Object.values(agendas).filter(count => count > 1).length;
-}
-
-function parseDate(value) {
-    if (!value) return null;
-    const parts = value.split("-");
-    if (parts.length !== 3) return null;
-    return new Date(`${parts[0]}-${parts[1]}-${parts[2]}`);
-}
-
-function compareConsultas(a, b) {
-    const dataA = parseDate(a.data);
-    const dataB = parseDate(b.data);
-    if (!dataA || !dataB) return 0;
-    if (dataA.getTime() !== dataB.getTime()) return dataA - dataB;
-    return a.hora.localeCompare(b.hora);
-}
-
-function capitalize(text) {
-    if (!text) return text;
-    return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 window.addEventListener("DOMContentLoaded", initRecepcionistaDashboard);

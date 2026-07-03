@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Médica - Rececionista</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="recepcionista-styles.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="../assets/img/logo.png" alt="Logo HAN">
+    <span>HAN</span>
+  </div>
+  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt=""> Pacientes</a>
+  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/calendario.png" alt=""> Agenda Médica</a>
+  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/check.png" alt=""> Confirmar Presença</a>
+  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacoes.png" alt=""> Notificações</a>
+  <div class="bottom">
+    <div class="divider"></div>
+    <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="header">
+    <h2>Agenda Médica</h2>
+  </div>
+  <div class="header-line"></div>
+
+  <div class="search-row">
+    <input id="agendaData" type="date">
+    <select id="filtroEspecialidade">
+      <option value="">Todas as especialidades</option>
+    </select>
+    <select id="filtroMedico">
+      <option value="">Todos os médicos</option>
+    </select>
+  </div>
+
+  <div class="cards">
+    <div class="card"><h4>Médicos Disponíveis</h4><p id="medicosDisponiveis">0</p></div>
+    <div class="card"><h4>Horários Livres</h4><p id="horariosLivres">0</p></div>
+    <div class="card"><h4>Horários Ocupados</h4><p id="horariosOcupados">0</p></div>
+  </div>
+
+  <div class="agenda-grid">
+    <div class="table-card">
+      <h3>Calendário do Dia</h3>
+      <div id="calendarioDia"></div>
+    </div>
+    <div class="table-card">
+      <h3>Médicos Disponíveis</h3>
+      <div id="listaMedicos"></div>
+    </div>
+  </div>
+
+  <div class="agenda-grid">
+    <div class="table-card">
+      <h3>Horários Disponíveis</h3>
+      <div id="horariosDisponiveis" class="slot-list"></div>
+    </div>
+    <div class="table-card">
+      <h3>Horários Ocupados</h3>
+      <div id="horariosOcupadosLista" class="slot-list"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/recepcionista-common.js"></script>
+<script src="js/agenda.js"></script>
+</body>
+</html>

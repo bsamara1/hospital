@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmar Presença - Rececionista</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="recepcionista-styles.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="../assets/img/logo.png" alt="Logo HAN">
+    <span>HAN</span>
+  </div>
+  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt=""> Pacientes</a>
+  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/calendario.png" alt=""> Agenda Médica</a>
+  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/check.png" alt=""> Confirmar Presença</a>
+  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacoes.png" alt=""> Notificações</a>
+  <div class="bottom">
+    <div class="divider"></div>
+    <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="header">
+    <h2>Confirmar Presença</h2>
+  </div>
+  <div class="header-line"></div>
+
+  <div class="cards">
+    <div class="card"><h4>Consultas de Hoje</h4><p id="totalHoje">0</p></div>
+    <div class="card"><h4>Aguardam Confirmação</h4><p id="aguardam">0</p></div>
+    <div class="card"><h4>Presentes</h4><p id="totalPresentes">0</p></div>
+  </div>
+
+  <div class="table-card">
+    <h3>Pacientes do Dia</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Consulta</th>
+          <th>Hora</th>
+          <th>Presença</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaPresencas"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="js/recepcionista-common.js"></script>
+<script src="js/presencas.js"></script>
+</body>
+</html>

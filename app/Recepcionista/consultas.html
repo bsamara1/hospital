@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultas - Rececionista</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<link href="recepcionista-styles.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <img src="../assets/img/logo.png" alt="Logo HAN">
+    <span>HAN</span>
+  </div>
+  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt=""> Pacientes</a>
+  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/calendario.png" alt=""> Agenda Médica</a>
+  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/check.png" alt=""> Confirmar Presença</a>
+  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacoes.png" alt=""> Notificações</a>
+  <div class="bottom">
+    <div class="divider"></div>
+    <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="header">
+    <h2>Gestão de Consultas</h2>
+    <button class="add-btn" type="button" onclick="abrirModalMarcar()">
+      <i class="fa fa-plus"></i> Marcar Consulta
+    </button>
+  </div>
+  <div class="header-line"></div>
+
+  <div class="search-row">
+    <input id="pesquisaConsulta" type="text" placeholder="Pesquisar por paciente, médico ou especialidade">
+    <select id="filtroEstado">
+      <option value="">Todos os estados</option>
+      <option value="pendente">Pendente</option>
+      <option value="confirmada">Confirmada</option>
+      <option value="cancelada">Cancelada</option>
+      <option value="presente">Presente</option>
+      <option value="realizada">Realizada</option>
+    </select>
+  </div>
+
+  <div class="cards">
+    <div class="card"><h4>Pendentes</h4><p id="cardPendentes">0</p></div>
+    <div class="card"><h4>Confirmadas</h4><p id="cardConfirmadas">0</p></div>
+    <div class="card"><h4>Canceladas</h4><p id="cardCanceladas">0</p></div>
+  </div>
+
+  <div class="table-card">
+    <h3>Consultas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Especialidade</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Estado</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaConsultas"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="modalConsulta" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" type="button" onclick="fecharModal()">×</button>
+    <h3 id="modalTitulo">Marcar Consulta</h3>
+    <select id="consultaPaciente"></select>
+    <select id="consultaEspecialidade" onchange="preencherMedicosModal()"></select>
+    <select id="consultaMedico"></select>
+    <input id="consultaData" type="date">
+    <input id="consultaHora" type="time">
+    <div class="modal-actions">
+      <button class="delete" type="button" onclick="fecharModal()">Cancelar</button>
+      <button class="add-btn" type="button" onclick="guardarConsulta()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modalDetalhes" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" type="button" onclick="fecharDetalhes()">×</button>
+    <h3>Detalhes da Consulta</h3>
+    <div id="detalhesConteudo"></div>
+  </div>
+</div>
+
+<script src="js/recepcionista-common.js"></script>
+<script src="js/consultas.js"></script>
+</body>
+</html>
