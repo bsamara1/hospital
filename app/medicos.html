@@ -62,34 +62,28 @@
             display: flex;
             list-style: none;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .nav-links a {
             color: #e0e6ed;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 6px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .nav-links a:hover:not(.btn-logout) {
+        .nav-links a:hover:not(.btn-logout), 
+        .nav-links a.active {
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
-        /* Link Ativo na página de Médicos */
-        .nav-links li:nth-child(5) a {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        /* Botão de Logout */
         .nav-links .btn-logout {
             background-color: #dc3545;
             color: white;
@@ -102,83 +96,148 @@
         }
 
         /* ==========================================================================
-           Estrutura de Conteúdo
+           Layout / Conteúdo Principal
            ========================================================================== */
         .container {
-            max-width: 1100px;
-            margin: 40px auto 50px auto;
+            max-width: 1200px;
+            margin: 40px auto;
             padding: 0 20px;
         }
 
-        h2 {
+        h1 {
             color: #0a2540;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
-        /* ==========================================================================
-           Tabela de Médicos e Especialidades
-           ========================================================================== */
-        #tabelaMedicos {
-            width: 100%;
-            border-collapse: collapse;
+        .subtitle {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        /* Grid de Cartões dos Médicos (Requisito 8) */
+        .medicos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .medico-card {
             background: #ffffff;
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        #tabelaMedicos th {
-            background-color: #0a2540;
-            color: #ffffff;
-            text-align: left;
-            padding: 15px 20px;
-            font-weight: 500;
-            font-size: 0.95rem;
+        .medico-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         }
 
-        #tabelaMedicos td {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-            font-size: 0.95rem;
+        .medico-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        #tabelaMedicos tr:last-child td {
-            border-bottom: none;
+        .medico-avatar {
+            width: 60px;
+            height: 60px;
+            background-color: #e2e8f0;
+            color: #0a2540;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            border: 2px solid #00d4ff;
         }
 
-        #tabelaMedicos tr:hover td {
-            background-color: #f8fafc;
+        .medico-info h3 {
+            color: #0a2540;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
-        /* Classe utilitária para o Emblema de Status (Disponível/Indisponível) se o teu JS usar */
-        .status-badge {
+        .especialidade-tag {
             display: inline-block;
-            padding: 4px 10px;
+            background-color: rgba(0, 212, 255, 0.1);
+            color: #007791;
             font-size: 0.8rem;
             font-weight: 600;
+            padding: 3px 10px;
             border-radius: 20px;
-            background-color: #e6f7ed;
+            margin-top: 2px;
+        }
+
+        .medico-detalhes {
+            border-top: 1px solid #f0f4f8;
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: #4a5568;
+        }
+
+        .medico-detalhes p {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .medico-detalhes i {
+            color: #0a2540;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* Status de Disponibilidade */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-top: auto;
+            align-self: flex-start;
+        }
+
+        .status-badge.disponivel {
+            background-color: #e6f6ec;
             color: #1f9254;
         }
 
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            #tabelaMedicos th, #tabelaMedicos td {
-                padding: 12px 10px;
-                font-size: 0.85rem;
-            }
+        .status-badge.indisponivel {
+            background-color: #fde8e8;
+            color: #dc3545;
+        }
+
+        .btn-agendar-medico {
+            display: block;
+            text-align: center;
+            background-color: #0a2540;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn-agendar-medico:hover {
+            background-color: #14375a;
         }
     </style>
 </head>
@@ -196,33 +255,88 @@
                 <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
                 <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
                 <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
-                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="medicos.html" class="active"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="notificacoes.html"><i class="fa-solid fa-bell"></i> Notificações</a></li>
+                <li><a href="perfil.html"><i class="fa-solid fa-user"></i> Meu Perfil</a></li>
                 <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="container">
-        
-        <h2>Equipa Médica Disponível</h2>
+        <h1>Equipa Médica Disponível</h1>
+        <p class="subtitle">Consulte os horários de atendimento dos nossos especialistas e agende a sua consulta.</p>
 
-        <table id="tabelaMedicos">
-            <thead>
-                <tr>
-                    <th>Médico(a)</th>
-                    <th>Especialidade</th>
-                    <th>Horário de Atendimento</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                </tbody>
-        </table>
+        <div class="medicos-grid" id="gridMedicos">
+            
+            <div class="medico-card">
+                <div class="medico-header">
+                    <div class="medico-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="medico-info">
+                        <h3>Dr. João Silva</h3>
+                        <span class="especialidade-tag">Cardiologia</span>
+                    </div>
+                </div>
+                <div class="medico-detalhes">
+                    <p><i class="fa-solid fa-calendar-week"></i> <strong>Disponível:</strong> Segunda a Sexta</p>
+                    <p><i class="fa-solid fa-clock"></i> <strong>Horário:</strong> 08:00 - 16:00</p>
+                </div>
+                <span class="status-badge disponivel"><i class="fa-solid fa-circle" style="font-size:0.6rem;"></i> Disponível</span>
+                <a href="marcacao.html" class="btn-agendar-medico">Agendar Consulta</a>
+            </div>
 
+            <div class="medico-card">
+                <div class="medico-header">
+                    <div class="medico-avatar"><i class="fa-solid fa-user-md"></i></div>
+                    <div class="medico-info">
+                        <h3>Dra. Maria Lopes</h3>
+                        <span class="especialidade-tag">Pediatria</span>
+                    </div>
+                </div>
+                <div class="medico-detalhes">
+                    <p><i class="fa-solid fa-calendar-week"></i> <strong>Disponível:</strong> Terça e Quinta</p>
+                    <p><i class="fa-solid fa-clock"></i> <strong>Horário:</strong> 09:00 - 15:00</p>
+                </div>
+                <span class="status-badge disponivel"><i class="fa-solid fa-circle" style="font-size:0.6rem;"></i> Disponível</span>
+                <a href="marcacao.html" class="btn-agendar-medico">Agendar Consulta</a>
+            </div>
+
+            <div class="medico-card">
+                <div class="medico-header">
+                    <div class="medico-avatar"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="medico-info">
+                        <h3>Dr. Carlos Monteiro</h3>
+                        <span class="especialidade-tag">Ortopedia</span>
+                    </div>
+                </div>
+                <div class="medico-detalhes">
+                    <p><i class="fa-solid fa-calendar-week"></i> <strong>Disponível:</strong> Segunda a Quarta</p>
+                    <p><i class="fa-solid fa-clock"></i> <strong>Horário:</strong> 08:00 - 14:00</p>
+                </div>
+                <span class="status-badge disponivel"><i class="fa-solid fa-circle" style="font-size:0.6rem;"></i> Disponível</span>
+                <a href="marcacao.html" class="btn-agendar-medico">Agendar Consulta</a>
+            </div>
+
+            <div class="medico-card">
+                <div class="medico-header">
+                    <div class="medico-avatar"><i class="fa-solid fa-user-md"></i></div>
+                    <div class="medico-info">
+                        <h3>Dra. Ana Fernandes</h3>
+                        <span class="especialidade-tag">Medicina Geral</span>
+                    </div>
+                </div>
+                <div class="medico-detalhes">
+                    <p><i class="fa-solid fa-calendar-week"></i> <strong>Disponível:</strong> Quarta e Sexta</p>
+                    <p><i class="fa-solid fa-clock"></i> <strong>Horário:</strong> 10:00 - 17:00</p>
+                </div>
+                <span class="status-badge disponivel"><i class="fa-solid fa-circle" style="font-size:0.6rem;"></i> Disponível</span>
+                <a href="marcacao.html" class="btn-agendar-medico">Agendar Consulta</a>
+            </div>
+
+        </div>
     </div>
 
     <script src="js/storage.js"></script>
-    <script src="js/medicos.js"></script>
 </body>
 
 </html>

@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "msedge",
             "request": "launch",
-            "name": "Open index.html",
-            "file": "c:\\Users\\Surface Owner\\Desktop\\hospital\\app\\Recepcionista\\index.html"
+            "name": "Abrir Ficheiro Atual no Edge",
+            "file": "${file}"
         }
     ]
 }

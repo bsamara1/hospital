@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Marcação de Consultas</title>
+    <title>Hospital Agostinho Neto - Marcação de Consultas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -21,18 +21,18 @@
         }
 
         body {
-            background-color: #f4f7f6; /* Cor de fundo externa cinza clara */
+            background-color: #f4f7f6;
             color: #333;
         }
 
         /* ==========================================================================
-           Header / Navbar (Igual ao Index/Login)
+           Header / Navbar
            ========================================================================== */
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #0a2540; /* Azul Escuro Hospitalar */
+            background-color: #0a2540;
             padding: 15px 4%;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: sticky;
@@ -50,7 +50,7 @@
 
         .logo i {
             font-size: 1.8rem;
-            color: #00d4ff; /* Ciano de Destaque */
+            color: #00d4ff;
         }
 
         .logo strong {
@@ -62,34 +62,28 @@
             display: flex;
             list-style: none;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .nav-links a {
             color: #e0e6ed;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 500;
-            padding: 8px 14px;
+            padding: 8px 12px;
             border-radius: 6px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .nav-links a:hover:not(.btn-logout) {
+        .nav-links a:hover:not(.btn-logout), 
+        .nav-links a.active {
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
 
-        /* Link Ativo na página de Marcação */
-        .nav-links li:nth-child(2) a {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        /* Botão de Logout Especial */
         .nav-links .btn-logout {
             background-color: #dc3545;
             color: white;
@@ -102,189 +96,148 @@
         }
 
         /* ==========================================================================
-           Estrutura de Conteúdo (Dashboard Layout)
+           Layout / Conteúdo Principal
            ========================================================================== */
-        h2 {
-            color: #0a2540;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin: 30px auto 15px auto;
-            max-width: 1100px;
-            padding: 0 20px;
-        }
-
-        /* SECÇÃO DE FILTROS */
-        .filtros {
-            display: flex;
-            gap: 15px;
-            max-width: 1100px;
-            margin: 0 auto 25px auto;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        /* CONTAINER PRINCIPAL DO FORMULÁRIO E TABELA */
         .container {
-            max-width: 1100px;
-            margin: 0 auto 50px auto;
-            padding: 0 20px;
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
-        /* ESTILIZAÇÃO DOS INPUTS, SELECTS E LABELS */
+        h1, h2 {
+            color: #0a2540;
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        h2 { font-size: 1.4rem; margin-top: 40px; }
+
+        /* Formulário Elegante */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
         label {
             display: block;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
             font-weight: 500;
             color: #4a5568;
-            margin-bottom: 6px;
-            margin-top: 15px;
+            font-size: 0.9rem;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="time"],
-        select {
+        input[type="text"], input[type="date"], select {
             width: 100%;
-            height: 46px;
-            padding: 0 15px;
-            font-size: 0.95rem;
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
             border-radius: 8px;
-            color: #333;
-            outline: none;
-            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            color: #2d3748;
+            background-color: #fff;
+            transition: all 0.3s ease;
         }
 
         input:focus, select:focus {
-            border-color: #0a2540;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.15);
         }
 
-        /* Ajuste específico para os inputs dentro da barra de filtros */
-        .filtros input, 
-        .filtros select {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        /* BOTÕES */
-        button {
-            height: 46px;
-            padding: 0 24px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-        }
-
-        /* Botão do Filtro (Limpar) */
-        .filtros button {
-            background-color: #e2e8f0;
-            color: #4a5568;
-        }
-
-        .filtros button:hover {
-            background-color: #cbd5e1;
-        }
-
-        /* Formulário de Marcação */
-        #formConsulta {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            margin-bottom: 30px;
-        }
-
-        /* Botão Submeter Form */
-        #formConsulta button[type="submit"] {
+        form button {
+            grid-column: 1 / -1;
             background-color: #0a2540;
             color: #ffffff;
-            width: 100%;
-            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
             font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(10, 37, 64, 0.15);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
         }
 
-        #formConsulta button[type="submit"]:hover {
+        form button:hover {
             background-color: #14375a;
-            transform: translateY(-1px);
         }
 
-        hr {
-            border: 0;
-            height: 1px;
+        /* Filtros Avançados */
+        .filtros-box {
+            background-color: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .filtros-box span {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .filtros-box select, .filtros-box input {
+            width: auto;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-limpar {
             background: #e2e8f0;
-            margin: 25px 0 10px 0;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: background 0.2s;
         }
+        .btn-limpar:hover { background: #cbd5e0; }
 
-        /* ==========================================================================
-           Tabela de Consultas Marcadas
-           ========================================================================== */
-        #tabelaConsultas {
+        /* Tabela Dinâmica */
+        table {
             width: 100%;
             border-collapse: collapse;
-            background: #ffffff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
             margin-top: 15px;
         }
 
-        #tabelaConsultas th {
-            background-color: #0a2540;
-            color: #ffffff;
+        th, td {
             text-align: left;
-            padding: 15px 20px;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        #tabelaConsultas td {
-            padding: 15px 20px;
+            padding: 12px 15px;
             border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #f7fafc;
             color: #4a5568;
-            font-size: 0.95rem;
+            font-weight: 600;
         }
 
-        #tabelaConsultas tr:last-child td {
-            border-bottom: none;
+        tr:hover td {
+            background-color: #fcfdfd;
         }
 
-        #tabelaConsultas tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        /* Responsividade para Ecrãs Menores */
+        /* Responsividade */
         @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .filtros {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filtros input, .filtros select, .filtros button {
-                width: 100%;
-            }
-            #tabelaConsultas th, #tabelaConsultas td {
-                padding: 12px 10px;
-                font-size: 0.85rem;
-            }
+            form { grid-template-columns: 1fr; }
+            .filtros-box { flex-direction: column; align-items: stretch; }
+            table, thead, tbody, th, td, tr { display: block; }
+            th { display: none; }
+            tr { margin-bottom: 15px; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; background: #fff; }
+            td { text-align: right; padding-left: 50%; position: relative; border-bottom: none; }
+            td::before { content: attr(data-label); position: absolute; left: 15px; font-weight: 600; color: #718096; }
         }
     </style>
 </head>
@@ -299,69 +252,88 @@
         <nav>
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
-                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
+                <li><a href="marcacao.html" class="active"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
                 <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
                 <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
                 <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="notificacoes.html"><i class="fa-solid fa-bell"></i> Notificações</a></li>
+                <li><a href="perfil.html"><i class="fa-solid fa-user"></i> Meu Perfil</a></li>
                 <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
             </ul>
         </nav>
     </header>
 
-    <h2>Filtros de Pesquisa</h2>
-
-    <div class="filtros">
-        <input type="text" id="pesquisaNome" placeholder="Pesquisar paciente...">
-
-        <select id="filtroMedico">
-            <option value="">Todos os médicos</option>
-            <option>Dr. João Silva</option>
-            <option>Dra. Maria Lopes</option>
-            <option>Dr. Carlos Monteiro</option>
-            <option>Dra. Ana Fernandes</option>
-        </select>
-
-        <input type="date" id="filtroData">
-
-        <button onclick="limparFiltros()">Limpar</button>
-    </div>
-
     <div class="container">
-        <form id="formConsulta">
-            <label>Nome do Paciente</label>
-            <input type="text" id="nome" required>
+        <h1>Agendar Consulta Médica</h1>
 
-            <label>Especialidade</label>
-            <select id="especialidade">
-                <option>Cardiologia</option>
-                <option>Pediatria</option>
-                <option>Ortopedia</option>
-                <option>Medicina Geral</option>
-                <option>Neurologia</option>
-            </select>
+        <form id=\"formConsulta\">
+            <div class="form-group-full">
+                <label for="nome">Nome Completo do Paciente</label>
+                <input type="text" id="nome" placeholder="Digite o seu nome completo" required>
+            </div>
 
-            <label>Médico</label>
-            <select id="medico">
-                <option>Dr. João Silva</option>
-                <option>Dra. Maria Lopes</option>
-                <option>Dr. Carlos Monteiro</option>
-                <option>Dra. Ana Fernandes</option>
-            </select>
+            <div>
+                <label for="especialidade">Especialidade Médica</label>
+                <select id="especialidade">
+                    <option value="Cardiologia">Cardiologia</option>
+                    <option value="Pediatria">Pediatria</option>
+                    <option value="Ortopedia">Ortopedia</option>
+                    <option value="Medicina Geral">Medicina Geral</option>
+                    <option value="Neurologia">Neurologia</option>
+                </select>
+            </div>
 
-            <label>Data</label>
-            <input type="date" id="data" required>
+            <div>
+                <label for="medico">Médico Especialista</label>
+                <select id="medico">
+                    <option value="Dr. João Silva">Dr. João Silva</option>
+                    <option value="Dra. Maria Lopes">Dra. Maria Lopes</option>
+                    <option value="Dr. Carlos Monteiro">Dr. Carlos Monteiro</option>
+                    <option value="Dra. Ana Fernandes">Dra. Ana Fernandes</option>
+                </select>
+            </div>
 
-            <label>Hora</label>
-            <input type="time" id="hora" required>
+            <div>
+                <label for="data">Data Desejada</label>
+                <input type="date" id="data" required>
+            </div>
 
-            <hr>
-            
-           
+            <div>
+                <label for="hora">Horários Disponíveis (Requisito 7)</label>
+                <select id="hora" required>
+                    <option value="08:00">08:00</option>
+                    <option value="08:30">08:30</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                </select>
+            </div>
 
-            <button type="submit">Marcar Consulta</button>
+            <button type="submit">Confirmar e Marcar Consulta</button>
         </form>
 
-        <h2>Consultas Marcadas</h2>
+        <h2>O Meu Histórico de Consultas</h2>
+
+        <div class="filtros-box">
+            <span><i class="fa-solid fa-filter"></i> Filtrar por:</span>
+            <select id="filtroMedico" onchange="aplicarFiltros()">
+                <option value="">Todos os Médicos</option>
+                <option value="Dr. João Silva">Dr. João Silva</option>
+                <option value="Dra. Maria Lopes">Dra. Maria Lopes</option>
+                <option value="Dr. Carlos Monteiro">Dr. Carlos Monteiro</option>
+                <option value="Dra. Ana Fernandes">Dra. Ana Fernandes</option>
+            </select>
+
+            <input type="date" id="filtroData" onchange="aplicarFiltros()">
+
+            <button class="btn-limpar" onclick="limparFiltros()">Limpar Filtros</button>
+        </div>
 
         <table id="tabelaConsultas">
             <thead>
@@ -371,6 +343,7 @@
                     <th>Médico</th>
                     <th>Data</th>
                     <th>Hora</th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>

@@ -47,3 +47,11 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:35:52
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:39:21
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:47:46
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:53:22
+<<<<<<< HEAD
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:22:37
+=======
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:57:53
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:09:15
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:11:28
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:23:38
+>>>>>>> 76b8a94409047450c2a5c23c27e79617786c50f3

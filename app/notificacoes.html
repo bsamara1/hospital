@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Agostinho Neto - Notificações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; background-color: #0a2540; padding: 15px 4%; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 1.3rem; }
+        .logo i { font-size: 1.8rem; color: #00d4ff; }
+        .logo strong { color: #ffffff; font-weight: 700; }
+        .nav-links { display: flex; list-style: none; align-items: center; gap: 12px; }
+        .nav-links a { color: #e0e6ed; text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 8px 12px; border-radius: 6px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
+        .nav-links a:hover:not(.btn-logout), .nav-links a.active { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; }
+        .nav-links .btn-logout { background-color: #dc3545; color: white; font-weight: 600; }
+
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .noti-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #0a2540; font-size: 1.8rem; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        h1 i { color: #00d4ff; }
+
+        .noti-list { display: flex; flex-direction: column; gap: 15px; }
+        .noti-item { display: flex; gap: 15px; padding: 15px; border-radius: 8px; border-left: 4px solid #cbd5e0; background-color: #f8fafc; transition: all 0.2s; }
+        .noti-item:hover { transform: translateX(2px); }
+        
+        .noti-item.sucesso { border-left-color: #1f9254; }
+        .noti-item.info { border-left-color: #00d4ff; }
+        .noti-item.aviso { border-left-color: #ffb703; }
+        .noti-item.erro { border-left-color: #dc3545; }
+
+        .noti-icon { font-size: 1.3rem; margin-top: 2px; }
+        .noti-item.sucesso .noti-icon { color: #1f9254; }
+        .noti-item.info .noti-icon { color: #00d4ff; }
+        .noti-item.aviso .noti-icon { color: #ffb703; }
+        .noti-item.erro .noti-icon { color: #dc3545; }
+
+        .noti-content p { font-size: 0.95rem; color: #2d3748; line-height: 1.4; }
+        .noti-content span { font-size: 0.78rem; color: #a0aec0; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="logo"><i class="fa-solid fa-hospital-user"></i><span>Hospital <strong>Agostinho Neto</strong></span></div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
+                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
+                <li><a href="reagendamento.html"><i class="fa-solid fa-calendar-days"></i> Reagendamento</a></li>
+                <li><a href="cancelamento.html"><i class="fa-solid fa-calendar-xmark"></i> Cancelamento</a></li>
+                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
+                <li><a href="notificacoes.html" class="active"><i class="fa-solid fa-bell"></i> Notificações</a></li>
+                <li><a href="perfil.html"><i class="fa-solid fa-user"></i> Meu Perfil</a></li>
+                <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="noti-box">
+            <h1><i class="fa-solid fa-bell"></i> Centro de Alertas e Notificações</h1>
+            
+            <div class="noti-list" id="listaNotificacoes">
+                <div class="noti-item sucesso">
+                    <div class="noti-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="noti-content">
+                        <p><strong>✔ Consulta Confirmada:</strong> A sua consulta de Cardiologia com o Dr. João Silva para o dia 17/07/2026 foi registada e aprovada com sucesso.</p>
+                        <span>Há 2 minutos</span>
+                    </div>
+                </div>
+
+                <div class="noti-item aviso">
+                    <div class="noti-icon"><i class="fa-solid fa-clock"></i></div>
+                    <div class="noti-content">
+                        <p><strong>⏰ Lembrete de Agendamento:</strong> Não se esqueça! Amanhã às 10:40 tem uma consulta agendada na especialidade de Cardiologia.</p>
+                        <span>Hoje às 08:00</span>
+                    </div>
+                </div>
+
+                <div class="noti-item info">
+                    <div class="noti-icon"><i class="fa-solid fa-rotate"></i></div>
+                    <div class="noti-content">
+                        <p><strong>🔄 Consulta Reagendada:</strong> O seu pedido de alteração de horário foi concluído. Nova data definida para Ortopedia com a Dra. Ana Fernandes.</p>
+                        <span>Ontem</span>
+                    </div>
+                </div>
+
+                <div class="noti-item erro">
+                    <div class="noti-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+                    <div class="noti-content">
+                        <p><strong>❌ Consulta Cancelada:</strong> A sua marcação para Medicina Geral foi desmarcada conforme o seu pedido. O horário está novamente livre.</p>
+                        <span>Há 3 dias</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+</body>
+</html>
