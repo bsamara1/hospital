@@ -167,20 +167,17 @@ def api_utilizador():
     if not campos:
         return jsonify({"sucesso": False, "mensagem": "Utilizador não encontrado."}), 404
 
-    nome_utilizador = email.split("@")[0] if "@" in email else email
     perfil = {
-        "nome": campos[0] if len(campos) > 0 else "",
-        "email": campos[1] if len(campos) > 1 else "",
-        "telefone": campos[2] if len(campos) > 2 else "",
-        "bii": "",
-        "dataNascimento": "",
-        "sexo": "",
-        "morada": "",
-        "nomeUtilizador": nome_utilizador,
-        "dataRegistro": "Não disponível",
-        "ultimoAcesso": obter_ultimo_acesso(email) or "Não disponível",
-        "tipo": campos[4] if len(campos) > 4 else ""
-    }
+    "nome": campos["nome"],
+    "email": campos["email"],
+    "telefone": campos["telefone"],
+    "bii": campos["bii"],
+    "dataNascimento": campos["dataNascimento"],
+    "sexo": campos["sexo"],
+    "tipo": campos["tipo"],
+    "ultimoAcesso": obter_ultimo_acesso(email) or "Não disponível"
+}
+
     return jsonify(perfil)
 
 
@@ -315,11 +312,11 @@ def api_atualizar_utilizador():
         for linha in f:
             campos = [c.strip() for c in linha.rstrip("\n").split(";")]
             if len(campos) >= 2 and campos[1].lower() == email_original:
-                while len(campos) < 4:
+                while len(campos) < 7:
                     campos.append("")
                 campos[0] = nome
-                campos[1] = email
-                campos[2] = telefone
+                campos[5] = email
+                campos[4] = telefone
                 modificado = True
             linhas.append(";".join(campos))
 
@@ -437,7 +434,7 @@ def login():
     with open(ARQUIVO, "r", encoding="utf-8") as f:
         for linha in f:
             # Limpa espaços e divide garantindo que não guarda elementos vazios falsos
-            campos = [c.strip() for c in linha.strip().split(";") if c.strip() != ""]
+            campos = [c.strip() for c in linha.strip().split(";")]
             
             if not campos:
                 continue
@@ -661,7 +658,7 @@ def esqueceu_senha():
 
         for linha in f:
 
-            campos = [c.strip() for c in linha.strip().split(";") if c.strip() != ""]
+            campos = [c.strip() for c in linha.strip().split(";")]
             if len(campos) >= 7:
                 email_bd = campos[1].lower()
             elif len(campos) == 4:

@@ -194,7 +194,82 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 
   </div>
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", carregarPerfil);
 
+function carregarPerfil(){
+
+    // 1. buscar utilizador guardado no login
+    const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+
+    if(!utilizador){
+        window.location.href = "../login.html";
+        return;
+    }
+
+    // 2. chamar backend com o email
+    fetch(`http://127.0.0.1:5000/utilizador?email=${utilizador.email}`)
+    .then(res => res.json())
+    .then(dados => {
+
+        // 3. preencher os campos do formulário
+        document.getElementById("nomePerfil").value = dados.nome;
+        document.getElementById("emailPerfil").value = dados.email;
+        document.getElementById("telefonePerfil").value = dados.telefone;
+        document.getElementById("tipoPerfil").value = dados.tipo;
+
+    });
+
+}
+function salvarPerfil(){
+
+    const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+
+    if(!utilizador){
+        window.location.href = "../login.html";
+        return;
+    }
+
+    const dadosAtualizados = {
+        emailOriginal: utilizador.email,
+        nome: document.getElementById("nomePerfil").value,
+        email: document.getElementById("emailPerfil").value,
+        telefone: document.getElementById("telefonePerfil").value
+        // ❌ NÃO enviar tipo
+    };
+
+    fetch("http://127.0.0.1:5000/utilizador", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dadosAtualizados)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.sucesso){
+
+            alert("Perfil atualizado com sucesso!");
+
+            // atualizar localStorage
+            utilizador.nome = dadosAtualizados.nome;
+            utilizador.email = dadosAtualizados.email;
+
+            localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
+
+        } else {
+            alert(data.mensagem || "Erro ao atualizar perfil");
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erro na ligação ao servidor");
+    });
+}
+
+</script>
 <script src="../js/consultas.js"></script>
 </body>
 </html>

@@ -10,7 +10,6 @@
 <style>
 
 /* RESET */
-
 *{
 margin:0;
 padding:0;
@@ -42,7 +41,7 @@ background:#f5f7fb;
 height:100vh;
 }
 
-/* SIDEBAR */
+/* SIDEBAR (Atualizada igual a marcar_consulta) */
 .sidebar{
 width:260px;
 background:#0b2a4a;
@@ -56,17 +55,19 @@ height:100vh;
   margin-top:auto; 
 }
 
-.sidebar a img{
-  width:20px;
-  height:20px;
-  object-fit:contain;
-}
-
 .sidebar .logo{
+display:flex;
+align-items:center;
+gap:10px;
 font-size:22px;
 font-weight:bold;
-text-align:center;
 margin-bottom:30px;
+}
+
+.sidebar .logo img{
+width:50px;
+height:50px;
+object-fit:contain;
 }
 
 .sidebar a{
@@ -79,10 +80,10 @@ align-items:center;
 gap:10px;
 border-radius:8px;
 transition:0.3s;
-font-size:18px;
+font-size:16px;
 }
 
-.sidebar a:hover{
+.sidebar a:hover, .sidebar a.active{
 background:#163a63;
 color:#fff;
 }
@@ -94,6 +95,9 @@ color:#fff;
   gap:10px;
   padding:12px 15px;
   border-radius:8px;
+  text-decoration:none;
+  margin:5px 0;
+  transition:0.3s;
 }
 .logout:hover{
   background:#163a63;
@@ -146,6 +150,7 @@ gap:10px;
 padding:10px 14px;
 border-radius:16px;
 box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
+background:#fff;
 }
 
 .user-profile .fa-user-circle{
@@ -346,17 +351,14 @@ margin-right:5px;
 <script src="../js/consultas.js"></script>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
     <div class="logo">
         <img src="../assets/img/logo.png" alt="Logo"> HAN
     </div>
-    <a href="index.html">🏠 Início</a>
+    <a href="index.html" class="active">🏠 Início</a>
+    <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
     <a href="consultas.html">📋 Minhas Consultas</a>
-    <a href="reagendamentos.html">🔄 Reagendar</a>
-    <a href="cancelamentos.html">❌ Cancelar</a>
-    <a href="consultas.html#historico">📜 Histórico</a>
-    <a href="medicos.html">👨‍⚕️ Médicos</a>
+    <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
     <a href="notificacoes.html">🔔 Notificações</a>
     <a href="perfil.html">👤 Meu Perfil</a>
     <div class="bottom">
@@ -365,10 +367,8 @@ margin-right:5px;
     </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-<!-- HEADER -->
 <div class="header">
 
     <h2>Painel Principal</h2>
@@ -401,7 +401,6 @@ margin-right:5px;
     </a>
 </div>
 
-<!-- CARDS -->
 <div class="cards">
 
 <div class="card">
