@@ -54,7 +54,21 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:57:53
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:09:15
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:11:28
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:23:38
+<<<<<<< HEAD
+rececao@hospita.cv;LOGIN_FALHOU;2026-07-03 11:40:42
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:49:31
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:50:03
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:50:11
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:54:18
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:54:20
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:55:44
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:58:34
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:02:24
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:02:29
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:03:28
+=======
 >>>>>>> 76b8a94409047450c2a5c23c27e79617786c50f3
+<<<<<<< HEAD
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:28:51
 epereira.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-03 11:51:22
 epereira.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-03 11:54:07
@@ -73,3 +87,15 @@ jose.tavares@us.edu.cv;LOGIN_SUCESSO;2026-07-03 12:10:06
 jose.tavares@us.edu.cv;LOGIN_SUCESSO;2026-07-03 12:10:06
 jose.tavares@us.edu.cv;LOGIN_SUCESSO;2026-07-03 12:10:06
 jose.tavares@us.edu.cv;LOGIN_SUCESSO;2026-07-03 12:10:07
+=======
+>>>>>>> 8e339d8235d1c4c186d9416cd541b5929c4606d5
+alytavares.l23@us.educ.cv;LOGIN_FALHOU;2026-07-03 12:08:05
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 12:12:25
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:12:44
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-03 12:13:12
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:16:05
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:16:07
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:17:41
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:17:45
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 12:18:45
+>>>>>>> 26fd8fdeca2bdd8276b6cd8d9f750a9f8c6a1f25

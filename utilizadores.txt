@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 admin;admin@hospital.cv;99112233;1234;Administrador
 rececao;rececao@hospital.cv;99223344;hospital;Receção
 Benedita Samara  Tavares;btadr@gsmskf;9876543;1234567
@@ -11,3 +12,8 @@ bsamara;btavares.l23@us.edu.cv;9725189;teste2
 aly Tavares;23456789GF;2006-06-07;Feminino;9876543;alytavares@gmail.com;teste
 Edilça Suraia Gomes Pereira;123456789;2005-10-20;Feminino;9753759;epereira.l23@us.edu.cv;123456
 Jorge Henrique Pires Tavares;987654321;1985-01-15;Masculino;0000000;jose.tavares@us.edu.cv;654321
+=======
+Admin;000000001;1990-01-01;Masculino;99112233;admin@hospital.cv;1234;admin
+Rececao;000000000;1990-01-01;Masculino;99223344;rececao@hospital.cv;hospital;rececao
+alyTavares;23456789GF;2006-06-07;Feminino;9876543;alytavares@gmail.com;teste;utilizador
+>>>>>>> 26fd8fdeca2bdd8276b6cd8d9f750a9f8c6a1f25
