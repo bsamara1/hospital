@@ -277,6 +277,10 @@ function guardarConsulta() {
    RENDERERS DE TABELAS & SISTEMA DE NOTIFICAÇÕES
    ========================================================================== */
 
+/* ==========================================================================
+   CORRIGIDO: EXIBIÇÃO DE CONSULTAS CONFIRMADAS E CANCELADAS NA TABELA
+   ========================================================================== */
+
 function renderTabelaConsultas() {
     const tbody = document.getElementById("tabela-consultas");
     if (!tbody) return;
@@ -287,25 +291,37 @@ function renderTabelaConsultas() {
     tbody.innerHTML = "";
 
     const consultasFiltradas = consultas.filter(c => {
+        // Junta os campos para a pesquisa textual por input
         const texto = `${c.medico} ${c.especialidade} ${c.data} ${c.estado}`.toLowerCase();
         const bateTexto = texto.includes(filtroPesquisa);
         
+        // CORREÇÃO DO FILTRO DE ESTADO: Garante consistência com o select dropdown
         const bateEstado = (filtroEstado === "todas") || 
                            (filtroEstado === "agendadas" && c.estado !== "realizada" && c.estado !== "cancelada") || 
                            (c.estado === filtroEstado);
         
-        const bateAba = abaAtiva === "historico" ? (c.estado === "realizada" || c.estado === "cancelada") : (c.estado !== "cancelada" && c.estado !== "realizada");
+        // CORREÇÃO DA ABA ATIVA: 
+        // - Aba 'historico': exibe apenas o que já foi Concluído/Realizado.
+        // - Aba 'agendadas': exibe tudo o que está ativo no presente/futuro (Pendentes, Confirmadas e Canceladas recentemente).
+        const bateAba = abaAtiva === "historico" 
+            ? (c.estado === "realizada") 
+            : (c.estado === "pendente" || c.estado === "confirmada" || c.estado === "cancelada");
         
         return bateTexto && bateEstado && bateAba;
     });
 
     if (consultasFiltradas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:18px; color:#555;">Nenhuma consulta registada nesta aba.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:18px; color:#555;">Nenhuma consulta registada nesta aba para o filtro selecionado.</td></tr>`;
         return;
     }
 
+    // Renderiza as linhas na tabela aplicando as cores corretas do seu CSS
     consultasFiltradas.forEach(c => {
-        const statusClass = c.estado === 'confirmada' ? 'confirmada' : c.estado === 'pendente' ? 'pendente' : c.estado === 'realizada' ? 'done' : 'cancelada';
+        // Mapeia o estado para a classe CSS exata definida no seu <style>
+        const statusClass = c.estado === 'confirmada' ? 'confirmada' : 
+                            c.estado === 'pendente' ? 'pendente' : 
+                            c.estado === 'cancelada' ? 'cancelada' : 'view'; // 'view' ou cinza padrão para realizada
+                            
         tbody.innerHTML += `
         <tr>
             <td>${formatarData(c.data)}</td>
