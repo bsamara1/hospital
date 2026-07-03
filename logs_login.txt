@@ -51,3 +51,14 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 10:57:53
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:09:15
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:11:28
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-03 11:23:38
+rececao@hospita.cv;LOGIN_FALHOU;2026-07-03 11:40:42
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:49:31
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:50:03
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:50:11
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:54:18
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:54:20
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:55:44
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 11:58:34
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:02:24
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:02:29
+rececao@hospital.cv;LOGIN_FALHOU;2026-07-03 12:03:28

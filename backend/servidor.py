@@ -367,55 +367,68 @@ def criar_conta():
     })
 
 # =========================
-# LOGIN + 2FA
+# LOGIN + 2FA (CORRIGIDO)
 # =========================
 @app.route("/login", methods=["POST"])
 def login():
-
     dados = request.get_json()
+    if not dados:
+        return jsonify({"sucesso": False, "mensagem": "Dados em falta."}), 400
 
-    email = dados["email"].strip().lower()
-    senha = dados["senha"]
+    email = dados.get("email", "").strip().lower()
+    senha = dados.get("senha", "")
 
-    # ADMIN FIXO
+    # 1. ADMIN FIXO
     if email == "admin@hospital.cv" and senha == "1234":
-
         registrar_log(email, "LOGIN_SUCESSO")
-
         return jsonify({
             "sucesso": True,
-            "tipo": "admin"
+            "tipo": "admin",
+            "nome": "Administrador"
         })
 
-    # UTILIZADOR NORMAL
+    # 2. UTILIZADOR NORMAL
+    if not os.path.exists(ARQUIVO):
+        return jsonify({"sucesso": False, "mensagem": "Base de dados não encontrada."}), 500
+
     with open(ARQUIVO, "r", encoding="utf-8") as f:
-
         for linha in f:
-
-            campos = linha.strip().split(";")
-            campos = [c.strip() for c in campos if c.strip() != ""]
+            # Limpa espaços e divide garantindo que não guarda elementos vazios falsos
+            campos = [c.strip() for c in linha.strip().split(";") if c.strip() != ""]
+            
+            if not campos:
+                continue
 
             email_bd = None
             senha_bd = None
             tipo_bd = "utilizador"
             nome_bd = campos[0]
 
-            if len(campos) >= 7:
+            # CASO A: Padrão Novo / Criar Conta (7 ou 8 campos)
+            # Nome;BI;DataNasc;Sexo;Telefone;Email;Senha;[Tipo]
+            if len(campos) >= 7 and "@" in campos[5]:
                 email_bd = campos[5].lower()
                 senha_bd = campos[6]
-            elif len(campos) == 4:
-                email_bd = campos[1].lower()
-                senha_bd = campos[3]
-            elif len(campos) == 5:
-                # Suporte a linhas com 5 campos antigas ou personalizadas
-                email_bd = campos[1].lower()
-                senha_bd = campos[3]
-                tipo_bd = normalizar_tipo(campos[4])
+                if len(campos) >= 8:
+                    tipo_bd = normalizar_tipo(campos[7])
+                else:
+                    tipo_bd = "utilizador"
 
+            # CASO B: Padrão Antigo / Simplificado (4 ou 5 campos)
+            # Nome;Email;Telefone;Senha;[Tipo]
+            elif len(campos) >= 4 and "@" in campos[1]:
+                email_bd = campos[1].lower()
+                senha_bd = campos[3]
+                if len(campos) >= 5:
+                    tipo_bd = normalizar_tipo(campos[4])
+
+            # Se não encaixar em nenhum padrão estruturado, ignora a linha
+            if not email_bd:
+                continue
+
+            # Validação das credenciais
             if email_bd == email and senha_bd == senha:
-
                 registrar_log(email, "LOGIN_SUCESSO")
-
                 return jsonify({
                     "sucesso": True,
                     "tipo": tipo_bd,
@@ -423,12 +436,10 @@ def login():
                 })
 
     registrar_log(email, "LOGIN_FALHOU")
-
     return jsonify({
         "sucesso": False,
         "mensagem": "Utilizador ou palavra-passe incorretos."
     })
-
 # =========================
 # GERAR CÓDIGO 2FA
 # =========================
