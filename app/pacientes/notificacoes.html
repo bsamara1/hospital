@@ -3,40 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notificações</title>
+<title>Notificações - HAN</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
-body{display:flex;background:#f5f7fb;min-height:100vh;}
-.sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
-.sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
-.sidebar .logo img{width:50px;height:50px;object-fit:contain;}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;font-size:16px;transition:0.3s;}
-.sidebar a:hover,.sidebar a.active{background:#163a63;}
-.sidebar .bottom{margin-top:auto;}
-.logout{color:#ff6b6b;}
-.divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
-.main{flex:1;padding:25px;overflow:auto;}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
-.header h2{font-size:20px;color:#333;}
-.header-line{margin-left:-25px;margin-right:-25px;height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
-.user-box{display:flex;align-items:center;gap:16px;color:#555;}
-.user-profile{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);background:#fff;}
-.user-profile .fa-user-circle{font-size:24px;color:#4a4a4a;}
-.user-info{display:flex;flex-direction:column;line-height:1.1;}
-.user-info #usuarioNome{font-weight:700;color:#222;}
-.user-info #usuarioEmail{font-size:13px;color:#6f7287;}
-.user-box i{font-size:18px;color:#4a4a4a;cursor:pointer;}
-.user-box .fa-chevron-down{font-size:12px;color:#6f7287;}
-.table-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
-.notificacao{padding:18px;border:1px solid #eef2f7;border-radius:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:15px;}
-.notificacao.nova{background:#e9f5ff;border-color:#9cc9ff;}
-.notificacao.lida{background:#f7f7f7;border-color:#ddd;}
-.notificacao-texto{font-size:15px;color:#333;flex:1;}
-.notificacao button{padding:10px 16px;border:none;border-radius:10px;background:#007bff;color:#fff;cursor:pointer;}
+/* RESET & BASE STYLES */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: "Segoe UI", sans-serif;
+}
+
+body{
+display:flex;
+background:#f5f7fb;
+height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:260px;
+background:#0b2a4a;
+color:#fff;
+display:flex;
+flex-direction:column;
+padding:20px;
+height:100vh;
+}
+.bottom{
+  margin-top:auto; 
+}
+
+.sidebar .logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:22px;
+font-weight:bold;
+margin-bottom:30px;
+}
+
+.sidebar .logo img{
+width:50px;
+height:50px;
+object-fit:contain;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+padding:12px 15px;
+margin:5px 0;
+display:flex;
+align-items:center;
+gap:10px;
+border-radius:8px;
+transition:0.3s;
+font-size:16px;
+}
+
+.sidebar a:hover, .sidebar a.active{
+background:#163a63;
+color:#fff;
+}
+
+.sidebar .logout{
+  color:#ff6b6b;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 15px;
+  border-radius:8px;
+  text-decoration:none;
+  margin:5px 0;
+  transition:0.3s;
+}
+.logout:hover{
+  background:#163a63;
+}
+
+.divider{
+  height:1px;
+  background:rgba(255,255,255,0.15);
+  margin:12px 0;
+}
+
+/* MAIN CONTENT */
+.main{
+flex:1;
+padding:25px;
+overflow:auto;
+}
+
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+.header-line{
+  margin-left:-25px;
+  margin-right:-25px;
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin-bottom:25px;
+}
+
+.header h2{
+font-size:20px;
+color:#333;
+}
+
+.user-box{
+display:flex;
+align-items:center;
+gap:16px;
+color:#555;
+}
+
+.user-profile{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 14px;
+border-radius:16px;
+box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
+background:#fff;
+}
+
+.user-profile .fa-user-circle{
+font-size:24px;
+color:#4a4a4a;
+}
+
+.user-info{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.user-info #usuarioNome{
+font-weight:700;
+color:#222;
+}
+
+.user-info #usuarioEmail{
+font-size:13px;
+color:#6f7287;
+}
+
+.user-box i{
+font-size:18px;
+color:#4a4a4a;
+cursor:pointer;
+}
+
+.user-box .fa-chevron-down{
+font-size:12px;
+color:#6f7287;
+}
+
+/* NOTIFICATIONS CONTAINER */
+.table-card{
+background:#fff;
+padding:24px;
+border-radius:16px;
+box-shadow:0 4px 20px rgba(0,0,0,0.04);
+margin-bottom:20px;
+}
+
+.notificacao{
+padding:18px;
+border:1px solid #e2e8f0;
+border-radius:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+gap:15px;
+transition: all 0.3s ease;
+}
+
+.notificacao.nova{
+background:#f0f7ff;
+border-color:#b9ddff;
+box-shadow: 0 2px 8px rgba(0, 123, 255, 0.05);
+}
+
+.notificacao.lida{
+background:#fafafa;
+border-color:#e2e8f0;
+opacity: 0.75;
+}
+
+.notificacao-texto{
+font-size:15px;
+color:#334155;
+flex:1;
+line-height: 1.5;
+}
+
+/* BUTTONS */
+.notificacao button{
+padding:8px 16px;
+border:none;
+border-radius:8px;
+background:#007bff;
+color:#fff;
+cursor:pointer;
+font-weight: 600;
+font-size: 13px;
+transition: background 0.2s;
+white-space: nowrap;
+}
+
+.notificacao button:hover{
+background:#0056b3;
+}
+
+.btn-marcar-todas {
+background: #054a93;
+color: white;
+padding: 10px 18px;
+border: none;
+border-radius: 8px;
+font-weight: 600;
+font-size: 14px;
+cursor: pointer;
+transition: background 0.2s;
+display: flex;
+align-items: center;
+gap: 8px;
+box-shadow: 0 4px 12px rgba(5, 74, 147, 0.15);
+}
+
+.btn-marcar-todas:hover {
+background: #0b2a4a;
+}
 </style>
 </head>
 <body>
+
 <div class="sidebar">
     <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
     <a href="index.html">🏠 Início</a>
@@ -47,6 +255,7 @@ body{display:flex;background:#f5f7fb;min-height:100vh;}
     <a href="perfil.html">👤 Meu Perfil</a>
     <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html">🚪 Terminar sessão</a></div>
 </div>
+
 <div class="main">
     <div class="header">
         <h2>Notificações</h2>
@@ -62,12 +271,20 @@ body{display:flex;background:#f5f7fb;min-height:100vh;}
             <i class="fa fa-chevron-down"></i>
         </div>
     </div>
+    
     <div class="header-line"></div>
-    <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
-        <button onclick="marcarTodasNotificacoesLidas()">Marcar todas como lidas</button>
+    
+    <div style="display:flex; justify-content:flex-end; margin-bottom:20px;">
+        <button class="btn-marcar-todas" onclick="marcarTodasNotificacoesLidas()">
+            <i class="fa fa-check-double"></i> Marcar todas como lidas
+        </button>
     </div>
-    <div id="listaNotificacoes" class="table-card"></div>
+    
+    <div id="listaNotificacoes" class="table-card">
+        <p style="color: #64748b; text-align: center; padding: 20px;">A carregar notificações...</p>
+    </div>
 </div>
+
 <script src="../js/consultas.js"></script>
 </body>
 </html>
