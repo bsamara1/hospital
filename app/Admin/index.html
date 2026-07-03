@@ -3,230 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital Agostinho Neto</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* ==========================================================================
-           Configurações Globais (Reset & Fontes)
-           ========================================================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    <title>Recepcionista - Dashboard</title>
 
-        * {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* RESET */
+        *{
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Segoe UI", sans-serif;
         }
-
-        body {
-            background-color: #f4f7f6;
-            color: #333;
-        }
-
-        /* ==========================================================================
-           Header / Navbar (Azul Escuro e Branco)
-           ========================================================================== */
-        .navbar {
+        
+        body{
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #0a2540; /* Azul Escuro Hospitalar */
-            padding: 15px 4%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background: #f5f7fb;
+            height: 100vh;
         }
 
-        .logo {
+        /* SIDEBAR */
+        .sidebar{
+            width: 260px;
+            background: #0b2a4a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+        }
+        
+        .logo{
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #ffffff;
-            font-size: 1.3rem;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+        
+        .logo span{
+            font-size: 32px;
+            font-weight: bold;
         }
 
-        .logo i {
-            font-size: 1.8rem;
-            color: #00d4ff; /* Um toque ciano para destacar o ícone */
+        .logo img{
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
 
-        .logo strong {
-            color: #ffffff;
-            font-weight: 700;
+        .bottom{
+            margin-top: auto; 
         }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
-            gap: 28px;
-        }
-
-        .nav-links a {
-            color: #e0e6ed;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 20px 45px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px; /* Espaço entre ícone e texto */
-        }
-
-        /* Hover nos links normais */
-        .nav-links a:hover:not(.btn-logout), 
-        .nav-links a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        /* Botão de Logout Especial (Vermelho) */
-        .nav-links .btn-logout {
-            background-color: #dc3545; /* Vermelho */
+        .sidebar a{
             color: white;
-            font-weight: 600;
-        }
-
-        .nav-links .btn-logout:hover {
-            background-color: #bd2130; /* Vermelho mais escuro no hover */
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-        }
-
-        /* ==========================================================================
-           Seção Banner / Boas-Vindas
-           ========================================================================== */
-        .banner {
-            min-height: 75vh;
-            background: linear-gradient(135deg, rgba(10, 37, 64, 0.95), rgba(20, 55, 90, 0.85)), 
-                        url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2053') no-repeat center center/cover;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin: 5px 0;
             display: flex;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 20px;
+            gap: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 15px;
+            cursor: pointer;
         }
 
-        .banner-content {
-            max-width: 700px;
-            color: #ffffff;
-            animation: fadeIn 1s ease-in-out;
+        .sidebar a:hover, .sidebar a.active{
+            background: #163a63;
+            color: #fff;
         }
 
-        .banner-content h2 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-
-        .banner-content p {
-            font-size: 1.1rem;
-            color: #d1dbe5;
-            margin-bottom: 35px;
-        }
-
-        /* Botões do Banner */
-        .banner-buttons {
+        .sidebar .logout{
+            color: #ff6b6b;
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+        
+        .logout:hover{
+            background: #163a63;
         }
 
-        .btn-primary {
-            background-color: #ffffff;
-            color: #0a2540;
-            padding: 13px 28px;
-            text-decoration: none;
-            font-weight: 600;
-            border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
+        .divider{
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+            margin: 12px 0;
         }
 
-        .btn-primary:hover {
-            background-color: #e6ecf2;
+        /* MAIN */
+        .main{
+            flex: 1;
+            padding: 25px;
+            margin-left: 260px;
+            overflow: auto;
+        }
+
+        /* HEADER */
+        .header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .header-line{
+            margin-left: -25px;
+            margin-right: -25px;
+            height: 1px;
+            background: rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .header h2{
+            font-size: 20px;
+            color: #333;
+        }
+
+        .user-box{
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+        }
+
+        .user-box i{
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* CARDS CLICÁVEIS */
+        .cards{
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card{
+            background: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
 
-        .btn-secondary {
-            background-color: transparent;
-            color: #ffffff;
-            padding: 13px 28px;
-            text-decoration: none;
+        /* Classe aplicada quando o filtro estiver selecionado */
+        .card.active-filter {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+
+        .card h4{
+            font-size: 13px;
+            color: #666;
+        }
+
+        .card p{
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        /* TABLE CARD */
+        .table-card{
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .table-card h3{
+            margin-bottom: 15px;
+        }
+
+        /* TABLE */
+        table{
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td{
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        th{
+            text-align: left;
+            color: #666;
+        }
+
+        /* STATUS */
+        .status{
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            text-transform: capitalize;
             font-weight: 600;
-            border: 2px solid #ffffff;
-            border-radius: 30px;
-            transition: all 0.3s ease;
         }
 
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
+        .pendente{ background: #fff3cd; color: #856404; }
+        .confirmada{ background: #d4edda; color: #155724; }
+        .cancelada{ background: #f8d7da; color: #721c24; }
+
+        /* BUTTONS */
+        button{
+            padding: 6px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: 0.2s;
         }
 
-        /* Animação de Entrada */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ==========================================================================
-           Responsividade (Para Celulares)
-           ========================================================================== */
-        @media (max-width: 992px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .banner-content h2 {
-                font-size: 2rem;
-            }
+        .confirm{ background: #28a745; color: #fff; }
+        .edit{ background: #007bff; color: #fff; }
+        .cancel{ background: #dc3545; color: #fff; }
+        
+        button:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo">
-            <i class="fa-solid fa-hospital-user"></i>
-            <span>Hospital <strong>Agostinho Neto</strong></span>
+<div class="sidebar">
+    <div class="logo">
+        <img src="../assets/img/logo.png" alt="Logo HAN">
+        <span>HAN</span>
+    </div>
+
+    <a href="index.html" class="active"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
+    <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+
+    <div class="bottom">
+        <div class="divider"></div>
+        <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="header">
+        <h2>Painel Principal</h2>
+        <div class="user-box">
+            <i class="fa fa-bell"></i>
+            <i class="fa fa-user-circle"></i>
+            <span>Recepcionista</span>
         </div>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Início</a></li>
-                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
-                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
-                <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
-                <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
-            </ul>
-        </nav>
-    </header>
+    </div>
 
-    <main>
-        <section class="banner">
-            <div class="banner-content">
-                <h2>Bem-vindo ao Sistema Hospitalar</h2>
-                <p>Gerencie suas consultas e marcações online com rapidez, segurança e total comodidade.</p>
-                <div class="banner-buttons">
-                    <a href="marcacao.html" class="btn-primary">Ver Consulta</a>
-                    <a href="medicos.html" class="btn-secondary">Ver Médicos</a>
-                </div>
-            </div>
-        </section>
-    </main>
+    <div class="header-line"></div>
 
-    <script src="js/app.js"></script>
+    <div class="cards">
+        <div class="card" id="card-hoje" onclick="gerirPainelFiltros('hoje', this)">
+            <h4>Consultas Hoje</h4>
+            <p id="consultasHoje">0</p>
+        </div>
+
+        <div class="card" id="card-pacientes" onclick="gerirPainelFiltros('pacientes', this)">
+            <h4>Total Pacientes</h4>
+            <p id="totalPacientes">0</p>
+        </div>
+
+        <div class="card" id="card-pendente" onclick="gerirPainelFiltros('pendente', this)">
+            <h4>Pendentes</h4>
+            <p id="pendentes">0</p>
+        </div>
+
+        <div class="card" id="card-cancelada" onclick="gerirPainelFiltros('cancelada', this)">
+            <h4>Canceladas</h4>
+            <p id="canceladas">0</p>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <h3 id="titulo-tabela">Todas as Consultas</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Médico</th>
+                    <th>Especialidade</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-consultas"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script src="javascript/storage.js"></script>
+<script src="javascript/consultas.js"></script>
+
+<script>
+    let filtroAtivoNoMomento = null;
+
+    function gerirPainelFiltros(tipoFiltro, elementoDoCard) {
+        const blocoDeCards = document.querySelectorAll('.cards .card');
+        const h3Titulo = document.getElementById('titulo-tabela');
+        const corpoTabela = document.getElementById('tabela-consultas');
+
+        // Se o card clicado já estiver selecionado (Toggle), limpa e volta ao estado base
+        if (filtroAtivoNoMomento === tipoFiltro) {
+            filtroAtivoNoMomento = null;
+            blocoDeCards.forEach(card => card.classList.remove('active-filter'));
+            h3Titulo.innerText = "Todas as Consultas";
+            if (typeof filtrarTabelaPorEstado === "function") {
+                filtrarTabelaPorEstado('todos');
+            }
+            return;
+        }
+
+        // Aplica o destaque visual azul ao card correto
+        filtroAtivoNoMomento = tipoFiltro;
+        blocoDeCards.forEach(card => card.classList.remove('active-filter'));
+        elementoDoCard.classList.add('active-filter');
+
+        // Altera o título dinamicamente e encaminha para a listagem/filtragem certa
+        if (tipoFiltro === 'hoje') {
+            h3Titulo.innerText = "Consultas de Hoje";
+            if (typeof filtrarTabelaPorEstado === "function") {
+                filtrarTabelaPorEstado('hoje');
+            }
+        } else if (tipoFiltro === 'pacientes') {
+            h3Titulo.innerText = "Lista de Pacientes";
+            corpoTabela.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Nenhum paciente registado por marcação própria no momento.</td></tr>`;
+        } else if (tipoFiltro === 'pendente') {
+            h3Titulo.innerText = "Consultas Pendentes";
+            if (typeof filtrarTabelaPorEstado === "function") {
+                filtrarTabelaPorEstado('pendente');
+            }
+        } else if (tipoFiltro === 'cancelada') {
+            h3Titulo.innerText = "Consultas Canceladas";
+            if (typeof filtrarTabelaPorEstado === "function") {
+                filtrarTabelaPorEstado('cancelada');
+            }
+        }
+    }
+</script>
+
 </body>
 </html>

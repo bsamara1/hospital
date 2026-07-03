@@ -3,468 +3,502 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Corpo Médico - Hospital Agostinho Neto</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador - Médicos</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           Configurações Globais (Reset & Fontes)
-           ========================================================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
+        /* RESET & BASE */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: "Segoe UI", sans-serif;
         }
 
         body {
-            background-color: #f4f7f6;
-            color: #333;
+            display: flex;
+            background: #f5f7fb;
+            height: 100vh;
         }
 
-        /* ==========================================================================
-           Header / Navbar (Idêntico ao index.html)
-           ========================================================================== */
-        .navbar {
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #0b2a4a;
+            color: #fff;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #0a2540;
-            padding: 15px 4%;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: #ffffff;
-            font-size: 1.3rem;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
         }
 
-        .logo i {
-            font-size: 1.8rem;
-            color: #00d4ff;
+        .logo span {
+            font-size: 32px;
+            font-weight: bold;
         }
 
-        .logo strong {
-            color: #ffffff;
-            font-weight: 700;
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
         }
 
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
-            gap: 28px;
+        .bottom {
+            margin-top: auto;
         }
 
-        .nav-links a {
-            color: #e0e6ed;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 20px 45px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-links a:hover:not(.btn-logout) {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        /* Link Ativo na página de Médicos */
-        .nav-links li:nth-child(3) a {
-            background-color: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .nav-links .btn-logout {
-            background-color: #dc3545;
+        .sidebar a {
             color: white;
-            font-weight: 600;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 15px;
+            cursor: pointer;
         }
 
-        .nav-links .btn-logout:hover {
-            background-color: #bd2130;
-            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #163a63;
         }
 
-        /* ==========================================================================
-           Estrutura de Conteúdo Ampla (Tela Inteira)
-           ========================================================================== */
-        .main-content {
-            width: 100%;
-            padding: 30px 4%;
-            margin: 0 auto;
+        .sidebar .logout {
+            color: #ff6b6b;
         }
 
-        .header-section {
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 12px 0;
+        }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            padding: 25px;
+            margin-left: 260px;
+            overflow: auto;
+        }
+
+        /* HEADER */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
+        }
+
+        .header-line {
+            margin-left: -25px;
+            margin-right: -25px;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        /* CARDS DE FUNCIONALIDADES (Exatamente igual ao design da imagem) */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.active-filter {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+
+        .card h4 {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
             margin-top: 10px;
         }
 
-        h2 {
-            color: #0a2540;
-            font-size: 1.6rem;
-            font-weight: 600;
-        }
-
-        /* Botão Principal de Ação */
-        .btn-add {
-            height: 46px;
-            padding: 0 24px;
-            background-color: #00d4ff;
-            color: #0a2540;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0, 212, 255, 0.2);
-        }
-
-        .btn-add:hover {
-            background-color: #00bada;
-            transform: translateY(-1px);
-        }
-
-        /* Formulário de Cadastro Escondido por Padrão */
-        .form-cadastro {
-            display: none;
-            width: 100%;
-            margin-bottom: 30px;
-            padding: 25px;
-            background: #ffffff;
+        /* FORMULÁRIO */
+        .form-card {
+            background: #fff;
+            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            animation: slideDown 0.3s ease-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-card h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
         }
 
-        .form-grid {
+        .form-inline {
             display: flex;
-            gap: 15px;
             flex-wrap: wrap;
+            gap: 12px;
             align-items: flex-end;
         }
 
         .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #4a5568;
-            margin-bottom: 6px;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            height: 46px;
-            padding: 0 15px;
-            font-size: 0.95rem;
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            color: #333;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input:focus, select:focus {
-            border-color: #0a2540;
-            background-color: #ffffff;
-            box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.1);
-        }
-
-        .btn-salvar {
-            height: 46px;
-            padding: 0 30px;
-            font-size: 0.95rem;
+            font-size: 12px;
             font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            border: none;
-            background-color: #0a2540;
-            color: #ffffff;
-            transition: all 0.2s ease;
+            color: #555;
         }
 
-        .btn-salvar:hover {
-            background-color: #0f365c;
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
         }
 
-        /* ==========================================================================
-           Tabela de Médicos Espalhada na Tela
-           ========================================================================== */
-        .table-container {
-            width: 100%;
-            background: #ffffff;
+        /* TABELA */
+        .table-card {
+            background: #fff;
+            padding: 20px;
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        #tabelaMedicos {
+        .table-card h3 {
+            margin-bottom: 15px;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        th {
             text-align: left;
+            color: #666;
         }
 
-        #tabelaMedicos th {
-            background-color: #0a2540;
-            color: #ffffff;
-            padding: 18px 20px;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        #tabelaMedicos td {
-            padding: 16px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #4a5568;
-            font-size: 0.95rem;
-        }
-
-        #tabelaMedicos tr:last-child td {
-            border-bottom: none;
-        }
-
-        #tabelaMedicos tr:hover td {
-            background-color: #f8fafc;
-        }
-
-        /* Crachás de Status Estilizados */
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        /* BADGES */
+        .badge {
+            padding: 4px 10px;
             border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
         }
 
-        .status-disponivel {
-            background-color: #e6f7ed;
-            color: #1f9254;
+        .badge-especialidade { background: #e2f0d9; color: #385723; }
+        .badge-horario { background: #fff2cc; color: #7f6000; }
+
+        /* BOTÕES */
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
         }
 
-        .status-indisponivel {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .navbar {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding: 15px 4%;
-            }
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .header-section {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            .btn-add {
-                width: 100%;
-                justify-content: center;
-            }
-            .form-grid {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .btn-salvar {
-                width: 100%;
-            }
-        }
+        button:hover { opacity: 0.9; }
+        .btn-primary { background: #007bff; color: #fff; }
+        .btn-secondary { background: #6c757d; color: #fff; }
+        .btn-status { background: #17a2b8; color: #fff; padding: 5px 8px; font-size: 12px; margin-right: 4px; }
+        .btn-delete { background: #dc3545; color: #fff; padding: 5px 8px; font-size: 12px; }
     </style>
 </head>
 
 <body>
 
-    <header class="navbar">
+    <div class="sidebar">
         <div class="logo">
-            <i class="fa-solid fa-hospital-user"></i>
-            <span>Hospital <strong>Agostinho Neto</strong></span>
+            <img src="../assets/img/logo.png" alt="Logo HAN">
+            <span>HAN</span>
         </div>
-        <nav>
-            <ul class="nav-links">
-                <li><a href="index.html"><i class="fa-solid fa-house"></i> Início</a></li>
-                <li><a href="marcacao.html"><i class="fa-solid fa-calendar-plus"></i> Marcação</a></li>
-                <li><a href="medicos.html"><i class="fa-solid fa-user-doctor"></i> Médicos</a></li>
-                <li><a href="prioridades.html"><i class="fa-solid fa-kit-medical"></i> Prioridades</a></li>
-                <li><a href="#" onclick="logout()" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Terminar Sessão</a></li>
-            </ul>
-        </nav>
-    </header>
+        <a href="admin.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+        <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+        <a href="medicos.html" class="active"><i class="fa fa-user-md"></i> Médicos</a>
+        <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+        <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
+        <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
 
-    <main class="main-content">
-        
-        <div class="header-section">
-            <h2>Equipa Médica Disponível</h2>
-            <button class="btn-add" onclick="toggleFormulario()">
-                <i class="fa-solid fa-plus"></i> Adicionar Médico
-            </button>
+        <div class="bottom">
+            <div class="divider"></div>
+            <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
         </div>
+    </div>
 
-        <div class="form-cadastro" id="areaFormulario">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="nomeMedico">Nome do Médico(a)</label>
-                    <input type="text" id="nomeMedico" placeholder="Ex: Dr. Antónia Almeida">
-                </div>
-                
-                <div class="form-group">
-                    <label for="especialidadeMedico">Especialidade</label>
-                    <select id="especialidadeMedico">
-                        <option value="">Selecione...</option>
-                        <option value="Cardiologia">Cardiologia</option>
-                        <option value="Pediatria">Pediatria</option>
-                        <option value="Ortopedia">Ortopedia</option>
-                        <option value="Medicina Geral">Medicina Geral</option>
-                        <option value="Ginecologia">Ginecologia</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="horarioMedico">Horário de Atendimento</label>
-                    <input type="text" id="horarioMedico" placeholder="Ex: Segunda a Sexta - 08:00 às 14:00">
-                </div>
-
-                <div class="form-group">
-                    <label for="statusMedico">Status</label>
-                    <select id="statusMedico">
-                        <option value="Disponível">Disponível</option>
-                        <option value="Indisponível">Indisponível</option>
-                    </select>
-                </div>
-
-                <button class="btn-salvar" onclick="salvarMedico()">Salvar</button>
+    <div class="main">
+        <div class="header">
+            <h2>Plano Clínico & Escala Médica</h2>
+            <div class="user-box" style="color: #555;">
+                <i class="fa fa-user-circle"></i> <span>Administrador</span>
             </div>
         </div>
 
-        <div class="table-container">
-            <table id="tabelaMedicos">
-                <thead>
-                    <tr>
-                        <th><i class="fa-solid fa-user-doctor"></i> Médico(a)</th>
-                        <th><i class="fa-solid fa-stethoscope"></i> Especialidade</th>
-                        <th><i class="fa-solid fa-clock"></i> Horário de Atendimento</th>
-                        <th><i class="fa-solid fa-signal"></i> Status</th>
-                    </tr>
-                </thead>
-                <tbody id="corpoTabelaMedicos">
-                    <tr>
-                        <td>Dr. João Silva</td>
-                        <td>Cardiologia</td>
-                        <td>Segunda a Sexta - 08:00 às 14:00</td>
-                        <td><span class="status-badge status-disponivel">Disponível</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dra. Maria Lopes</td>
-                        <td>Pediatria</td>
-                        <td>Terça e Quinta - 09:00 às 16:00</td>
-                        <td><span class="status-badge status-disponivel">Disponível</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dr. Carlos Monteiro</td>
-                        <td>Ortopedia</td>
-                        <td>Segunda e Quarta - 14:00 às 20:00</td>
-                        <td><span class="status-badge status-disponivel">Disponível</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dra. Ana Fernandes</td>
-                        <td>Medicina Geral</td>
-                        <td>Segunda a Sexta - 08:00 às 18:00</td>
-                        <td><span class="status-badge status-disponivel">Disponível</span></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="header-line"></div>
+
+        <div class="cards">
+            <div class="card active-filter" id="card-todos" onclick="limparFiltros()">
+                <h4> Total de Médicos</h4>
+                <p id="totalMedicos">0</p>
+            </div>
+            <div class="card" onclick="focarFormulario()">
+                <h4> Nova Escala</h4>
+                <p style="font-size: 14px; color: #007bff; margin-top: 15px; font-weight: 600;">Agendar Turno →</p>
+            </div>
+            <div class="card" onclick="limparFormulario()">
+                <h4> Limpar Campos</h4>
+                <p style="font-size: 14px; color: #6c757d; margin-top: 15px; font-weight: 600;">Reset Form Diagnóstico</p>
+            </div>
+            <div class="card" onclick="window.location.href='seguranca.html'">
+                <h4> Histórico Auditar</h4>
+                <p style="font-size: 14px; color: #dc3545; margin-top: 15px; font-weight: 600;">Verificar Segurança →</p>
+            </div>
         </div>
 
-    </main>
+        <div class="form-card">
+            <h3 id="form-titulo">Configurar Horário de Atendimento</h3>
+            <form id="form-medico" class="form-inline" onsubmit="gravarMedicoForm(event)">
+                <input type="hidden" id="medico-id">
+
+                <div class="form-group">
+                    <label for="medico-nome">Nome do Médico</label>
+                    <input type="text" id="medico-nome" placeholder="Ex: Dr. António Rocha" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="select-esp">Especialidade Médica</label>
+                    <select id="select-esp" required>
+                        <option value="">Atribuir Especialidade...</option>
+                        <option value="Clínica Geral">Clínica Geral</option>
+                        <option value="Cardiologia">Cardiologia</option>
+                        <option value="Pediatria">Pediatria</option>
+                        <option value="Ortopedia">Ortopedia</option>
+                        <option value="Dermatologia">Dermatologia</option>
+                        <option value="Neurologia">Neurologia</option>
+                        <option value="Ginecologia">Ginecologia</option>
+                        <option value="Oftalmologia">Oftalmologia</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="medico-horas">Carga Horária (Turno)</label>
+                    <input type="text" id="medico-horas" placeholder="Ex: 08:00 - 14:00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="medico-dias">Dias Úteis Semanais</label>
+                    <input type="text" id="medico-dias" placeholder="Ex: Seg, Qua, Sex" required>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" class="btn-primary" id="btn-submeter">Adicionar</button>
+                    <button type="button" class="btn-secondary" id="btn-cancelar" onclick="limparFormulario()"
+                        style="display: none;">Cancelar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h3 id="titulo-tabela">Todos os Médicos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Médico</th>
+                        <th>Especialidade</th>
+                        <th>Horários</th>
+                        <th>Dias da Escala</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-corpo-medico"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="javascript/storage.js"></script>
 
     <script>
-        function toggleFormulario() {
-            const form = document.getElementById('areaFormulario');
-            form.style.display = (form.style.display === 'block') ? 'none' : 'block';
+        function obterListaSegura() {
+            if (typeof obterMedicosInfo === "function") return obterMedicosInfo();
+            return JSON.parse(localStorage.getItem("han_db_medicos")) || [];
         }
 
-        // Função para capturar os dados informados e injetar na tabela
-        function salvarMedico() {
-            const nome = document.getElementById('nomeMedico').value.trim();
-            const especialidade = document.getElementById('especialidadeMedico').value;
-            const horario = document.getElementById('horarioMedico').value.trim();
-            const status = document.getElementById('statusMedico').value;
+        function salvarListaSegura(lista) {
+            if (typeof salvarMedicosInfo === "function") {
+                salvarMedicosInfo(lista);
+                return;
+            }
+            localStorage.setItem("han_db_medicos", JSON.stringify(lista));
+        }
 
-            // Validação simples de campos obrigatórios
-            if (!nome || !especialidade || !horario) {
-                alert('Por favor, preencha todos os campos antes de salvar.');
+        function render() {
+            const lista = obterListaSegura();
+
+            // Atualizar o contador total
+            document.getElementById("totalMedicos").innerText = lista.length;
+
+            const tbody = document.getElementById("tabela-corpo-medico");
+            tbody.innerHTML = "";
+
+            if (lista.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Nenhum médico registado.</td></tr>`;
                 return;
             }
 
-            // Seleciona o corpo da tabela
-            const tabelaBody = document.getElementById('corpoTabelaMedicos');
-
-            // Cria uma nova linha no HTML
-            const novaLinha = document.createElement('tr');
-
-            // Define a classe CSS correta baseada no status selecionado
-            const classeStatus = (status === 'Disponível') ? 'status-disponivel' : 'status-indisponivel';
-
-            novaLinha.innerHTML = `
-                <td>${nome}</td>
-                <td>${especialidade}</td>
-                <td>${horario}</td>
-                <td><span class="status-badge ${classeStatus}">${status}</span></td>
-            `;
-
-            // Adiciona a linha ao final da tabela
-            tabelaBody.appendChild(novaLinha);
-
-            // Limpa os campos digitados para o próximo cadastro
-            document.getElementById('nomeMedico').value = '';
-            document.getElementById('especialidadeMedico').value = '';
-            document.getElementById('horarioMedico').value = '';
-            document.getElementById('statusMedico').value = 'Disponível';
-
-            // Fecha o formulário
-            toggleFormulario();
+            lista.forEach(m => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${m.id}</td>
+                        <td><b>${m.nome}</b></td>
+                        <td><span class="badge badge-especialidade">${m.especialidade || 'Geral'}</span></td>
+                        <td><span class="badge badge-horario">${m.horario || 'N/A'}</span></td>
+                        <td>${m.dias || 'N/A'}</td>
+                        <td>
+                            <button class="btn-status" onclick="prepararEdicao(${m.id})">
+                                <i class="fa fa-edit"></i> Editar
+                            </button>
+                            <button class="btn-delete" onclick="removerMed(${m.id})">
+                                <i class="fa fa-trash"></i> Remover
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
         }
+
+        function focarFormulario() {
+            document.getElementById("medico-nome").focus();
+            window.scrollTo({ top: document.querySelector('.form-card').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function limparFiltros() {
+            render();
+        }
+
+        function gravarMedicoForm(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("medico-id").value;
+            const nome = document.getElementById("medico-nome").value.trim();
+            const specialty = document.getElementById("select-esp").value;
+            const hours = document.getElementById("medico-horas").value.trim();
+            const days = document.getElementById("medico-dias").value.trim();
+
+            let lista = obterListaSegura();
+
+            if (id) {
+                lista = lista.map(m => m.id == id ? { ...m, nome, especialidade: specialty, specialty, horario: hours, dias: days } : m);
+                if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Editou médico: ${nome}`);
+            } else {
+                const novoMedico = {
+                    id: lista.length > 0 ? Math.max(...lista.map(m => m.id)) + 1 : 1,
+                    nome: nome,
+                    especialidade: specialty,
+                    specialty: specialty,
+                    horario: hours,
+                    dias: days,
+                    totalAtendimentos: 0
+                };
+                lista.push(novoMedico);
+                if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Adicionou médico: ${nome}`);
+            }
+
+            salvarListaSegura(lista);
+            limparFormulario();
+            render();
+        }
+
+        function removerMed(id) {
+            if (!confirm("Tem a certeza que deseja remover este médico?")) return;
+            let lista = obterListaSegura();
+            lista = lista.filter(m => m.id != id);
+            salvarListaSegura(lista);
+            render();
+        }
+
+        function prepararEdicao(id) {
+            const lista = obterListaSegura();
+            const m = lista.find(item => item.id == id);
+            if (m) {
+                document.getElementById("medico-id").value = m.id;
+                document.getElementById("medico-nome").value = m.nome;
+                document.getElementById("select-esp").value = m.especialidade || m.specialty || "";
+                document.getElementById("medico-horas").value = m.horario || "";
+                document.getElementById("medico-dias").value = m.dias || "";
+
+                document.getElementById("form-titulo").innerText = "Editar Cadastro de Médico";
+                document.getElementById("btn-submeter").innerText = "Guardar";
+                document.getElementById("btn-cancelar").style.display = "inline-block";
+                
+                focarFormulario();
+            }
+        }
+
+        function limparFormulario() {
+            document.getElementById("form-medico").reset();
+            document.getElementById("medico-id").value = "";
+            document.getElementById("form-titulo").innerText = "Configurar Horário de Atendimento";
+            document.getElementById("btn-submeter").innerText = "Adicionar";
+            document.getElementById("btn-cancelar").style.display = "none";
+        }
+
+        window.onload = function() {
+            render();
+        };
     </script>
-    <script src="js/storage.js"></script>
-    <script src="js/medicos.js"></script>
 </body>
 
 </html>

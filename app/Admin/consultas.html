@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrador - Histórico de Consultas & Relatórios</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { display: flex; background: #f5f7fb; height: 100vh; }
+    .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
+    .logo{ display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
+    .logo span { font-size: 32px; font-weight: bold; }
+    .logo img { width: 50px; height: 50px; object-fit: contain; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; }
+    .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+    .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+    .stat-card h4 { font-size: 13px; color: #777; margin-bottom: 5px; }
+    .stat-card p { font-size: 24px; font-weight: bold; }
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; text-align: left; }
+    .status { padding: 4px 10px; border-radius: 20px; font-size: 12px; text-transform: capitalize; font-weight: 600; }
+    .confirmada, .done { background: #d4edda; color: #155724; }
+    .pendente { background: #fff3cd; color: #856404; }
+    .cancelada { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+        <img src="../assets/img/logo.png" alt="Logo">
+        <span>HAN</span>
+    </div>
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="consultas.html" class="active"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
+    <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h2>Histórico Geral de Consultas</h2>
+      <div><span>Administrador</span></div>
+    </div>
+    <div class="header-line"></div>
+
+    <div class="stats-container">
+      <div class="stat-card"><h4>Volume Total</h4><p id="c-total">0</p></div>
+      <div class="stat-card"><h4>Atendidas / Confirmadas</h4><p id="c-done" style="color: #28a745;">0</p></div>
+      <div class="stat-card"><h4>Canceladas no Sistema</h4><p id="c-cancel" style="color: #dc3545;">0</p></div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr><th>Paciente</th><th>Médico</th><th>Especialidade</th><th>Data/Hora</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="tabela-consultas-global"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="javascript/storage.js"></script>
+  <script>
+    function render() {
+      const consultas = obterConsultas();
+      document.getElementById("c-total").innerText = consultas.length;
+      document.getElementById("c-done").innerText = consultas.filter(c => c.estado === 'confirmada' || c.estado === 'done').length;
+      document.getElementById("c-cancel").innerText = consultas.filter(c => c.estado === 'cancelada').length;
+
+      const tbody = document.getElementById("tabela-consultas-global");
+      tbody.innerHTML = "";
+      if (consultas.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px;'>Nenhuma consulta registada no sistema.</td></tr>";
+        return;
+      }
+      consultas.forEach(c => {
+        tbody.innerHTML += `<tr>
+              <td>${c.paciente || c.nome}</td>
+              <td>${c.medico}</td>
+              <td>${c.especialidade || 'Geral'}</td>
+              <td>${c.data} às ${c.hora}</td>
+              <td><span class="status ${c.estado}">${c.estado}</span></td>
+          </tr>`;
+      });
+    }
+    window.onload = render;
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrador - Gerir Especialidades</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { display: flex; background: #f5f7fb; height: 100vh; }
+    .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
+    .logo{ display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
+    .logo span { font-size: 32px; font-weight: bold; }
+    .logo img { width: 50px; height: 50px; object-fit: contain; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; }
+    .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; }
+    .form-group { display: flex; gap: 10px; margin-bottom: 20px; }
+    input { padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; flex: 1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; text-align: left; }
+    button { padding: 9px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; }
+    .confirm { background: #28a745; color: #fff; }
+    .delete { background: #dc3545; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+        <img src="../assets/img/logo.png" alt="Logo">
+        <span>HAN</span>
+    </div>
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Dashboard</a>
+    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="especialidades.html" class="active"><i class="fa fa-tags"></i> Especialidades</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h2>Gestão de Especialidades Clínicas</h2>
+      <div><span>Administrador</span></div>
+    </div>
+    <div class="header-line"></div>
+
+    <div class="table-card">
+      <h3>Adicionar Nova Especialidade</h3>
+      <form id="form-esp" class="form-group" onsubmit="addEsp(event)">
+        <input type="text" id="esp-nome" placeholder="Nome Clínico da Especialidade" required>
+        <button type="submit" class="confirm">Criar Especialidade</button>
+      </form>
+    </div>
+
+    <div class="table-card">
+      <h3>Especialidades Ativas</h3>
+      <table>
+        <thead>
+          <tr><th>Nome da Especialidade</th><th>Ações</th></tr>
+        </thead>
+        <tbody id="tabela-esp"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="javascript/storage.js"></script>
+  <script>
+    function render() {
+      const lista = obterEspecialidadesLista();
+      const tbody = document.getElementById("tabela-esp");
+      tbody.innerHTML = "";
+      lista.forEach((e, index) => {
+        tbody.innerHTML += `<tr>
+              <td><b>${e}</b></td>
+              <td><button class="delete" onclick="remover(${index})">Remover</button></td>
+          </tr>`;
+      });
+    }
+    function addEsp(e) {
+      e.preventDefault();
+      const nome = document.getElementById("esp-nome").value.trim();
+      const lista = obterEspecialidadesLista();
+      if (!lista.includes(nome)) {
+        lista.push(nome);
+        salvarEspecialidadesLista(lista);
+        registrarLogAcesso("Administrador", `Criou especialidade: ${nome}`);
+      }
+      document.getElementById("esp-nome").value = "";
+      render();
+    }
+    function remover(index) {
+      if (!confirm("Remover esta especialidade clínica?")) return;
+      const lista = obterEspecialidadesLista();
+      lista.splice(index, 1);
+      salvarEspecialidadesLista(lista);
+      render();
+    }
+    window.onload = render;
+  </script>
+</body>
+</html>

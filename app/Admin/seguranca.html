@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Administrador - Segurança & Logs</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { display: flex; background: #f5f7fb; height: 100vh; }
+    .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
+    .logo{ display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
+    .logo span { font-size: 32px; font-weight: bold; }
+    .logo img { width: 50px; height: 50px; object-fit: contain; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; }
+    .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; text-align: left; }
+    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; background: #007bff; color: #fff; margin-bottom: 20px; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+        <img src="../assets/img/logo.png" alt="Logo">
+        <span>HAN</span>
+    </div>
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
+    <a href="seguranca.html" class="active"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h2>Segurança, Auditoria e Backups</h2>
+      <div><span>Administrador</span></div>
+    </div>
+    <div class="header-line"></div>
+
+    <button onclick="fazerBackup()"><i class="fa fa-database"></i> Realizar Backup Geral (.json)</button>
+
+    <div class="table-card">
+      <h3>Registos de Acesso e Auditoria de Segurança (Logs)</h3>
+      <table>
+        <thead>
+          <tr><th>Data/Hora</th><th>Operador</th><th>Operação Executada</th></tr>
+        </thead>
+        <tbody id="tabela-logs"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="javascript/storage.js"></script>
+  <script>
+    function render() {
+      const logs = obterLogsAcesso();
+      const tbody = document.getElementById("tabela-logs");
+      tbody.innerHTML = "";
+      if(logs.length === 0){
+        tbody.innerHTML = "<tr><td colspan='3' style='text-align:center; padding:15px; color:#888;'>Nenhum registo de segurança encontrado.</td></tr>";
+        return;
+      }
+      logs.slice(0, 20).forEach(l => {
+        tbody.innerHTML += `<tr>
+              <td style="color:#666; font-size:13px; font-family:monospace;">${l.data}</td>
+              <td><b>${l.operador}</b></td>
+              <td>${l.acao}</td>
+          </tr>`;
+      });
+    }
+    function fazerBackup() {
+      const dados = {
+        utilizadores: obterUsuariosGerais(),
+        medicos: obterMedicosInfo(),
+        especialidades: obterEspecialidadesLista(),
+        consultas: obterConsultas()
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
+      const dl = document.createElement('a');
+      dl.setAttribute("href", dataStr);
+      dl.setAttribute("download", `backup_han_${Date.now()}.json`);
+      dl.click();
+      registrarLogAcesso("Administrador", "Efetuou backup integral de dados.");
+      render();
+    }
+    window.onload = render;
+  </script>
+</body>
+</html>
