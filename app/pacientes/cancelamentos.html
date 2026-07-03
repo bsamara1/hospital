@@ -50,7 +50,7 @@ body{
   gap:10px;
   border-radius:8px;
   transition:0.2s;
-  font-size:18px;
+  font-size:16px;
 }
 .sidebar a:hover,
 .sidebar a.active{
@@ -79,8 +79,56 @@ body{
   margin-bottom:25px;
 }
 .header h2{
-  font-size:24px;
+  font-size:20px;
   color:#333;
+}
+.header-line{
+  margin-left:-25px;
+  margin-right:-25px;
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin-bottom:25px;
+}
+.user-box{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  color:#555;
+}
+.user-profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:16px;
+  box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
+  background:#fff;
+}
+.user-profile .fa-user-circle{
+  font-size:24px;
+  color:#4a4a4a;
+}
+.user-info{
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
+}
+.user-info #usuarioNome{
+  font-weight:700;
+  color:#222;
+}
+.user-info #usuarioEmail{
+  font-size:13px;
+  color:#6f7287;
+}
+.user-box i{
+  font-size:18px;
+  color:#4a4a4a;
+  cursor:pointer;
+}
+.user-box .fa-chevron-down{
+  font-size:12px;
+  color:#6f7287;
 }
 .table-card{
   background:#fff;
@@ -133,11 +181,9 @@ button:disabled{
         <img src="../assets/img/logo.png" alt="Logo"> HAN
     </div>
     <a href="index.html">🏠 Início</a>
+    <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
     <a href="consultas.html">📋 Minhas Consultas</a>
-    <a href="reagendamentos.html">🔄 Reagendamentos</a>
-    <a href="cancelamentos.html" class="active">❌ Cancelar</a>
-    <a href="consultas.html#historico">📜 Histórico</a>
-    <a href="medicos.html">👨‍⚕️ Médicos</a>
+    <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
     <a href="notificacoes.html">🔔 Notificações</a>
     <a href="perfil.html">👤 Meu Perfil</a>
     <div class="bottom">
@@ -149,6 +195,22 @@ button:disabled{
 <div class="main">
   <div class="header">
     <h2>Cancelar Consulta</h2>
+    <div class="user-box">
+      <i class="fa fa-bell"></i>
+      <div class="user-profile">
+        <i class="fa fa-user-circle"></i>
+        <div class="user-info">
+          <span id="usuarioNome">Pacientes</span>
+          <span id="usuarioEmail"></span>
+        </div>
+      </div>
+      <i class="fa fa-chevron-down"></i>
+    </div>
+  </div>
+
+  <div class="header-line"></div>
+
+  <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
     <a href="consultas.html" style="background:#054a93;color:#fff;padding:10px 16px;border-radius:8px;text-decoration:none;">Voltar</a>
   </div>
 

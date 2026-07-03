@@ -7,71 +7,194 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
-body{display:flex;background:#f5f7fb;min-height:100vh;}
+body{display:flex;background:#f8fafc;min-height:100vh;}
 .sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
 .sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
 .sidebar .logo img{width:50px;height:50px;object-fit:contain;}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;transition:0.3s;font-size:18px;}
+.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;transition:0.3s;font-size:16px;}
 .sidebar a:hover,.sidebar a.active{background:#163a63;}
 .sidebar .bottom{margin-top:auto;}
 .logout{color:#ff6b6b;}
 .divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
-.main{flex:1;padding:25px;overflow:auto;}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
-.header h2{font-size:24px;color:#333;}
-.header-line{height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
-.table-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);max-width:700px;}
-.table-card h3{margin-bottom:15px;}
-.form-row{display:grid;gap:15px;}
-.form-row label{display:block;color:#555;margin-bottom:6px;}
-.form-row input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;}
-.form-row button{padding:12px 16px;border:none;border-radius:8px;background:#28a745;color:#fff;cursor:pointer;}
-.form-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);}
-.foto-preview{width:120px;height:120px;object-fit:cover;border-radius:50%;border:2px solid #ddd;margin-bottom:15px;}
+
+/* Main Layout */
+.main{flex:1;padding:30px 40px;overflow:auto;}
+.profile-title-container {margin-bottom: 25px;}
+.profile-title-container h2 {font-size: 24px; color: #0b2a4a; font-weight: 700; margin-bottom: 4px;}
+.profile-title-container p {font-size: 14px; color: #64748b;}
+
+/* Grid de duas colunas */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    max-width: 1200px;
+}
+
+/* Cartões */
+.section-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+}
+
+.section-card h3 {
+    font-size: 18px;
+    color: #0b2a4a;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* Campos de Formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: #475569;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #1e40af;
+}
+
+/* Input de Senha com Ícone */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input-wrapper input {
+    padding-right: 40px;
+}
+
+.password-input-wrapper i {
+    position: absolute;
+    right: 15px;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Botões do Formato do Print */
+.btn-primary-blue {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #1e40af;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary-blue:hover {
+    background: #1e3a8a;
+}
 </style>
 </head>
 <body>
+
 <div class="sidebar">
   <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
   <a href="index.html">🏠 Início</a>
+  <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
   <a href="consultas.html">📋 Minhas Consultas</a>
-  <a href="reagendamentos.html">🔄 Reagendar</a>
-  <a href="cancelamentos.html">❌ Cancelar</a>
-  <a href="consultas.html#historico">📜 Histórico</a>
-  <a href="medicos.html">👨‍⚕️ Médicos</a>
+  <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
   <a href="notificacoes.html">🔔 Notificações</a>
   <a class="active" href="perfil.html">👤 Meu Perfil</a>
   <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html">🚪 Terminar sessão</a></div>
 </div>
+
 <div class="main">
-  <div class="header"><h2>Meu Perfil</h2></div>
-  <div class="header-line"></div>
-  <div class="table-card">
-    <h3>Dados pessoais</h3>
-    <div class="form-row">
-      <div class="form-card">
-        <img id="perfilFoto" class="foto-preview" src="../assets/img/profile.png" alt="Foto de Perfil">
-        <div><label for="nomePerfil">Nome Completo</label><input type="text" id="nomePerfil"></div>
-        <div><label for="biiPerfil">BI</label><input type="text" id="biiPerfil"></div>
-        <div><label for="dataNascimentoPerfil">Data de Nascimento</label><input type="date" id="dataNascimentoPerfil"></div>
-        <div><label for="sexoPerfil">Sexo</label><select id="sexoPerfil"><option value="">Selecionar</option><option value="Feminino">Feminino</option><option value="Masculino">Masculino</option><option value="Outro">Outro</option></select></div>
-        <div><label for="telefonePerfil">Telefone</label><input type="text" id="telefonePerfil"></div>
-        <div><label for="emailPerfil">E-mail</label><input type="email" id="emailPerfil"></div>
-        <div><label for="moradaPerfil">Morada</label><input type="text" id="moradaPerfil"></div>
+  <div class="profile-title-container">
+    <h2>Meu Perfil</h2>
+    <p>Gerir informações da sua conta.</p>
+  </div>
+
+  <div class="profile-grid">
+    
+    <div class="section-card">
+      <h3>Informações Pessoais</h3>
+      
+      <div class="form-group">
+        <label for="nomePerfil">Nome Completo</label>
+        <input type="text" id="nomePerfil" value="Administrador">
       </div>
-      <div class="form-card">
-        <h3>Dados da conta</h3>
-        <p><strong>Nome de utilizador:</strong> <span id="usernamePerfil">-</span></p>
-        <p><strong>Data de registo:</strong> <span id="dataRegistoPerfil">Não disponível</span></p>
-        <p><strong>Último acesso:</strong> <span id="ultimoAcessoPerfil">Não disponível</span></p>
-        <p><strong>Tipo de conta:</strong> <span id="tipoPerfil">-</span></p>
+      
+      <div class="form-group">
+        <label for="emailPerfil">Email</label>
+        <input type="email" id="emailPerfil" value="admin@sibes.cv">
       </div>
+      
+      <div class="form-group">
+        <label for="tipoPerfil">Tipo de Utilizador</label>
+        <input type="text" id="tipoPerfil" value="Administrador" readonly style="background-color: #f8fafc;">
+      </div>
+      
+      <div class="form-group">
+        <label for="telefonePerfil">Telefone</label>
+        <input type="text" id="telefonePerfil" value="+238 999 99 99">
+      </div>
+      
+      <button class="btn-primary-blue" onclick="salvarPerfil()">Editar Informações</button>
     </div>
-    <div style="margin-top:20px; display:flex; justify-content:flex-end;">
-      <button onclick="salvarPerfil()">Gravar Alterações</button>
+
+    <div class="section-card">
+      <h3>Alterar Palavra-passe</h3>
+      
+      <div class="form-group">
+        <label for="atualPassword">Palavra-passe Atual</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="atualPassword" placeholder="Digite a palavra-passe atual">
+          <i class="fa-solid fa-eye-slash"></i>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="novaPassword">Nova Palavra-passe</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="novaPassword" placeholder="Digite a nova palavra-passe">
+          <i class="fa-solid fa-eye-slash"></i>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmarPassword">Confirmar Nova Palavra-passe</label>
+        <div class="password-input-wrapper">
+          <input type="password" id="confirmarPassword" placeholder="Confirme a nova palavra-passe">
+          <i class="fa-solid fa-eye-slash"></i>
+        </div>
+      </div>
+      
+      <button class="btn-primary-blue">Alterar Palavra-passe</button>
     </div>
+
   </div>
 </div>
+
 <script src="../js/consultas.js"></script>
 </body>
 </html>

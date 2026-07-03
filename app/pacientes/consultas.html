@@ -58,7 +58,7 @@ display:flex;
 align-items:center;
 gap:10px;
 border-radius:8px;
-font-size:18px;
+font-size:16px;
 transition:0.3s;
 }
 
@@ -92,6 +92,7 @@ overflow:auto;
 display:flex;
 justify-content:space-between;
 align-items:center;
+margin-bottom:25px;
 }
 
 .header h2{
@@ -117,9 +118,60 @@ opacity:0.8;
 }
 
 .header-line{
+margin-left:-25px;
+margin-right:-25px;
 height:1px;
 background:rgba(0,0,0,0.08);
-margin:15px 0 25px;
+margin-bottom:25px;
+}
+
+.user-box{
+display:flex;
+align-items:center;
+gap:16px;
+color:#555;
+}
+
+.user-profile{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 14px;
+border-radius:16px;
+box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
+background:#fff;
+}
+
+.user-profile .fa-user-circle{
+font-size:24px;
+color:#4a4a4a;
+}
+
+.user-info{
+display:flex;
+flex-direction:column;
+line-height:1.1;
+}
+
+.user-info #usuarioNome{
+font-weight:700;
+color:#222;
+}
+
+.user-info #usuarioEmail{
+font-size:13px;
+color:#6f7287;
+}
+
+.user-box i{
+font-size:18px;
+color:#4a4a4a;
+cursor:pointer;
+}
+
+.user-box .fa-chevron-down{
+font-size:12px;
+color:#6f7287;
 }
 
 /* CARDS */
@@ -235,11 +287,9 @@ border-color:#007bff;
         <img src="../assets/img/logo.png" alt="Logo"> HAN
     </div>
     <a href="index.html">🏠 Início</a>
+    <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
     <a href="consultas.html">📋 Minhas Consultas</a>
-    <a href="reagendamentos.html">🔄 Reagendar</a>
-    <a href="cancelamentos.html">❌ Cancelar</a>
-    <a href="consultas.html#historico">📜 Histórico</a>
-    <a href="medicos.html">👨‍⚕️ Médicos</a>
+    <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
     <a href="notificacoes.html">🔔 Notificações</a>
     <a href="perfil.html">👤 Meu Perfil</a>
     <div class="bottom">
@@ -256,9 +306,17 @@ border-color:#007bff;
 
       <h2>Minhas Consultas</h2>
 
-      <button class="add-btn" onclick="marcarConsulta()">
-          <i class="fa fa-plus"></i> Marcar Consulta
-      </button>
+      <div class="user-box">
+          <i class="fa fa-bell"></i>
+          <div class="user-profile">
+              <i class="fa fa-user-circle"></i>
+              <div class="user-info">
+                  <span id="usuarioNome">Pacientes</span>
+                  <span id="usuarioEmail"></span>
+              </div>
+          </div>
+          <i class="fa fa-chevron-down"></i>
+      </div>
 
   </div>
 

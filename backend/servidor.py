@@ -80,6 +80,51 @@ def normalizar_tipo(tipo):
     return "utilizador"
 
 
+def utilizador_para_dict(campos):
+    campos = [c.strip() for c in campos]
+    if len(campos) >= 7:
+        return {
+            "nome": campos[0],
+            "bii": campos[1],
+            "dataNascimento": campos[2],
+            "sexo": campos[3],
+            "telefone": campos[4],
+            "email": campos[5].lower(),
+            "senha": campos[6],
+            "tipo": normalizar_tipo(campos[7] if len(campos) > 7 else "Paciente"),
+            "formato": "completo"
+        }
+    if len(campos) >= 4:
+        return {
+            "nome": campos[0],
+            "bii": "",
+            "dataNascimento": "",
+            "sexo": "",
+            "telefone": campos[2],
+            "email": campos[1].lower(),
+            "senha": campos[3],
+            "tipo": normalizar_tipo(campos[4] if len(campos) > 4 else "Paciente"),
+            "formato": "simples"
+        }
+    return None
+
+
+def ler_utilizadores_com_linhas():
+    utilizadores = []
+    with open(ARQUIVO, "r", encoding="utf-8") as f:
+        for linha in f:
+            linha_limpa = linha.rstrip("\n")
+            if not linha_limpa.strip():
+                continue
+            campos = linha_limpa.split(";")
+            utilizador = utilizador_para_dict(campos)
+            if utilizador:
+                utilizador["linha"] = linha_limpa
+                utilizador["campos"] = campos
+                utilizadores.append(utilizador)
+    return utilizadores
+
+
 @app.route("/medicos", methods=["GET"])
 def api_medicos():
     return jsonify(carregar_json(MEDICOS_FILE))
@@ -92,11 +137,9 @@ def api_consultas():
 
 def buscar_utilizador_por_email(email):
     try:
-        with open(ARQUIVO, "r", encoding="utf-8") as f:
-            for linha in f:
-                campos = [c.strip() for c in linha.strip().split(";") if c.strip() != ""]
-                if len(campos) >= 2 and campos[1].lower() == email.lower():
-                    return campos
+        for utilizador in ler_utilizadores_com_linhas():
+            if utilizador["email"] == email.lower():
+                return utilizador
     except Exception:
         pass
     return None
