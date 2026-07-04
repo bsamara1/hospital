@@ -57,7 +57,7 @@
     </div>
   </div>
 
-  <script src="javascript/storage.js"></script>
+  <script src="storage.js"></script>
   <script>
     function render() {
       const logs = obterLogsAcesso();
@@ -75,12 +75,12 @@
           </tr>`;
       });
     }
-    function fazerBackup() {
+    async function fazerBackup() {
       const dados = {
-        utilizadores: obterUsuariosGerais(),
-        medicos: obterMedicosInfo(),
+        utilizadores: await obterUsuariosGerais(),
+        medicos: await obterMedicosInfo(),
         especialidades: obterEspecialidadesLista(),
-        consultas: obterConsultas()
+        consultas: await obterConsultas()
       };
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dados));
       const dl = document.createElement('a');

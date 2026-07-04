@@ -401,34 +401,14 @@
         </div>
     </div>
 
-    <script src="javascript/storage.js"></script>
+    <script src="storage.js"></script>
 
     <script>
         let filtroAtivo = "todos";
 
-        // Mapeamento dinâmico e seguro para proteger contra diferenças de nomenclatura entre funções
-        function obterListaSegura() {
-            if (typeof obterUsuariosGerais === "function") return obterUsuariosGerais();
-            if (typeof obterUtilizadores === "function") return obterUtilizadores();
-            // Fallback caso a chave local do storage mude
-            return JSON.parse(localStorage.getItem("han_db_utilizadores")) || [];
-        }
-
-        function salvarListaSegura(lista) {
-            if (typeof salvarUsuariosGerais === "function") {
-                salvarUsuariosGerais(lista);
-                return;
-            }
-            if (typeof guardarUtilizadores === "function") {
-                guardarUtilizadores(lista);
-                return;
-            }
-            localStorage.setItem("han_db_utilizadores", JSON.stringify(lista));
-        }
-
         // Função para carregar e renderizar os dados respeitando o filtro ativo
-        function render() {
-            const lista = obterListaSegura();
+        async function render() {
+            const lista = await obterUsuariosGerais();
 
             // 1. Atualizar contadores nos cards superiores
             document.getElementById("totalGeral").innerText = lista.length;
@@ -452,6 +432,7 @@
             }
 
             listaFiltrada.forEach(u => {
+                const emailSeguro = encodeURIComponent(u.email);
                 tbody.innerHTML += `
                     <tr>
                         <td>${u.id}</td>
@@ -460,10 +441,10 @@
                         <td><span class="badge perfil-${u.perfil}">${u.perfil}</span></td>
                         <td><span class="badge status-${u.estado || 'ativo'}">${u.estado || 'ativo'}</span></td>
                         <td>
-                            <button class="btn-status" onclick="alternarEstadoLocal(${u.id})">
+                            <button class="btn-status" onclick="alternarEstado('${emailSeguro}')">
                                 <i class="fa fa-sync-alt"></i> Alternar Estado
                             </button>
-                            <button class="btn-delete" onclick="removerUsuarioLocal(${u.id})">
+                            <button class="btn-delete" onclick="removerUtilizador('${emailSeguro}')">
                                 <i class="fa fa-trash"></i> Remover
                             </button>
                         </td>
@@ -498,58 +479,42 @@
             render();
         }
 
-        // Função para submeter o Formulário e Adicionar Utilizadores de forma ilimitada
-        function adicionarUtilizadorForm(event) {
+        // Função para submeter o Formulário e Adicionar Utilizadores
+        async function adicionarUtilizadorForm(event) {
             event.preventDefault();
 
             const nome = document.getElementById("user-nome").value.trim();
             const email = document.getElementById("user-email").value.trim();
             const perfil = document.getElementById("user-perfil").value;
 
-            let lista = obterListaSegura();
-
-            // Cria um novo utilizador de forma limpa e com ID único incremental
-            const novoUtilizador = {
-                id: lista.length > 0 ? Math.max(...lista.map(u => u.id)) + 1 : 1,
-                nome: nome,
-                email: email,
-                perfil: perfil,
-                estado: "ativo"
-            };
-
-            lista.push(novoUtilizador);
-            salvarListaSegura(lista);
-
-            if (typeof registrarLogAcesso === "function") {
+            try {
+                const resultado = await criarUtilizadorApi(nome, email, perfil);
                 registrarLogAcesso("Administrador", `Adicionou o utilizador: ${nome} (${perfil})`);
+                document.getElementById("form-user").reset();
+                await render();
+                alert(`Utilizador criado. Senha provisória gerada: ${resultado.senhaProvisoria}\n(Deve ser trocada pelo próprio utilizador em "Esqueceu a senha").`);
+            } catch (erro) {
+                alert(erro.message);
             }
+        }
 
-            // Limpa o formulário de forma correta
-            document.getElementById("form-user").reset();
-
-            // Força a tabela a renderizar o novo elemento imediatamente na lista!
+        async function alternarEstado(emailSeguro) {
+            const email = decodeURIComponent(emailSeguro);
+            await alternarEstadoUtilizadorApi(email);
+            registrarLogAcesso("Administrador", `Alternou o estado do utilizador: ${email}`);
             render();
         }
 
-        // Ações locais seguras
-        function alternarEstadoLocal(id) {
-            let lista = obterListaSegura();
-            lista = lista.map(u => {
-                if (u.id === id) {
-                    u.estado = (u.estado === "desativado") ? "ativo" : "desativado";
-                }
-                return u;
-            });
-            salvarListaSegura(lista);
-            render();
-        }
-
-        function removerUsuarioLocal(id) {
+        async function removerUtilizador(emailSeguro) {
             if (!confirm("Tem a certeza que deseja remover este utilizador do sistema?")) return;
-            let lista = obterListaSegura();
-            lista = lista.filter(u => u.id !== id);
-            salvarListaSegura(lista);
-            render();
+            const email = decodeURIComponent(emailSeguro);
+            try {
+                await removerUtilizadorApi(email);
+                registrarLogAcesso("Administrador", `Removeu o utilizador: ${email}`);
+                render();
+            } catch (erro) {
+                alert(erro.message);
+            }
         }
 
         // Executa a montagem inicial do ecrã mal a página termine de carregar
