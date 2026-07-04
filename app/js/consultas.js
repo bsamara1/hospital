@@ -1,419 +1,262 @@
-// =========================================================================
-// VARIÁVEIS GLOBAIS E ESTADO DA APLICAÇÃO
-// =========================================================================
+const API_URL = "http://127.0.0.1:5000";
+
+const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
+
 let consultas = [];
-let pacientes = [];
 let medicos = [];
-let consultaEmEdicao = null;
+let abaAtiva = "agendadas";
+
+const ESPECIALIDADES_LABEL = {
+    "clinica-geral": "Clínica Geral",
+    "cardiologia": "Cardiologia",
+    "ortopedia": "Ortopedia",
+    "pediatria": "Pediatria",
+    "dermatologia": "Dermatologia"
+};
 
 // =========================================================================
-// FUNÇÕES DE CARREGAMENTO DE DADOS (AJAX / FETCH)
+// ACESSO AOS DADOS (API REAL DO BACKEND)
 // =========================================================================
 
-// Carrega as consultas priorizando o estado local modificado
 async function loadConsultas() {
-    if (localStorage.getItem("consultas_local")) {
-        return JSON.parse(localStorage.getItem("consultas_local"));
-    }
-
     try {
-        const res = await fetch("/consultas.txt"); 
-        const dados = await res.json();
-        localStorage.setItem("consultas_local", JSON.stringify(dados));
-        return dados;
-    } catch (erro) {
-        console.warn("Aviso: Erro ao ler consultas.txt, a usar cópia local.", erro);
-        return [];
-    }
-}
-
-// Lê o formato JSON de medicos.txt a partir da raíz
-async function loadMedicos() {
-    try {
-        console.log("A carregar medicos.txt...");
-        const res = await fetch("/medicos.txt");
-
-        if (!res.ok) {
-            throw new Error(`Erro ${res.status}: ${res.statusText}`);
-        }
-
+        const res = await fetch(`${API_URL}/consultas`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
     } catch (erro) {
-        console.error("Erro ao carregar medicos.txt:", erro);
+        console.warn("Não foi possível carregar consultas do servidor.", erro);
         return [];
     }
 }
 
-// Carrega os Pacientes a partir de utilizadores.txt na raíz
-async function loadPacientes() {
-    let listaPacientes = [];
+async function loadMedicos() {
     try {
-        const res = await fetch("/utilizadores.txt");
-        const texto = await res.text();
-        const linhas = texto.split("\n");
-        
-        linhas.forEach(linha => {
-            if (!linha.trim()) return;
-            const partes_linha = lineToArray(linha);
-            if (partes_linha.length >= 4) {
-                const nivel = partes_linha[partes_linha.length - 1].trim().toLowerCase();
-                if (nivel === "paciente" || nivel === "utilizador" || nivel.includes("paciente")) {
-                    listaPacientes.push({ nome: partes_linha[0].trim(), email: partes_linha[1].trim() });
-                }
-            }
-        });
-    } catch (e) {
-        console.warn("Erro ao ler utilizadores.txt", e);
-    }
-    return listaPacientes;
-}
-
-function lineToArray(linha) {
-    return linha.split(";");
-}
-
-function salvarDadosLocalmente() {
-    localStorage.setItem("consultas_local", JSON.stringify(consultas));
-}
-
-// =========================================================================
-// INICIALIZADORES DE PÁGINA (ROTEAMENTO)
-// =========================================================================
-
-async function initConsultas() {
-    consultas = await loadConsultas();
-    medicos = await loadMedicos();
-    pacientes = await loadPacientes();
-
-    const pesquisaInput = document.getElementById("pesquisaConsulta");
-    const filtroSelect = document.getElementById("filtroEstado");
-
-    if (pesquisaInput) pesquisaInput.addEventListener("input", renderTabela);
-    if (filtroSelect) filtroSelect.addEventListener("change", renderTabela);
-    
-    const selectEspecialidade = document.getElementById("especialidade");
-    if (selectEspecialidade) {
-        selectEspecialidade.addEventListener("change", carregarListaMedicos);
-    }
-
-    preencherSelectPacientes();
-    preencherSelectEspecialidades();
-    atualizarCardsContadores();
-    renderTabela();
-
-    // Se houver um utilizador logado na sessão, atualiza o painel personalizado
-    const usuarioLogado = localStorage.getItem("usuario_logado_nome");
-    if (usuarioLogado) {
-        atualizarDashboardPaciente(usuarioLogado);
-    }
-}
-
-async function initPacientesAtivos() {
-    consultas = await loadConsultas();
-    renderTabelaPacientes();
-}
-
-// =========================================================================
-// COMPONENTES DE INTERFACE (SELECTS / DROPDOWNS)
-// =========================================================================
-
-function preencherSelectPacientes() {
-    const sel = document.getElementById("consultaPaciente");
-    if (!sel) return;
-    sel.innerHTML = '<option value="" disabled selected>Selecionar Paciente</option>' +
-        pacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
-}
-
-function preencherSelectEspecialidades() {
-    const sel = document.getElementById("especialidade");
-    if (!sel) return;
-    
-    const esp = [...new Set(medicos.map(m => m.especialidade).filter(Boolean))];
-    sel.innerHTML = '<option value="">Selecionar Especialidade</option>' +
-        esp.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
-}
-
-function carregarListaMedicos() {
-    const selEsp = document.getElementById("especialidade");
-    const selMed = document.getElementById("medico");
-    if (!selEsp || !selMed) return;
-
-    const espSelecionada = selEsp.value;
-    const filtrados = medicos.filter(m => m.especialidade === espSelecionada && m.status === "ativo");
-    
-    if (!espSelecionada || filtrados.length === 0) {
-        selMed.innerHTML = '<option value="">Selecionar Médico</option>';
-        return;
-    }
-
-    selMed.innerHTML = '<option value="">Selecionar Médico</option>' +
-        filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
-}
-
-function carregarHorarios() {
-    console.log("Médico ou Data alterados.");
-}
-
-// =========================================================================
-// VALIDAÇÕES AUTOMÁTICAS E REGRAS DA AGENDA
-// =========================================================================
-
-function validarAgendamento(paciente, medico, data, hora, idIgnorar = null) {
-    // 1. Verifica choque de horário para o Médico
-    const choqueMedico = consultas.find(c => 
-        c.id !== idIgnorar &&
-        c.medico === medico && 
-        c.data === data && 
-        c.hora === hora && 
-        c.estado !== "cancelada"
-    );
-
-    if (choqueMedico) {
-        alert(`Erro: O Dr(a). ${medico} já possui uma consulta marcada para o dia ${data} às ${hora}.`);
-        return false;
-    }
-
-    // 2. Verifica choque de horário para o próprio Paciente (Evita marcação duplicada)
-    const choquePaciente = consultas.find(c =>
-        c.id !== idIgnorar &&
-        c.paciente.toLowerCase() === paciente.toLowerCase() &&
-        c.data === data &&
-        c.hora === hora &&
-        c.estado !== "cancelada"
-    );
-
-    if (choquePaciente) {
-        alert(`Erro: O paciente ${paciente} já tem uma consulta agendada para o dia ${data} às ${hora}.`);
-        return false;
-    }
-
-    return true;
-}
-
-// =========================================================================
-// OPERAÇÕES DE MANUTENÇÃO (GUARDAR, CONFIRMAR, CANCELAR)
-// =========================================================================
-
-function guardarConsulta() {
-    const pacienteSel = document.getElementById("consultaPaciente");
-    const paciente = pacienteSel ? pacienteSel.value : "Paciente Geral";
-    
-    const BlacklistCheckboxes = document.querySelectorAll('input[name="sintoma"]:checked');
-    let sintomasSelecionados = [];
-    let prioridadeCalculada = "baixa";
-
-    BlacklistCheckboxes.forEach(cb => {
-        sintomasSelecionados.push(cb.value);
-        if (cb.value === "dor-peito" || cb.value === "falta-ar") {
-            prioridadeCalculada = "alta";
-        } else if (cb.value === "febre" && prioridadeCalculada !== "alta") {
-            prioridadeCalculada = "media";
-        }
-    });
-    
-    const投especialidade = document.getElementById("especialidade").value;
-    const medico = document.getElementById("medico").value;
-    const data = document.getElementById("data").value;
-    const hora = document.getElementById("hora").value;
-
-    if (!投especialidade || !medico || !data || !hora) {
-        alert("Por favor, preencha todos os campos obrigatórios do formulário.");
-        return;
-    }
-
-    if (!validarAgendamento(paciente, medico, data, hora, consultaEmEdicao)) {
-        return; 
-    }
-
-    if (consultaEmEdicao) {
-        const idx = consultas.findIndex(c => c.id === consultaEmEdicao);
-        if (idx !== -1) {
-            consultas[idx].especialidade = 投especialidade;
-            consultas[idx].medico = medico;
-            consultas[idx].data = data;
-            consultas[idx].hora = hora;
-            consultas[idx].estado = "confirmada"; 
-        }
-        consultaEmEdicao = null;
-    } else {
-        const nova = {
-            id: Date.now(),
-            paciente: paciente || "Anónimo",
-            medico,
-            especialidade: 投especialidade,
-            data,
-            hora,
-            estado: "confirmada",
-            prioridade: prioridadeCalculada,
-            sintomas: sintomasSelecionados.length > 0 ? sintomasSelecionados : ["rotina"]
-        };
-        consultas.push(nova);
-    }
-
-    salvarDadosLocalmente();
-    fecharModal();
-    atualizarCardsContadores();
-    renderTabela();
-    
-    const usuarioLogado = localStorage.getItem("usuario_logado_nome");
-    if (usuarioLogado) atualizarDashboardPaciente(usuarioLogado);
-
-    alert("Consulta registada com sucesso!");
-}
-
-function confirmarConsulta(id) {
-    const idx = consultas.findIndex(c => c.id === id);
-    if (idx !== -1) {
-        consultas[idx].estado = "confirmada";
-        salvarDadosLocalmente();
-        atualizarCardsContadores();
-        renderTabela();
-        
-        const usuarioLogado = localStorage.getItem("usuario_logado_nome");
-        if (usuarioLogado) atualizarDashboardPaciente(usuarioLogado);
-    }
-}
-
-function cancelarConsulta(id) {
-    if (!confirm("Tem a certeza que deseja cancelar esta consulta?")) return;
-    const idx = consultas.findIndex(c => c.id === id);
-    if (idx !== -1) {
-        consultas[idx].estado = "cancelada";
-        salvarDadosLocalmente();
-        atualizarCardsContadores();
-        renderTabela();
-        
-        const usuarioLogado = localStorage.getItem("usuario_logado_nome");
-        if (usuarioLogado) atualizarDashboardPaciente(usuarioLogado);
+        const res = await fetch(`${API_URL}/medicos`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } catch (erro) {
+        console.warn("Não foi possível carregar médicos do servidor.", erro);
+        return [];
     }
 }
 
 // =========================================================================
-// RENDERIZAÇÃO DE INTERFACE
+// UTILITÁRIOS
 // =========================================================================
 
-function atualizarCardsContadores() {
-    if (document.getElementById("totalMarcadas")) {
-        document.getElementById("totalMarcadas").innerText = consultas.filter(c => c.estado === "confirmada").length;
-    }
-    if (document.getElementById("totalRealizadas")) {
-        document.getElementById("totalRealizadas").innerText = consultas.filter(c => c.estado === "realizada").length;
-    }
-    if (document.getElementById("totalCanceladas")) {
-        document.getElementById("totalCanceladas").innerText = consultas.filter(c => c.estado === "cancelada").length;
-    }
+function nomePaciente() {
+    return utilizadorLogado?.nome || "";
 }
 
-function renderTabela() {
-    const tbody = document.getElementById("tabelaConsultas") || document.getElementById("tabela-consultas");
-    if (!tbody) return;
-
-    const termo = document.getElementById("pesquisaConsulta")?.value.toLowerCase() || "";
-    const filtroEstado = document.getElementById("filtroEstado")?.value || "";
-
-    const filtradas = consultas.filter(c => {
-        const bateTexto = (c.paciente || "").toLowerCase().includes(termo) || 
-                          (c.medico || "").toLowerCase().includes(termo) || 
-                          (c.especialidade || "").toLowerCase().includes(termo);
-        const bateEstado = !filtroEstado || c.estado === filtroEstado;
-        return bateTexto && bateEstado;
-    });
-
-    if (filtradas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:15px; color:#888;">Nenhuma marcação encontrada.</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = filtradas.map(c => {
-        let acoesHtml = "";
-        if (c.estado === "pendente") {
-            acoesHtml = `<button onclick="confirmarConsulta(${c.id})" style="background:#28a745; color:#fff; padding:2px 6px; border:none; border-radius:4px; cursor:pointer;">Confirmar</button>`;
-        } else if (c.estado === "confirmada") {
-            acoesHtml = `<button onclick="cancelarConsulta(${c.id})" style="background:#dc3545; color:#fff; padding:2px 6px; border:none; border-radius:4px; cursor:pointer;">Cancelar</button>`;
-        } else {
-            acoesHtml = `<small style="color:#aaa;">Sem ações</small>`;
-        }
-
-        return `
-            <tr>
-                <td><strong>${escapeHtml(c.paciente)}</strong></td>
-                <td>${escapeHtml(c.medico)}</td>
-                <td>${escapeHtml(c.especialidade)}</td>
-                <td>${escapeHtml(c.data)}</td>
-                <td>${escapeHtml(c.hora)}</td>
-                <td><span class="badge ${c.estado}">${c.estado.toUpperCase()}</span></td>
-                <td>${acoesHtml}</td>
-            </tr>
-        `;
-    }).join("");
-}
-
-function abrirModalEdicao(id) {
-    const c = consultas.find(item => item.id === id);
-    if (!c) return;
-
-    consultaEmEdicao = c.id;
-    abrirModal();
-
-    const mTitle = document.getElementById("modalTitle");
-    if (mTitle) mTitle.innerText = "Editar/Reagendar Consulta";
-    
-    document.getElementById("especialidade").value = c.especialidade;
-    carregarListaMedicos();
-    document.getElementById("medico").value = c.medico;
-    document.getElementById("data").value = c.data;
-    document.getElementById("hora").value = c.hora;
-}
-
-function abrirModal() {
-    const m = document.getElementById("modalConsulta") || document.getElementById("modal");
-    if (m) m.style.display = "flex";
-}
-
-function fecharModal() {
-    const m = document.getElementById("modalConsulta") || document.getElementById("modal");
-    if (m) m.style.display = "none";
-    consultaEmEdicao = null;
-}
-
-function renderTabelaPacientes() {
-    const tbody = document.getElementById("tabelaPacientes");
-    if (!tbody) return;
-
-    const mapaPacientes = new Map();
-    consultas.forEach(c => {
-        mapaPacientes.set((c.paciente || "").toLowerCase(), {
-            nomeOriginal: c.paciente,
-            agendaInfo: `${c.data} às ${c.hora}`,
-            idConsulta: c.id
-        });
-    });
-
-    tbody.innerHTML = Array.from(mapaPacientes.values()).map(p => `
-        <tr>
-            <td><strong>${escapeHtml(p.nomeOriginal)}</strong></td>
-            <td>Consulta agendada para ${p.agendaInfo}</td>
-            <td>
-                <button type="button" onclick="abrirModalEdicao(${p.idConsulta})">Gerir</button>
-            </td>
-        </tr>
-    `).join("");
+function preencherUsuarioHeader() {
+    const nomeEl = document.getElementById("usuarioNome");
+    const emailEl = document.getElementById("usuarioEmail");
+    if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+    if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
 }
 
 function escapeHtml(string) {
     if (!string) return "";
-    return String(string).replace(/[&<>"']/g, function (s) {
-        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[s];
-    });
+    return String(string).replace(/[&<>"']/g, s => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[s]
+    ));
+}
+
+function capitalize(text) {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function formatDate(value) {
+    if (!value) return "";
+    const partes = value.split("-");
+    if (partes.length !== 3) return value;
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+}
+
+// =========================================================================
+// MÓDULO: MARCAR CONSULTA (marcar_consulta.html)
+// =========================================================================
+
+async function initMarcarConsulta() {
+    preencherUsuarioHeader();
+    medicos = await loadMedicos();
+
+    const selectEsp = document.getElementById("especialidade");
+    const selectMed = document.getElementById("medico");
+    const form = document.getElementById("formMarcacao");
+
+    selectEsp.addEventListener("change", atualizarMedicosDisponiveis);
+    selectMed.addEventListener("change", atualizarHorariosDisponiveis);
+    form.addEventListener("submit", onSubmitMarcacao);
+}
+
+function atualizarMedicosDisponiveis() {
+    const espValue = document.getElementById("especialidade").value;
+    const label = ESPECIALIDADES_LABEL[espValue] || "";
+    const selectMed = document.getElementById("medico");
+
+    const filtrados = medicos.filter(m => m.especialidade === label && m.status !== "inativo");
+    selectMed.innerHTML = '<option value="">Selecione o médico...</option>' +
+        filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
+
+    atualizarHorariosDisponiveis();
+}
+
+function atualizarHorariosDisponiveis() {
+    const medicoNome = document.getElementById("medico").value;
+    const selectHora = document.getElementById("horaConsulta");
+    const medico = medicos.find(m => m.nome === medicoNome);
+
+    if (!medico || !medico.horarios) return;
+
+    const horarios = medico.horarios.split(",").map(h => h.trim()).filter(Boolean);
+    selectHora.innerHTML = '<option value="">Selecione o horário...</option>' +
+        horarios.map(h => `<option value="${h}">${h}</option>`).join("");
+}
+
+async function onSubmitMarcacao(event) {
+    event.preventDefault();
+
+    const feedback = document.getElementById("mensagemFeedback");
+    feedback.innerHTML = "";
+
+    const paciente = nomePaciente();
+    if (!paciente) {
+        feedback.innerHTML = '<p style="color:#dc3545;">Sessão inválida. Faça login novamente.</p>';
+        return;
+    }
+
+    const espValue = document.getElementById("especialidade").value;
+    const especialidade = ESPECIALIDADES_LABEL[espValue] || espValue;
+    const medico = document.getElementById("medico").value;
+    const data = document.getElementById("dataConsulta").value;
+    const hora = document.getElementById("horaConsulta").value;
+
+    if (!especialidade || !medico || !data || !hora) {
+        feedback.innerHTML = '<p style="color:#dc3545;">Preencha especialidade, médico, data e horário.</p>';
+        return;
+    }
+
+    const sintomasSelecionados = Array.from(document.querySelectorAll('input[name="sintoma"]:checked')).map(cb => cb.value);
+    let prioridade = "baixa";
+    if (sintomasSelecionados.includes("dor-peito") || sintomasSelecionados.includes("falta-ar")) {
+        prioridade = "alta";
+    } else if (sintomasSelecionados.includes("febre-alta")) {
+        prioridade = "media";
+    }
+
+    const consultasAtuais = await loadConsultas();
+    const conflito = consultasAtuais.find(c =>
+        c.estado !== "cancelada" && c.medico === medico && c.data === data && c.hora === hora
+    );
+    if (conflito) {
+        feedback.innerHTML = '<p style="color:#dc3545;">O médico já tem uma consulta marcada nesse dia e horário.</p>';
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/consultas`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                paciente,
+                medico,
+                especialidade,
+                data,
+                hora,
+                sintomas: sintomasSelecionados.length > 0 ? sintomasSelecionados : ["rotina"],
+                prioridade
+            })
+        });
+        const resultado = await res.json();
+        if (!res.ok || !resultado.sucesso) {
+            throw new Error(resultado.mensagem || "Não foi possível marcar a consulta.");
+        }
+
+        feedback.innerHTML = '<p style="color:#28a745;">Consulta marcada com sucesso!</p>';
+        document.getElementById("formMarcacao").reset();
+        setTimeout(() => { window.location.href = "consultas.html"; }, 1200);
+    } catch (error) {
+        feedback.innerHTML = `<p style="color:#dc3545;">${escapeHtml(error.message)}</p>`;
+    }
+}
+
+// =========================================================================
+// MÓDULO: MINHAS CONSULTAS (consultas.html)
+// =========================================================================
+
+async function initMinhasConsultas() {
+    preencherUsuarioHeader();
+    const todasConsultas = await loadConsultas();
+    consultas = todasConsultas.filter(c => (c.paciente || "").toLowerCase() === nomePaciente().toLowerCase());
+
+    document.getElementById("pesquisaGeral").addEventListener("input", renderTabelaConsultas);
+    document.getElementById("filtroEstado").addEventListener("change", renderTabelaConsultas);
+
+    renderTabelaConsultas();
+}
+
+function ativarAba(nome) {
+    abaAtiva = nome;
+    document.getElementById("abaAgendadas").classList.toggle("active-tab", nome === "agendadas");
+    document.getElementById("abaHistorico").classList.toggle("active-tab", nome === "historico");
+    renderTabelaConsultas();
+}
+
+function renderTabelaConsultas() {
+    const tbody = document.getElementById("tabela-consultas");
+    if (!tbody) return;
+
+    document.getElementById("pendentes").innerText = consultas.filter(c => c.estado === "pendente").length;
+    document.getElementById("confirmadas").innerText = consultas.filter(c => c.estado === "confirmada").length;
+    document.getElementById("canceladas").innerText = consultas.filter(c => c.estado === "cancelada").length;
+
+    let lista = abaAtiva === "historico"
+        ? consultas.filter(c => c.estado === "realizada" || c.estado === "cancelada")
+        : consultas.filter(c => c.estado !== "realizada" && c.estado !== "cancelada");
+
+    const estadoFiltro = document.getElementById("filtroEstado").value;
+    if (estadoFiltro && estadoFiltro !== "todas") {
+        lista = estadoFiltro === "agendadas"
+            ? lista.filter(c => c.estado !== "cancelada" && c.estado !== "realizada")
+            : lista.filter(c => c.estado === estadoFiltro);
+    }
+
+    const termo = document.getElementById("pesquisaGeral").value.trim().toLowerCase();
+    if (termo) {
+        lista = lista.filter(c =>
+            (c.especialidade || "").toLowerCase().includes(termo) ||
+            (c.medico || "").toLowerCase().includes(termo) ||
+            (c.data || "").includes(termo) ||
+            (c.estado || "").toLowerCase().includes(termo)
+        );
+    }
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(c => `
+        <tr>
+            <td>${formatDate(c.data)}</td>
+            <td>${escapeHtml(c.hora)}</td>
+            <td>${escapeHtml(c.medico)}</td>
+            <td>${escapeHtml(c.especialidade || "")}</td>
+            <td><span class="status ${c.estado}">${capitalize(c.estado)}</span></td>
+        </tr>
+    `).join("");
 }
 
 // =========================================================================
 // MÓDULO: CORPO MÉDICO (medicos.html)
 // =========================================================================
 
-async function initPaginaMedicos() {
+async function initListaMedicos() {
     medicos = await loadMedicos();
     renderMedicos();
+    document.getElementById("pesquisaMedico")?.addEventListener("input", renderMedicos);
 }
 
 function renderMedicos() {
@@ -426,8 +269,7 @@ function renderMedicos() {
         const correspondeNome = (m.nome || "").toLowerCase().includes(termo);
         const correspondeEspecialidade = (m.especialidade || "").toLowerCase().includes(termo);
         const correspondeHorario = (m.horarios || "").includes(termo);
-        
-        return (correspondeNome || correspondeEspecialidade || correspondeHorario) && m.status === "ativo";
+        return (correspondeNome || correspondeEspecialidade || correspondeHorario) && m.status !== "inativo";
     });
 
     if (filtrados.length === 0) {
@@ -436,22 +278,18 @@ function renderMedicos() {
     }
 
     let htmlGrelha = '<div class="medicos-grid">';
-    
     filtrados.forEach(m => {
-        const tagsHorarios = m.horarios.split(",")
+        const tagsHorarios = (m.horarios || "").split(",")
             .map(h => `<span class="medico-tag"><i class="fa fa-clock"></i> ${escapeHtml(h.trim())}</span>`)
             .join("");
 
         htmlGrelha += `
             <div class="medico-card">
-                <img class="medico-photo" src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400&auto=format&fit=crop" alt="${escapeHtml(m.nome)}">
                 <div class="medico-info">
                     <div class="medico-nome">${escapeHtml(m.nome)}</div>
                     <div class="medico-especialidade"><i class="fa fa-stethoscope"></i> ${escapeHtml(m.especialidade)}</div>
                     <div class="medico-meta"><strong>Disponibilidade:</strong></div>
-                    <div class="medico-tags">
-                        ${tagsHorarios}
-                    </div>
+                    <div class="medico-tags">${tagsHorarios}</div>
                 </div>
                 <div class="medico-actions">
                     <button type="button" onclick="verAgendaMedico('${escapeHtml(m.nome)}')">
@@ -461,7 +299,6 @@ function renderMedicos() {
             </div>
         `;
     });
-
     htmlGrelha += '</div>';
     container.innerHTML = htmlGrelha;
 }
@@ -473,29 +310,25 @@ function verAgendaMedico(nomeMedico) {
     const modal = document.getElementById("modalAgenda");
     const modalNome = document.getElementById("modalMedicoNome");
     const modalDetalhes = document.getElementById("modalMedicoDetalhes");
-
     if (!modal || !modalNome || !modalDetalhes) return;
 
     modalNome.innerText = `Agenda Completa - ${m.nome}`;
 
-    const listaHorariosFormatada = m.horarios.split(",")
-        .map(h => `<li><i class="fa fa-check-circle" style="color:#28a745;"></i> Período disponível: <strong>${h.trim()}</strong></li>`)
+    const listaHorariosFormatada = (m.horarios || "").split(",")
+        .map(h => `<li><i class="fa fa-check-circle" style="color:#28a745;"></i> Período disponível: <strong>${escapeHtml(h.trim())}</strong></li>`)
         .join("");
 
     modalDetalhes.innerHTML = `
         <div class="modal-section">
             <div class="modal-row" style="margin-bottom: 10px;">
                 <span><strong>Especialidade:</strong> ${escapeHtml(m.especialidade)}</span>
-                <span><strong>Estado:</strong> <span style="color: green; font-weight:bold;">${m.status.toUpperCase()}</span></span>
+                <span><strong>Estado:</strong> <span style="color: green; font-weight:bold;">${(m.status || "ativo").toUpperCase()}</span></span>
             </div>
             <p style="margin-top:15px; margin-bottom:10px;"><strong>Horários de Consulta Ativos:</strong></p>
-            <ul style="list-style: none; padding-left: 0; display: grid; gap: 8px;">
-                ${listaHorariosFormatada}
-            </ul>
+            <ul style="list-style: none; padding-left: 0; display: grid; gap: 8px;">${listaHorariosFormatada}</ul>
         </div>
         <p style="font-size:13px; color:#6f7287; margin-top:12px;"><i class="fa fa-info-circle"></i> Para efetuar uma marcação com este profissional, aceda ao menu "Marcar Consulta".</p>
     `;
-
     modal.style.display = "flex";
 }
 
@@ -505,64 +338,14 @@ function fecharModalMedico() {
 }
 
 // =========================================================================
-// MÓDULO: MOTOR DO DASHBOARD DINÂMICO DO PACIENTE
+// GATILHO DE ROTEAMENTO
 // =========================================================================
-function atualizarDashboardPaciente(nomePaciente) {
-    if (!nomePaciente) return;
-    
-    const locais = JSON.parse(localStorage.getItem("consultas_local")) || [];
-    const consultasDoPaciente = locais.filter(c => c.paciente && c.paciente.toLowerCase() === nomePaciente.toLowerCase());
-
-    const marcadas = consultasDoPaciente.filter(c => c.estado === "confirmada" || c.estado === "pendente").length;
-    const realizadas = consultasDoPaciente.filter(c => c.estado === "realizada").length;
-    const canceladas = consultasDoPaciente.filter(c => c.estado === "cancelada").length;
-
-    const agora = new Date();
-    const proximas = consultasDoPaciente
-        .filter(c => (c.estado === "confirmada" || c.estado === "pendente") && new Date(c.data + "T" + c.hora) >= agora)
-        .sort((a, b) => new Date(a.data + "T" + a.hora) - new Date(b.data + "T" + b.hora));
-
-    if (document.getElementById("cardProxima")) {
-        document.getElementById("cardProxima").innerText = proximas.length > 0 
-            ? `${proximas[0].data} às ${proximas[0].hora} (Dr(a). ${proximas[0].medico})` 
-            : "Nenhuma consulta agendada";
-    }
-    
-    if (document.getElementById("totalMarcadas")) document.getElementById("totalMarcadas").innerText = marcadas;
-    if (document.getElementById("totalRealizadas")) document.getElementById("totalRealizadas").innerText = realizadas;
-    if (document.getElementById("totalCanceladas")) document.getElementById("totalCanceladas").innerText = canceladas;
-}
-
-// =========================================================================
-// EVENTO AUTOMÁTICO DE INICIALIZAÇÃO UNIFICADO
-// =========================================================================
-window.addEventListener("DOMContentLoaded", async () => {
-    // 1. Força a leitura preliminar das consultas globais para popular o estado interno da aplicação
-    consultas = await loadConsultas();
-    
-    // 2. Atualiza o Dashboard dinâmico se os elementos existirem no ecrã atual
-    const usuarioLogado = localStorage.getItem("usuario_logado_nome");
-    if (usuarioLogado) {
-        atualizarDashboardPaciente(usuarioLogado);
-    }
-
-    // 3. Encaminha a inicialização específica baseada nos nós do DOM
-    if (document.getElementById("tabelaConsultas") || document.getElementById("tabela-consultas") || document.getElementById("especialidade")) {
-        initConsultas();
-    } 
-    if (document.getElementById("tabelaPacientes")) {
-        initPacientesAtivos();
-    }
-    if (document.getElementById("listaMedicos")) {
-        initPaginaMedicos();
-    }
-    
-    // Intercetor para o formulário de marcação nativo, se presente
-    const formAgendamento = document.querySelector("form");
-    if (formAgendamento && window.location.pathname.includes("marcar_consulta.html")) {
-        formAgendamento.addEventListener("submit", (e) => {
-            e.preventDefault();
-            guardarConsulta();
-        });
+window.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("formMarcacao")) {
+        initMarcarConsulta();
+    } else if (document.getElementById("tabela-consultas")) {
+        initMinhasConsultas();
+    } else if (document.getElementById("listaMedicos")) {
+        initListaMedicos();
     }
 });

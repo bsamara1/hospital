@@ -318,8 +318,7 @@
 
 </div>
 
-<script src="javascript/storage.js"></script>
-<script src="javascript/consultas.js"></script>
+<script src="storage.js"></script>
 
 <script>
     let filtroAtivoNoMomento = null;
@@ -353,7 +352,12 @@
             }
         } else if (tipoFiltro === 'pacientes') {
             h3Titulo.innerText = "Lista de Pacientes";
-            corpoTabela.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Nenhum paciente registado por marcação própria no momento.</td></tr>`;
+            const nomes = [...new Set(consultasCache.map(c => c.paciente).filter(Boolean))];
+            if (nomes.length === 0) {
+                corpoTabela.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Nenhum paciente com consulta marcada no momento.</td></tr>`;
+            } else {
+                corpoTabela.innerHTML = nomes.map(nome => `<tr><td colspan="7">${nome}</td></tr>`).join("");
+            }
         } else if (tipoFiltro === 'pendente') {
             h3Titulo.innerText = "Consultas Pendentes";
             if (typeof filtrarTabelaPorEstado === "function") {
@@ -366,6 +370,52 @@
             }
         }
     }
+
+    let consultasCache = [];
+
+    async function carregarPainel() {
+        consultasCache = await obterConsultas();
+        const hoje = new Date().toISOString().split("T")[0];
+
+        document.getElementById("consultasHoje").innerText = consultasCache.filter(c => c.data === hoje).length;
+        document.getElementById("totalPacientes").innerText = new Set(consultasCache.map(c => c.paciente)).size;
+        document.getElementById("pendentes").innerText = consultasCache.filter(c => c.estado === "pendente").length;
+        document.getElementById("canceladas").innerText = consultasCache.filter(c => c.estado === "cancelada").length;
+
+        filtrarTabelaPorEstado('todos');
+    }
+
+    function filtrarTabelaPorEstado(tipo) {
+        const tbody = document.getElementById('tabela-consultas');
+        const hoje = new Date().toISOString().split("T")[0];
+
+        let lista = consultasCache;
+        if (tipo === 'hoje') lista = consultasCache.filter(c => c.data === hoje);
+        else if (tipo === 'pendente') lista = consultasCache.filter(c => c.estado === 'pendente');
+        else if (tipo === 'cancelada') lista = consultasCache.filter(c => c.estado === 'cancelada');
+
+        tbody.innerHTML = "";
+        if (lista.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
+            return;
+        }
+
+        lista.forEach(c => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${c.paciente}</td>
+                    <td>${c.medico}</td>
+                    <td>${c.especialidade || ''}</td>
+                    <td>${c.data}</td>
+                    <td>${c.hora}</td>
+                    <td><span class="status ${c.estado}">${c.estado}</span></td>
+                    <td>-</td>
+                </tr>
+            `;
+        });
+    }
+
+    window.onload = carregarPainel;
 </script>
 
 </body>

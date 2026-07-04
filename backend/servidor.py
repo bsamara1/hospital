@@ -1,12 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_mail import Mail, Message
+from dotenv import load_dotenv
 import os
 import json
 import random
 import time
 import unicodedata
 from datetime import datetime
+
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -26,8 +29,8 @@ CONSULTAS_FILE = os.path.join(BASE_DIR, "consultas.txt")
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'btavares.l23@us.edu.cv'
-app.config['MAIL_PASSWORD'] = 'oofkrbnlspzzeioi'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
 mail = Mail(app)
 
@@ -77,6 +80,8 @@ def normalizar_tipo(tipo):
         return "admin"
     if texto in ("rececao", "recepcao", "recepcionista"):
         return "rececao"
+    if texto in ("medico", "medica"):
+        return "medico"
     return "utilizador"
 
 
@@ -125,9 +130,76 @@ def ler_utilizadores_com_linhas():
     return utilizadores
 
 
+def carregar_medicos():
+    lista = carregar_json(MEDICOS_FILE)
+    modificado = False
+    base = int(time.time() * 1000)
+    for indice, medico in enumerate(lista):
+        if "id" not in medico:
+            medico["id"] = base + indice
+            modificado = True
+    if modificado:
+        guardar_json(MEDICOS_FILE, lista)
+    return lista
+
+
 @app.route("/medicos", methods=["GET"])
 def api_medicos():
-    return jsonify(carregar_json(MEDICOS_FILE))
+    return jsonify(carregar_medicos())
+
+
+@app.route("/medicos", methods=["POST"])
+def api_criar_medico():
+    dados = request.get_json() or {}
+    nome = dados.get("nome", "").strip()
+    especialidade = dados.get("especialidade", "").strip()
+    horarios = dados.get("horarios", "").strip()
+
+    if not nome or not especialidade:
+        return jsonify({"sucesso": False, "mensagem": "Nome e especialidade são obrigatórios."}), 400
+
+    lista = carregar_medicos()
+    novo_medico = {
+        "id": int(time.time() * 1000),
+        "nome": nome,
+        "especialidade": especialidade,
+        "horarios": horarios,
+        "status": dados.get("status", "ativo")
+    }
+    lista.append(novo_medico)
+    guardar_json(MEDICOS_FILE, lista)
+
+    return jsonify({"sucesso": True, "medico": novo_medico}), 201
+
+
+@app.route("/medicos/<int:medico_id>", methods=["PATCH"])
+def api_atualizar_medico(medico_id):
+    dados = request.get_json() or {}
+    lista = carregar_medicos()
+    medico = next((m for m in lista if m.get("id") == medico_id), None)
+
+    if not medico:
+        return jsonify({"sucesso": False, "mensagem": "Médico não encontrado."}), 404
+
+    for campo in ["nome", "especialidade", "horarios", "status"]:
+        if campo in dados:
+            medico[campo] = dados[campo]
+
+    guardar_json(MEDICOS_FILE, lista)
+    return jsonify({"sucesso": True, "medico": medico})
+
+
+@app.route("/medicos/<int:medico_id>", methods=["DELETE"])
+def api_remover_medico(medico_id):
+    lista = carregar_medicos()
+    medico = next((m for m in lista if m.get("id") == medico_id), None)
+
+    if not medico:
+        return jsonify({"sucesso": False, "mensagem": "Médico não encontrado."}), 404
+
+    lista = [m for m in lista if m.get("id") != medico_id]
+    guardar_json(MEDICOS_FILE, lista)
+    return jsonify({"sucesso": True, "mensagem": "Médico removido."})
 
 
 @app.route("/consultas", methods=["GET"])
@@ -233,6 +305,7 @@ def api_criar_utilizador():
     email = dados.get("email", "").strip().lower()
     telefone = dados.get("telefone", "").strip()
     senha = dados.get("senha", "").strip()
+    tipo = dados.get("tipo", "Paciente").strip() or "Paciente"
 
     if not nome or not email or not senha:
         return jsonify({"sucesso": False, "mensagem": "Nome, e-mail e senha são obrigatórios."}), 400
@@ -241,7 +314,7 @@ def api_criar_utilizador():
         return jsonify({"sucesso": False, "mensagem": "Este e-mail já está registado."}), 409
 
     with open(ARQUIVO, "a", encoding="utf-8") as f:
-        f.write(f"{nome};{email};{telefone};{senha};Paciente\n")
+        f.write(f"{nome};{email};{telefone};{senha};{tipo}\n")
 
     return jsonify({"sucesso": True, "utilizador": {"nome": nome, "email": email, "telefone": telefone}}), 201
 
@@ -267,7 +340,9 @@ def api_guardar_consulta():
         "especialidade": especialidade,
         "data": data_consulta,
         "hora": hora,
-        "estado": "pendente"
+        "estado": "pendente",
+        "sintomas": dados.get("sintomas", []),
+        "prioridade": dados.get("prioridade", "baixa")
     }
     consultas.append(nova_consulta)
     guardar_json(CONSULTAS_FILE, consultas)
