@@ -1,4 +1,5 @@
 const API_URL = "http://127.0.0.1:5000";
+const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
 
 const tbody = document.querySelector("#tabelaReagendamento");
 const selectHora = document.getElementById("editHora");
@@ -8,8 +9,28 @@ let medicos = [];
 let consultaSelecionada = null;
 
 async function initReagendamento() {
+    preencherUsuarioHeader();
     await carregarDados();
     listar();
+}
+
+function preencherUsuarioHeader() {
+    const nomeEl = document.getElementById("usuarioNome");
+    const emailEl = document.getElementById("usuarioEmail");
+    if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+    if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+}
+
+function atualizarBadgeNotificacoes() {
+    const badge = document.getElementById("notifBadge");
+    if (!badge) return;
+    const relevantes = consultas.filter(c => c.estado === "pendente" || c.estado === "cancelada" || c.estado === "confirmada");
+    if (relevantes.length > 0) {
+        badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
 }
 
 async function carregarDados() {
@@ -17,8 +38,11 @@ async function carregarDados() {
         fetch(`${API_URL}/consultas`),
         fetch(`${API_URL}/medicos`)
     ]);
-    consultas = await resConsultas.json();
+    const todasConsultas = await resConsultas.json();
+    const paciente = utilizadorLogado?.nome || "";
+    consultas = todasConsultas.filter(c => (c.paciente || "").toLowerCase() === paciente.toLowerCase());
     medicos = await resMedicos.json();
+    atualizarBadgeNotificacoes();
 }
 
 function formatarData(dataString) {

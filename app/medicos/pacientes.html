@@ -47,7 +47,13 @@
 <div class="main">
     <div class="header">
         <h2>Meus Pacientes Ativos</h2>
-        <div class="user-box"><i class="fa fa-user-circle"></i> <span>Dr. Mendes</span></div>
+        <div class="user-box">
+            <a href="notificacao.html" style="position:relative; text-decoration:none; color:inherit;">
+                <i class="fa fa-bell"></i>
+                <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
+            </a>
+            <i class="fa fa-user-circle"></i> <span id="usuarioNome">Dr. Mendes</span>
+        </div>
     </div>
     <div class="header-line"></div>
 
@@ -65,5 +71,6 @@
     </div>
 </div>
 
+<script src="identidade.js"></script>
 </body>
 </html>

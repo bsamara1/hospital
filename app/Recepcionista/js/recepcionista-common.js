@@ -9,13 +9,38 @@ if (!utilizadorLogado || !["rececao", "recepcionista", "admin"].includes(tipoUti
 
 document.addEventListener("DOMContentLoaded", () => {
     const logout = document.querySelector(".logout");
-    if (!logout) return;
+    if (logout) {
+        logout.addEventListener("click", () => {
+            localStorage.removeItem("utilizador");
+            localStorage.removeItem("email");
+        });
+    }
 
-    logout.addEventListener("click", () => {
-        localStorage.removeItem("utilizador");
-        localStorage.removeItem("email");
-    });
+    preencherUsuarioHeader();
+    atualizarBadgeNotificacoes();
 });
+
+function preencherUsuarioHeader() {
+    const nomeEl = document.getElementById("usuarioNome");
+    const emailEl = document.getElementById("usuarioEmail");
+    if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+    if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+}
+
+async function atualizarBadgeNotificacoes() {
+    const badge = document.getElementById("notifBadge");
+    if (!badge) return;
+
+    const consultas = await loadConsultas();
+    const relevantes = consultas.filter(c => c.estado === "pendente" || c.estado === "cancelada");
+
+    if (relevantes.length > 0) {
+        badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
+}
 
 async function loadConsultas() {
     try {
