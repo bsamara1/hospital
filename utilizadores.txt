@@ -2,4 +2,5 @@ Admin;000000001;1990-01-01;Masculino;99112233;admin@hospital.cv;1234;admin
 Rececao;000000000;1990-01-01;Masculino;99223344;rececao@hospital.cv;hospital;rececao
 alyTavares;23456789GF;2006-06-07;Feminino;9876543;alytavares@gmail.com;teste;utilizador
 João Paulo Silva de Oliveira;joao.oliveira@us.edu.cv;9876543;123456;Paciente
-José Sócrates da Cunha Lima;jose.lima@us.edu.cv;9876543;123456789;Paciente
+José Sócrates da Cunha Lima;jose.lima@us.edu.cv;9876543;123456789;9khgcv b;jose.lima@us.edu.cv;
+Benedita Tavares;btavares.l23@us.edu.cv;876543345678;12345;Paciente
