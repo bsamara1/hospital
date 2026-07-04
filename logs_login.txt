@@ -1,1 +1,25 @@
 
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 17:34:11
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:30
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:32
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:33
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:39
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:39
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:39
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:39
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:43
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:44
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:44
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:47
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:48
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:48
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:48
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:48
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:49
+alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:54
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 17:37:19
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 17:54:30
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 18:26:07
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 18:26:24
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 18:31:35
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 19:28:17
