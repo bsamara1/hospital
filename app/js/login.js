@@ -52,6 +52,8 @@ window.addEventListener("DOMContentLoaded", () => {
             window.location.href = "./admin/index.html";
           } else if (dados.tipo === "rececao") {
             window.location.href = "./Recepcionista/index.html";
+          } else if (dados.tipo === "medico") {
+            window.location.href = "./medicos/index.html";
           } else {
             window.location.href = "./pacientes/index.html";
           }

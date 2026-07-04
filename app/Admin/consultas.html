@@ -67,10 +67,10 @@
     </div>
   </div>
 
-  <script src="javascript/storage.js"></script>
+  <script src="storage.js"></script>
   <script>
-    function render() {
-      const consultas = obterConsultas();
+    async function render() {
+      const consultas = await obterConsultas();
       document.getElementById("c-total").innerText = consultas.length;
       document.getElementById("c-done").innerText = consultas.filter(c => c.estado === 'confirmada' || c.estado === 'done').length;
       document.getElementById("c-cancel").innerText = consultas.filter(c => c.estado === 'cancelada').length;

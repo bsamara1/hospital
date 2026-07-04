@@ -333,13 +333,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="medico-horas">Carga Horária (Turno)</label>
-                    <input type="text" id="medico-horas" placeholder="Ex: 08:00 - 14:00" required>
+                    <label for="medico-horarios">Horários Disponíveis (separados por vírgula)</label>
+                    <input type="text" id="medico-horarios" placeholder="Ex: 08:00,09:00,10:00,14:00" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="medico-dias">Dias Úteis Semanais</label>
-                    <input type="text" id="medico-dias" placeholder="Ex: Seg, Qua, Sex" required>
+                    <label for="medico-status">Estado</label>
+                    <select id="medico-status">
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
                 </div>
 
                 <div style="display: flex; gap: 8px;">
@@ -359,7 +362,7 @@
                         <th>Médico</th>
                         <th>Especialidade</th>
                         <th>Horários</th>
-                        <th>Dias da Escala</th>
+                        <th>Estado</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -368,44 +371,33 @@
         </div>
     </div>
 
-    <script src="javascript/storage.js"></script>
+    <script src="storage.js"></script>
 
     <script>
-        function obterListaSegura() {
-            if (typeof obterMedicosInfo === "function") return obterMedicosInfo();
-            return JSON.parse(localStorage.getItem("han_db_medicos")) || [];
-        }
+        let medicosCache = [];
 
-        function salvarListaSegura(lista) {
-            if (typeof salvarMedicosInfo === "function") {
-                salvarMedicosInfo(lista);
-                return;
-            }
-            localStorage.setItem("han_db_medicos", JSON.stringify(lista));
-        }
-
-        function render() {
-            const lista = obterListaSegura();
+        async function render() {
+            medicosCache = await obterMedicosInfo();
 
             // Atualizar o contador total
-            document.getElementById("totalMedicos").innerText = lista.length;
+            document.getElementById("totalMedicos").innerText = medicosCache.length;
 
             const tbody = document.getElementById("tabela-corpo-medico");
             tbody.innerHTML = "";
 
-            if (lista.length === 0) {
+            if (medicosCache.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Nenhum médico registado.</td></tr>`;
                 return;
             }
 
-            lista.forEach(m => {
+            medicosCache.forEach(m => {
                 tbody.innerHTML += `
                     <tr>
                         <td>${m.id}</td>
                         <td><b>${m.nome}</b></td>
                         <td><span class="badge badge-especialidade">${m.especialidade || 'Geral'}</span></td>
-                        <td><span class="badge badge-horario">${m.horario || 'N/A'}</span></td>
-                        <td>${m.dias || 'N/A'}</td>
+                        <td><span class="badge badge-horario">${m.horarios || 'N/A'}</span></td>
+                        <td>${m.status || 'ativo'}</td>
                         <td>
                             <button class="btn-status" onclick="prepararEdicao(${m.id})">
                                 <i class="fa fa-edit"></i> Editar
@@ -428,61 +420,54 @@
             render();
         }
 
-        function gravarMedicoForm(event) {
+        async function gravarMedicoForm(event) {
             event.preventDefault();
 
             const id = document.getElementById("medico-id").value;
             const nome = document.getElementById("medico-nome").value.trim();
-            const specialty = document.getElementById("select-esp").value;
-            const hours = document.getElementById("medico-horas").value.trim();
-            const days = document.getElementById("medico-dias").value.trim();
+            const especialidade = document.getElementById("select-esp").value;
+            const horarios = document.getElementById("medico-horarios").value.trim();
+            const status = document.getElementById("medico-status").value;
 
-            let lista = obterListaSegura();
+            try {
+                if (id) {
+                    await atualizarMedicoApi(id, { nome, especialidade, horarios, status });
+                    registrarLogAcesso("Administrador", `Editou médico: ${nome}`);
+                } else {
+                    await criarMedicoApi(nome, especialidade, horarios);
+                    registrarLogAcesso("Administrador", `Adicionou médico: ${nome}`);
+                }
 
-            if (id) {
-                lista = lista.map(m => m.id == id ? { ...m, nome, especialidade: specialty, specialty, horario: hours, dias: days } : m);
-                if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Editou médico: ${nome}`);
-            } else {
-                const novoMedico = {
-                    id: lista.length > 0 ? Math.max(...lista.map(m => m.id)) + 1 : 1,
-                    nome: nome,
-                    especialidade: specialty,
-                    specialty: specialty,
-                    horario: hours,
-                    dias: days,
-                    totalAtendimentos: 0
-                };
-                lista.push(novoMedico);
-                if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Adicionou médico: ${nome}`);
+                limparFormulario();
+                await render();
+            } catch (erro) {
+                alert(erro.message);
             }
-
-            salvarListaSegura(lista);
-            limparFormulario();
-            render();
         }
 
-        function removerMed(id) {
+        async function removerMed(id) {
             if (!confirm("Tem a certeza que deseja remover este médico?")) return;
-            let lista = obterListaSegura();
-            lista = lista.filter(m => m.id != id);
-            salvarListaSegura(lista);
-            render();
+            try {
+                await removerMedicoApi(id);
+                render();
+            } catch (erro) {
+                alert(erro.message);
+            }
         }
 
         function prepararEdicao(id) {
-            const lista = obterListaSegura();
-            const m = lista.find(item => item.id == id);
+            const m = medicosCache.find(item => item.id == id);
             if (m) {
                 document.getElementById("medico-id").value = m.id;
                 document.getElementById("medico-nome").value = m.nome;
-                document.getElementById("select-esp").value = m.especialidade || m.specialty || "";
-                document.getElementById("medico-horas").value = m.horario || "";
-                document.getElementById("medico-dias").value = m.dias || "";
+                document.getElementById("select-esp").value = m.especialidade || "";
+                document.getElementById("medico-horarios").value = m.horarios || "";
+                document.getElementById("medico-status").value = m.status || "ativo";
 
                 document.getElementById("form-titulo").innerText = "Editar Cadastro de Médico";
                 document.getElementById("btn-submeter").innerText = "Guardar";
                 document.getElementById("btn-cancelar").style.display = "inline-block";
-                
+
                 focarFormulario();
             }
         }
