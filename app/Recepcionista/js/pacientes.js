@@ -82,29 +82,36 @@ function aplicarFiltro() {
 function renderPacientesTabela() {
     const tabela = document.getElementById("pacientesTabela");
     const termo = document.getElementById("pesquisaPaciente").value.trim().toLowerCase();
+    
+    // Filtro atualizado para procurar por Nome, BI, Email ou Telefone
     const resultados = pacientes.filter(p => {
         if (!termo) return true;
         return (
-            p.nome.toLowerCase().includes(termo) ||
-            p.email.toLowerCase().includes(termo) ||
+            (p.nome || "").toLowerCase().includes(termo) ||
+            (p.bi || "").toLowerCase().includes(termo) ||
+            (p.email || "").toLowerCase().includes(termo) ||
             (p.telefone || "").toLowerCase().includes(termo)
         );
     });
 
+    // Se estiver vazio ou não encontrar nada, avisa o utilizador ocupando as 7 colunas
     if (resultados.length === 0) {
         tabela.innerHTML = `
             <tr>
-                <td colspan="5" style="text-align:center;padding:20px;color:#777;">Nenhum paciente encontrado.</td>
+                <td colspan="7" style="text-align:center;padding:20px;color:#777;">Nenhum paciente encontrado.</td>
             </tr>`;
         return;
     }
 
+    // Injeta os dados mapeados do utilizador.txt diretamente nas colunas certas
     tabela.innerHTML = resultados.map(p => `
         <tr>
-            <td>${escapeHtml(p.nome)}</td>
-            <td>${escapeHtml(p.email)}</td>
-            <td>${escapeHtml(p.telefone)}</td>
-            <td>${escapeHtml(p.tipo || "Paciente")}</td>
+            <td>${escapeHtml(p.nome || "")}</td>
+            <td>${escapeHtml(p.bi || "")}</td>
+            <td>${escapeHtml(p.dataNascimento || "")}</td>
+            <td>${escapeHtml(p.sexo || "")}</td>
+            <td>${escapeHtml(p.telefone || "")}</td>
+            <td>${escapeHtml(p.email || "")}</td>
             <td>
                 <button class="edit" type="button" onclick="editarPaciente('${encodeURIComponent(p.email)}')">Editar</button>
                 <button class="view" type="button" onclick="verHistorico('${encodeURIComponent(p.nome)}')">Ver histórico</button>
@@ -162,10 +169,16 @@ function fecharHistorico() {
 function abrirModal(email) {
     pacienteEditando = null;
     document.getElementById("modalTitle").innerText = "Adicionar Paciente";
+    
+    // Limpa todos os campos do formulário
     document.getElementById("pacienteNome").value = "";
-    document.getElementById("pacienteEmail").value = "";
+    document.getElementById("pacienteBI").value = "";
+    document.getElementById("pacienteDataNascimento").value = "";
+    document.getElementById("pacienteSexo").value = "";
     document.getElementById("pacienteTelefone").value = "";
+    document.getElementById("pacienteEmail").value = "";
     document.getElementById("pacienteSenha").value = "";
+    
     document.getElementById("modalPaciente").style.display = "flex";
 }
 
@@ -176,29 +189,38 @@ function editarPaciente(email) {
 
     pacienteEditando = paciente;
     document.getElementById("modalTitle").innerText = "Editar Paciente";
-    document.getElementById("pacienteNome").value = paciente.nome;
-    document.getElementById("pacienteEmail").value = paciente.email;
-    document.getElementById("pacienteTelefone").value = paciente.telefone;
-    document.getElementById("pacienteSenha").value = "";
+    
+    // Preenche os campos com os dados existentes do paciente
+    document.getElementById("pacienteNome").value = paciente.nome || "";
+    document.getElementById("pacienteBI").value = paciente.bi || "";
+    document.getElementById("pacienteDataNascimento").value = paciente.dataNascimento || "";
+    document.getElementById("pacienteSexo").value = paciente.sexo || "";
+    document.getElementById("pacienteTelefone").value = paciente.telefone || "";
+    document.getElementById("pacienteEmail").value = paciente.email || "";
+    document.getElementById("pacienteSenha").value = ""; 
+    
     document.getElementById("modalPaciente").style.display = "flex";
-}
-
-function fecharModal() {
-    document.getElementById("modalPaciente").style.display = "none";
-    pacienteEditando = null;
 }
 
 async function salvarPaciente() {
     const nome = document.getElementById("pacienteNome").value.trim();
-    const email = document.getElementById("pacienteEmail").value.trim().toLowerCase();
+    const bi = document.getElementById("pacienteBI").value.trim();
+    const dataNascimento = document.getElementById("pacienteDataNascimento").value;
+    const sexo = document.getElementById("pacienteSexo").value;
     const telefone = document.getElementById("pacienteTelefone").value.trim();
+    const email = document.getElementById("pacienteEmail").value.trim().toLowerCase();
     const senha = document.getElementById("pacienteSenha").value.trim();
+    
+    // O tipo é definido automaticamente como fixo: "Paciente"
+    const tipo = "Paciente";
 
-    if (!nome || !email || (!pacienteEditando && !senha)) {
-        alert("Preencha nome, email e senha para criar um paciente.");
+    // Validação básica de campos obrigatórios para novos registos
+    if (!nome || !bi || !email || (!pacienteEditando && !senha)) {
+        alert("Preencha o nome, BI, email e senha para criar um paciente.");
         return;
     }
 
+    // Se estiver a EDITAR um paciente existente
     if (pacienteEditando) {
         try {
             const res = await fetch(`${API_URL}/utilizador`, {
@@ -207,8 +229,12 @@ async function salvarPaciente() {
                 body: JSON.stringify({
                     emailOriginal: pacienteEditando.email,
                     nome,
+                    bi,
+                    dataNascimento,
+                    sexo,
+                    telefone,
                     email,
-                    telefone
+                    tipo // Envia "Paciente"
                 })
             });
             const data = await res.json();
@@ -221,11 +247,12 @@ async function salvarPaciente() {
         return;
     }
 
+    // Se estiver a ADICIONAR um paciente novo
     try {
         const res = await fetch(`${API_URL}/utilizadores`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ nome, email, telefone, senha })
+            body: JSON.stringify({ nome, bi, dataNascimento, sexo, telefone, email, senha, tipo })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.mensagem || "Erro ao criar paciente.");
@@ -235,7 +262,6 @@ async function salvarPaciente() {
         alert(error.message || "Não foi possível criar o paciente.");
     }
 }
-
 async function deletarPaciente(email) {
     const decodedEmail = decodeURIComponent(email);
     if (!confirm(`Deseja eliminar o paciente ${decodedEmail}?`)) return;
