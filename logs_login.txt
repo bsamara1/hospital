@@ -1,1 +1,3 @@
 
+aline@gmail.com;LOGIN_SUCESSO;2026-07-03 16:59:58
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 19:49:42
