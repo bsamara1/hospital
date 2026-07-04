@@ -39,3 +39,10 @@ filipa.teste@hospital.cv;LOGIN_SUCESSO;2026-07-04 20:56:03
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 21:02:28
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 21:05:19
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-04 21:08:51
+teste.senha@hospital.cv;LOGIN_SUCESSO;2026-07-04 21:21:22
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 22:13:14
+alytavares@gmail.com;LOGIN_FALHOU;2026-07-04 22:17:13
+alytavares@gmail.com;LOGIN_FALHOU;2026-07-04 22:17:16
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 22:17:25
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 22:27:57
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 22:41:37

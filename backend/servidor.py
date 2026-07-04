@@ -256,20 +256,16 @@ def api_utilizador():
 def carregar_utilizadores():
     usuarios = []
     try:
-        with open(ARQUIVO, "r", encoding="utf-8") as f:
-            for linha in f:
-                campos = [c.strip() for c in linha.strip().split(";") if c.strip() != ""]
-                if len(campos) < 2:
-                    continue
-                email = campos[1].lower()
-                if email in ("admin@hospital.cv", "rececao@hospital.cv"):
-                    continue
-                usuarios.append({
-                    "nome": campos[0],
-                    "email": email,
-                    "telefone": campos[2] if len(campos) > 2 else "",
-                    "tipo": campos[4] if len(campos) > 4 else "Paciente"
-                })
+        for utilizador in ler_utilizadores_com_linhas():
+            email = utilizador["email"]
+            if email in ("admin@hospital.cv", "rececao@hospital.cv"):
+                continue
+            usuarios.append({
+                "nome": utilizador["nome"],
+                "email": email,
+                "telefone": utilizador["telefone"],
+                "tipo": utilizador["tipo"]
+            })
     except Exception:
         pass
     return usuarios
