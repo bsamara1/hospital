@@ -1,6 +1,6 @@
 // ==========================================
 // HOSPITAL AGOSTINHO NETO - CAMADA DE DADOS DO ADMIN
-// Utilizadores, médicos e consultas vêm do backend real (Flask).
+// Utilizadores, médicos e consultas vêm do backend real (Flask) ou ficheiros locais.
 // Especialidades e logs de auditoria ficam apenas no browser porque
 // o backend não tem endpoints próprios para esses dois conceitos.
 // ==========================================
@@ -45,19 +45,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// UTILIZADORES (API real)
+// UTILIZADORES (Leitura e Normalização de Dados de Texto e API)
 // ==========================================
 
 function mapearTipoParaPerfil(tipo) {
   const t = (tipo || "").toLowerCase();
   if (t.includes("medic")) return "medico";
   if (t.includes("rece")) return "recepcionista";
+  if (t.includes("admin")) return "admin";
   return "paciente";
 }
 
 function mapearPerfilParaTipo(perfil) {
   if (perfil === "medico") return "medico";
   if (perfil === "recepcionista") return "recepcionista";
+  if (perfil === "admin") return "admin";
   return "Paciente";
 }
 
@@ -70,37 +72,129 @@ function salvarEstadosLocais(mapa) {
 }
 
 async function obterUsuariosGerais() {
-  try {
-    const res = await fetch(`${API_URL}/utilizadores`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const lista = await res.json();
-    const estados = obterEstadosLocais();
+  let listaFinal = [];
+  const estados = obterEstadosLocais();
 
-    return lista.map((u, index) => ({
-      id: index + 1,
-      nome: u.nome,
-      email: u.email,
-      perfil: mapearTipoParaPerfil(u.tipo),
-      estado: estados[u.email] || "ativo"
-    }));
-  } catch (erro) {
-    console.warn("Não foi possível carregar utilizadores do servidor.", erro);
-    return [];
+  try {
+    const resTxt = await fetch("utilizadores.txt");
+    if (resTxt.ok) {
+      const textoBruto = await resTxt.text();
+      const linhas = textoBruto.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+      
+      let contadorId = 1;
+
+      linhas.forEach((linha) => {
+        if (linha.startsWith("Nome;BI") || linha.startsWith("Nome;Email")) return;
+
+        const campos = linha.split(";").map(c => c.trim());
+        if (campos.length >= 4) {
+          let nome = campos[0] || "-";
+          let bi = "-";
+          let dataNascimento = "-";
+          let sexo = "-";
+          let telefone = "-";
+          let email = "-";
+          let tipoOriginal = "Paciente";
+
+          tipoOriginal = campos[campos.length - 1];
+
+          // Se a linha tem 7 ou mais campos (Formato Completo)
+          if (campos.length >= 7) {
+            bi = campos[1] || "-";
+            dataNascimento = campos[2] || "-";
+            sexo = campos[3] || "-";
+            telefone = campos[4] || "-";
+            email = campos[5] || "-";
+          } else { 
+            // Formato Simples (Ex: Nome;Email;Telefone;Senha;Tipo)
+            email = campos[1] || "-";
+            telefone = campos[2] || "-";
+          }
+
+          listaFinal.push({
+            id: "txt_" + (contadorId++),
+            nome: nome,
+            bi: bi,
+            dataNascimento: dataNascimento,
+            sexo: sexo,
+            telefone: telefone,
+            email: email,
+            perfil: mapearTipoParaPerfil(tipoOriginal),
+            estado: estados[email] || "ativo"
+          });
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("Aviso ao ler utilizadores.txt", e);
   }
+
+  // JUNTAR OS DADOS RECEBIDOS DA API FLASK
+  try {
+    const resApi = await fetch(`${API_URL}/utilizadores`);
+    if (resApi.ok) {
+      const dadosApi = await resApi.json();
+      const utilizadoresServidor = Array.isArray(dadosApi) ? dadosApi : (dadosApi.utilizadores || []);
+
+      utilizadoresServidor.forEach((u, index) => {
+        const emailFinal = u.email || "-";
+        const indexExistente = listaFinal.findIndex(item => item.email.toLowerCase() === emailFinal.toLowerCase() && emailFinal !== "-");
+        
+        const objetoMapeado = {
+          id: "api_" + (u.id || index + 1),
+          nome: u.nome || "-",
+          bi: u.bi || "-",
+          dataNascimento: u.dataNascimento || u.data_nascimento || "-",
+          sexo: u.sexo || "-",
+          telefone: u.telefone || "-",
+          email: emailFinal,
+          perfil: mapearTipoParaPerfil(u.tipo || u.perfil),
+          estado: estados[emailFinal] || u.estado || "ativo"
+        };
+
+        if (indexExistente !== -1) {
+          // Se já veio do txt, atualiza com os dados mais completos da API
+          listaFinal[indexExistente] = objetoMapeado;
+        } else {
+          listaFinal.push(objetoMapeado);
+        }
+      });
+    }
+  } catch (erroApi) {
+    console.warn("Servidor Flask indisponível, exibindo registos locais.", erroApi);
+  }
+
+  return listaFinal;
 }
 
-async function criarUtilizadorApi(nome, email, perfil, senha, telefone = "") {
+// Garante que a API recebe exatamente as propriedades que espera
+async function criarUtilizadorApi(nome, bi, data_nascimento, sexo, telefone, email, senha, perfil) {
+  const tipoMapeado = mapearPerfilParaTipo(perfil);
   const res = await fetch(`${API_URL}/utilizadores`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome, email, telefone, senha, tipo: mapearPerfilParaTipo(perfil) })
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nome: nome,
+      email: email,
+      tipo: tipoMapeado,
+      senha: senha,
+      bi: bi,
+      dataNascimento: data_nascimento, // Enviado em camelCase para bater com o recebimento do Flask
+      sexo: sexo,
+      telefone: telefone
+    })
   });
+
   const dados = await res.json();
   if (!res.ok || !dados.sucesso) {
     throw new Error(dados.mensagem || "Não foi possível criar o utilizador.");
   }
-  return dados.utilizador;
+  return dados;
 }
+
+// CORRIGIDO: Agora captura TODOS OS CAMPOS do formulário e envia corretamente no POST para o Flask
 
 async function alternarEstadoUtilizadorApi(email) {
   const estados = obterEstadosLocais();
@@ -144,17 +238,22 @@ async function criarMedicoApi(nome, especialidade, horarios) {
   return dados.medico;
 }
 
-async function atualizarMedicoApi(id, campos) {
-  const res = await fetch(`${API_URL}/medicos/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(campos)
-  });
-  const dados = await res.json();
-  if (!res.ok || !dados.sucesso) {
-    throw new Error(dados.mensagem || "Não foi possível atualizar o médico.");
+async function atualizarMedicoApi(id, dadosMed) {
+  try {
+    const res = await fetch(`${API_URL}/medicos/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dadosMed)
+    });
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.mensagem || "Erro ao atualizar médico.");
+    }
+    return await res.json();
+  } catch (erro) {
+    console.error(erro);
+    throw erro;
   }
-  return dados.medico;
 }
 
 async function removerMedicoApi(id) {

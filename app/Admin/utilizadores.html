@@ -111,6 +111,46 @@
             margin-bottom: 25px;
         }
 
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+        }
+
+        .user-box i {
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .user-profile-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .user-profile-link:hover {
+            background: #e2e8f0;
+        }
+
+        .avatar-circle {
+            width: 35px;
+            height: 35px;
+            background: #1e40af;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
         /* CARDS FILTROS (TOGGLE) */
         .cards {
             display: grid;
@@ -151,7 +191,7 @@
             margin-top: 10px;
         }
 
-        /* FORMULÁRIO */
+        /* FORMULÁRIO EM GRID COMPACTO */
         .form-card {
             background: #fff;
             padding: 20px;
@@ -166,16 +206,14 @@
             color: #333;
         }
 
-        .form-inline {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
             align-items: flex-end;
         }
 
         .form-group {
-            flex: 1;
-            min-width: 180px;
             display: flex;
             flex-direction: column;
             gap: 5px;
@@ -194,6 +232,14 @@
             border-radius: 6px;
             font-size: 14px;
             outline: none;
+            width: 100%;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
         }
 
         /* TABELA */
@@ -206,59 +252,56 @@
 
         .table-card h3 {
             margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1050px;
         }
 
-        th,
-        td {
-            padding: 12px;
+        th, td {
+            padding: 10px 12px;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 13.5px;
+            color: #444;
+            vertical-align: middle;
+            white-space: nowrap;
         }
 
         th {
             text-align: left;
             color: #666;
+            background-color: #f8fafc;
+            font-weight: 600;
         }
 
-        /* PERFIL & ESTADO */
+        /* BADGES PERFIL */
         .badge {
             padding: 4px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 600;
             text-transform: capitalize;
             display: inline-block;
         }
 
-        .perfil-paciente {
-            background: #e2f0d9;
-            color: #385723;
-        }
+        .perfil-paciente { background: #e2f0d9; color: #385723; }
+        .perfil-medico { background: #fce4d6; color: #c65911; }
+        .perfil-recepcionista { background: #fff2cc; color: #7f6000; }
+        .perfil-rececao { background: #fff2cc; color: #7f6000; }
+        .perfil-admin { background: #e8f4fd; color: #1d4ed8; }
 
-        .perfil-medico {
-            background: #fce4d6;
-            color: #c65911;
-        }
-
-        .perfil-recepcionista {
-            background: #fff2cc;
-            color: #7f6000;
-        }
-
-        .status-ativo {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-desativado {
-            background: #f8d7da;
-            color: #721c24;
-        }
+        .status-ativo { background: #d4edda; color: #155724; }
+        .status-desativado { background: #f8d7da; color: #721c24; }
 
         /* BOTÕES */
         button {
@@ -280,16 +323,12 @@
             color: #fff;
         }
 
-        .btn-secondary {
-            background: #6c757d;
-            color: #fff;
-        }
-
         .btn-status {
             background: #17a2b8;
             color: #fff;
             padding: 5px 8px;
             font-size: 12px;
+            margin-right: 4px;
         }
 
         .btn-delete {
@@ -308,9 +347,11 @@
             <img src="../assets/img/logo.png" alt="Logo HAN">
             <span>HAN</span>
         </div>
+
         <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
         <a href="utilizadores.html" class="active"><i class="fa fa-users"></i> Utilizadores</a>
         <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+        <a href="especialidades.html"><i class="fa fa-stethoscope"></i> Especialidades</a>
         <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
         <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
         <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
@@ -320,21 +361,23 @@
             <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
         </div>
     </div>
-    </div>
 
     <div class="main">
         <div class="header">
             <h2>Gestão de Utilizadores</h2>
-            <div class="user-box" style="color: #555;">
-                <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit;">
+            <div class="user-box">
+                <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
                     <i class="fa fa-bell"></i>
                     <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
                 </a>
-                <i class="fa fa-user-circle"></i>
-                <div style="display:flex; flex-direction:column; line-height:1.1;">
-                    <span id="usuarioNome" style="font-weight:700;">Administrador</span>
-                    <span id="usuarioEmail" style="font-size:12px; color:#888;"></span>
-                </div>
+
+                <a href="perfil.html" class="user-profile-link">
+                    <div class="avatar-circle" id="usuarioAvatar">A</div>
+                    <div style="display:flex; flex-direction:column; line-height:1.1;">
+                        <span id="usuarioNome" style="font-weight:700;">Administrador</span>
+                        <span id="usuarioEmail" style="font-size:12px; color:#888;">admin@hospital.cv</span>
+                    </div>
+                </a>
             </div>
         </div>
 
@@ -361,55 +404,76 @@
 
         <div class="form-card">
             <h3 id="form-titulo">Adicionar Novo Utilizador</h3>
-            <form id="form-user" class="form-inline" onsubmit="adicionarUtilizadorForm(event)">
-                <div class="form-group">
-                    <label for="user-nome">Nome Completo</label>
-                    <input type="text" id="user-nome" placeholder="Ex: Maria Silva" required>
+            <form id="form-user" onsubmit="adicionarUtilizadorForm(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="user-nome">Nome</label>
+                        <input type="text" id="user-nome" placeholder="Ex: Benedita Tavares" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-bi">BI / CNI</label>
+                        <input type="text" id="user-bi" placeholder="Ex: 20050714F001N" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-nascimento">Data Nascimento</label>
+                        <input type="date" id="user-nascimento" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-sexo">Sexo</label>
+                        <select id="user-sexo" required>
+                            <option value="">Selecione...</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-telefone">Telefone</label>
+                        <input type="text" id="user-telefone" placeholder="Ex: 99112233" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">Email</label>
+                        <input type="email" id="user-email" placeholder="Ex: benedita@hospital.cv" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-senha">Senha</label>
+                        <input type="password" id="user-senha" placeholder="Definir senha" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-perfil">Tipo de Utilizador</label>
+                        <select id="user-perfil" required>
+                            <option value="paciente">Paciente</option>
+                            <option value="medico">Médico</option>
+                            <option value="recepcionista">Recepcionista</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="user-email">E-mail</label>
-                    <input type="email" id="user-email" placeholder="Ex: maria@gmail.com" required>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="btn-submeter">Adicionar Utilizador</button>
                 </div>
-                <div class="form-group">
-                    <label for="user-senha">Senha</label>
-                    <input type="text" id="user-senha" placeholder="Definir senha" required minlength="4">
-                </div>
-                <div class="form-group">
-                    <label for="user-perfil">Perfil do Sistema</label>
-                    <select id="user-perfil" required onchange="mostrarEspecialidade(this.value)">
-                        <option value="paciente">Paciente</option>
-                        <option value="medico">Médico</option>
-                        <option value="recepcionista">Recepcionista</option>
-                    </select>
-                </div>
-
-                <!-- NOVO CAMPO DE ESPECIALIDADE (só aparece para médicos) -->
-                <div class="form-group" id="grupo-especialidade" style="display: none;">
-                    <label for="user-especialidade">Especialidade</label>
-                    <select id="user-especialidade">
-                        <!-- Será preenchido automaticamente -->
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-primary" id="btn-submeter">Adicionar</button>
             </form>
         </div>
 
         <div class="table-card">
             <h3 id="titulo-tabela">Todos os Utilizadores</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Perfil</th>
-                        <th>Estado</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabela-utilizadores"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>BI / CNI</th>
+                            <th>Data Nascimento</th>
+                            <th>Sexo</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Tipo de Utilizador</th>
+                            <th>Estado</th>
+                            <th style="text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-utilizadores"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -418,54 +482,70 @@
     <script>
         let filtroAtivo = "todos";
 
-        // Função para carregar e renderizar os dados respeitando o filtro ativo
+        function configurarHeaderDinamico() {
+            const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+            if (utilizador) {
+                if (document.getElementById("usuarioNome") && utilizador.nome) document.getElementById("usuarioNome").innerText = utilizador.nome;
+                if (document.getElementById("usuarioEmail") && utilizador.email) document.getElementById("usuarioEmail").innerText = utilizador.email;
+                if (document.getElementById("usuarioAvatar") && utilizador.nome) {
+                    const partes = utilizador.nome.trim().split(" ");
+                    const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+                    document.getElementById("usuarioAvatar").innerText = sigla.toUpperCase();
+                }
+            }
+        }
+
         async function render() {
             const lista = await obterUsuariosGerais();
 
-            // 1. Atualizar contadores nos cards superiores
             document.getElementById("totalGeral").innerText = lista.length;
-            document.getElementById("totalPacientes").innerText = lista.filter(u => u.perfil === "paciente").length;
-            document.getElementById("totalMedicos").innerText = lista.filter(u => u.perfil === "medico").length;
-            document.getElementById("totalRecepcionistas").innerText = lista.filter(u => u.perfil === "recepcionista").length;
+            document.getElementById("totalPacientes").innerText = lista.filter(u => String(u.perfil).toLowerCase() === "paciente").length;
+            document.getElementById("totalMedicos").innerText = lista.filter(u => String(u.perfil).toLowerCase() === "medico").length;
+            document.getElementById("totalRecepcionistas").innerText = lista.filter(u => ["recepcionista", "rececao"].includes(String(u.perfil).toLowerCase())).length;
 
-            // 2. Filtrar a lista para a tabela
             let listaFiltrada = lista;
             if (filtroAtivo !== "todos") {
-                listaFiltrada = lista.filter(u => u.perfil === filtroAtivo);
+                listaFiltrada = lista.filter(u => {
+                    const perf = String(u.perfil).toLowerCase();
+                    if (filtroAtivo === "recepcionista") return ["recepcionista", "rececao"].includes(perf);
+                    return perf === filtroAtivo;
+                });
             }
 
-            // 3. Montar as linhas na tabela
             const tbody = document.getElementById("tabela-utilizadores");
             tbody.innerHTML = "";
 
             if (listaFiltrada.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Nenhum utilizador registado nesta categoria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:20px; color:#888;">Nenhum utilizador registado nesta categoria.</td></tr>`;
                 return;
             }
 
+            // Renderiza as colunas seguindo estritamente a nova ordem do cabeçalho
             listaFiltrada.forEach(u => {
-                const emailSeguro = encodeURIComponent(u.email);
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${u.id}</td>
-                        <td><b>${u.nome}</b></td>
-                        <td>${u.email}</td>
-                        <td><span class="badge perfil-${u.perfil}">${u.perfil}</span></td>
-                        <td><span class="badge status-${u.estado || 'ativo'}">${u.estado || 'ativo'}</span></td>
-                        <td>
-                            <button class="btn-status" onclick="alternarEstado('${emailSeguro}')">
-                                <i class="fa fa-sync-alt"></i> Alternar Estado
-                            </button>
-                            <button class="btn-delete" onclick="removerUtilizador('${emailSeguro}')">
-                                <i class="fa fa-trash"></i> Remover
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+    const emailSeguro = encodeURIComponent(u.email || '');
+
+    tbody.innerHTML += `
+        <tr>
+            <td><b>${u.nome}</b></td>
+            <td>${u.bi}</td>
+            <td>${u.dataNascimento}</td>
+            <td>${u.sexo}</td>
+            <td>${u.telefone}</td> <td>${u.email}</td>
+            <td><span class="badge perfil-${String(u.perfil).toLowerCase()}">${u.perfil}</span></td>
+            <td><span class="badge status-${String(u.estado).toLowerCase()}">${u.estado}</span></td>
+            <td style="white-space: nowrap; text-align: center;">
+                <button class="btn-status" onclick="alternarEstado('${emailSeguro}')">
+                    <i class="fa fa-sync-alt"></i> Alternar
+                </button>
+                <button class="btn-delete" onclick="removerUtilizador('${emailSeguro}')">
+                    <i class="fa fa-trash"></i> Remover
+                </button>
+            </td>
+        </tr>
+    `;
+});
         }
 
-        // Função de Gestão do Clique nos Cards (Efeito Toggle e Mudança de Títulos)
         function gerirFiltroUtilizadores(perfil, elementoCard) {
             const todosCards = document.querySelectorAll('.cards .card');
             const h3Titulo = document.getElementById('titulo-tabela');
@@ -491,18 +571,34 @@
             render();
         }
 
-        // Função para submeter o Formulário e Adicionar Utilizadores
         async function adicionarUtilizadorForm(event) {
             event.preventDefault();
 
             const nome = document.getElementById("user-nome").value.trim();
+            const bi = document.getElementById("user-bi").value.trim();
+            const data_nascimento = document.getElementById("user-nascimento").value;
+            const sexo = document.getElementById("user-sexo").value;
+            const n_telefone = document.getElementById("user-telefone").value.trim();
             const email = document.getElementById("user-email").value.trim();
             const senha = document.getElementById("user-senha").value;
-            const perfil = document.getElementById("user-perfil").value;
+            const tipo = document.getElementById("user-perfil").value;
 
             try {
-                await criarUtilizadorApi(nome, email, perfil, senha);
-                registrarLogAcesso("Administrador", `Adicionou o utilizador: ${nome} (${perfil})`);
+                if (typeof criarUtilizadorApi === "function") {
+                    await criarUtilizadorApi(nome, 
+            bi, 
+            data_nascimento, 
+            sexo, 
+            n_telefone, 
+            email, 
+            senha, 
+            tipo);
+                }
+                
+                if (typeof registrarLogAcesso === "function") {
+                    registrarLogAcesso("Administrador", `Adicionou o utilizador: ${nome} (${tipo})`);
+                }
+                
                 document.getElementById("form-user").reset();
                 await render();
                 alert("Utilizador criado com sucesso.");
@@ -514,7 +610,7 @@
         async function alternarEstado(emailSeguro) {
             const email = decodeURIComponent(emailSeguro);
             await alternarEstadoUtilizadorApi(email);
-            registrarLogAcesso("Administrador", `Alternou o estado do utilizador: ${email}`);
+            if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Alternou o estado do utilizador: ${email}`);
             render();
         }
 
@@ -523,15 +619,15 @@
             const email = decodeURIComponent(emailSeguro);
             try {
                 await removerUtilizadorApi(email);
-                registrarLogAcesso("Administrador", `Removeu o utilizador: ${email}`);
+                if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Removeu o utilizador: ${email}`);
                 render();
             } catch (erro) {
                 alert(erro.message);
             }
         }
 
-        // Executa a montagem inicial do ecrã mal a página termine de carregar
         window.onload = function () {
+            configurarHeaderDinamico();
             document.getElementById('card-todos').classList.add('active-filter');
             render();
         };
