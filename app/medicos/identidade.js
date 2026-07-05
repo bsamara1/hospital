@@ -1,0 +1,33 @@
+const API_URL = "http://127.0.0.1:5000";
+const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
+
+function preencherUsuarioHeader() {
+    const nomeEl = document.getElementById("usuarioNome");
+    if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+}
+
+async function atualizarBadgeNotificacoes() {
+    const badge = document.getElementById("notifBadge");
+    if (!badge || !utilizadorLogado?.nome) return;
+
+    try {
+        const res = await fetch(`${API_URL}/consultas`);
+        const consultas = await res.json();
+        const minhas = consultas.filter(c => c.medico === utilizadorLogado.nome);
+        const relevantes = minhas.filter(c => c.estado === "pendente" || c.estado === "confirmada");
+
+        if (relevantes.length > 0) {
+            badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+            badge.style.display = "inline-block";
+        } else {
+            badge.style.display = "none";
+        }
+    } catch (erro) {
+        console.warn("Não foi possível carregar notificações do médico.", erro);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    preencherUsuarioHeader();
+    atualizarBadgeNotificacoes();
+});
