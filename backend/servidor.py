@@ -253,6 +253,14 @@ def api_utilizador():
     return jsonify(perfil)
 
 
+def indice_email(campos):
+    if len(campos) >= 7:
+        return 5
+    if len(campos) >= 4:
+        return 1
+    return None
+
+
 def carregar_utilizadores():
     usuarios = []
     try:
@@ -264,7 +272,10 @@ def carregar_utilizadores():
                 "nome": utilizador["nome"],
                 "email": email,
                 "telefone": utilizador["telefone"],
-                "tipo": utilizador["tipo"]
+                "tipo": utilizador["tipo"],
+                "bi": utilizador.get("bii", ""),
+                "dataNascimento": utilizador.get("dataNascimento", ""),
+                "sexo": utilizador.get("sexo", "")
             })
     except Exception:
         pass
@@ -302,6 +313,9 @@ def api_criar_utilizador():
     telefone = dados.get("telefone", "").strip()
     senha = dados.get("senha", "").strip()
     tipo = dados.get("tipo", "Paciente").strip() or "Paciente"
+    bi = dados.get("bi", "").strip()
+    data_nascimento = dados.get("dataNascimento", "").strip()
+    sexo = dados.get("sexo", "").strip()
 
     if not nome or not email or not senha:
         return jsonify({"sucesso": False, "mensagem": "Nome, e-mail e senha são obrigatórios."}), 400
@@ -310,7 +324,10 @@ def api_criar_utilizador():
         return jsonify({"sucesso": False, "mensagem": "Este e-mail já está registado."}), 409
 
     with open(ARQUIVO, "a", encoding="utf-8") as f:
-        f.write(f"{nome};{email};{telefone};{senha};{tipo}\n")
+        if bi:
+            f.write(f"{nome};{bi};{data_nascimento};{sexo};{telefone};{email};{senha};{tipo}\n")
+        else:
+            f.write(f"{nome};{email};{telefone};{senha};{tipo}\n")
 
     return jsonify({"sucesso": True, "utilizador": {"nome": nome, "email": email, "telefone": telefone}}), 201
 
@@ -381,13 +398,29 @@ def api_atualizar_utilizador():
     modificado = False
     with open(ARQUIVO, "r", encoding="utf-8") as f:
         for linha in f:
-            campos = [c.strip() for c in linha.rstrip("\n").split(";")]
-            if len(campos) >= 2 and campos[1].lower() == email_original:
-                while len(campos) < 7:
-                    campos.append("")
+            linha_limpa = linha.rstrip("\n")
+            if not linha_limpa.strip():
+                continue
+            campos = [c.strip() for c in linha_limpa.split(";")]
+            indice = indice_email(campos)
+
+            if indice is not None and campos[indice].lower() == email_original:
                 campos[0] = nome
-                campos[5] = email
-                campos[4] = telefone
+                campos[indice] = email
+
+                if indice == 5:
+                    # formato completo: Nome;BI;DataNasc;Sexo;Telefone;Email;Senha;Tipo
+                    campos[4] = telefone
+                    if "bi" in dados:
+                        campos[1] = dados.get("bi", "").strip()
+                    if "dataNascimento" in dados:
+                        campos[2] = dados.get("dataNascimento", "").strip()
+                    if "sexo" in dados:
+                        campos[3] = dados.get("sexo", "").strip()
+                else:
+                    # formato simples: Nome;Email;Telefone;Senha;Tipo
+                    campos[2] = telefone
+
                 modificado = True
             linhas.append(";".join(campos))
 
@@ -413,8 +446,12 @@ def api_deletar_utilizador():
     removido = False
     with open(ARQUIVO, "r", encoding="utf-8") as f:
         for linha in f:
-            campos = [c.strip() for c in linha.rstrip("\n").split(";")]
-            if len(campos) >= 2 and campos[1].lower() == email:
+            linha_limpa = linha.rstrip("\n")
+            if not linha_limpa.strip():
+                continue
+            campos = [c.strip() for c in linha_limpa.split(";")]
+            indice = indice_email(campos)
+            if indice is not None and campos[indice].lower() == email:
                 removido = True
                 continue
             linhas.append(";".join(campos))
