@@ -1,4 +1,6 @@
 
+aline@gmail.com;LOGIN_SUCESSO;2026-07-03 16:59:58
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-03 19:49:42
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 17:34:11
 alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:30
 alytavares@hospital.com;LOGIN_FALHOU;2026-07-04 17:36:32
@@ -46,3 +48,7 @@ alytavares@gmail.com;LOGIN_FALHOU;2026-07-04 22:17:16
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 22:17:25
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 22:27:57
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 22:41:37
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-04 23:03:58
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-04 23:03:58
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-04 23:03:59
+samaravela@gmail.com;LOGIN_SUCESSO;2026-07-04 23:03:59
