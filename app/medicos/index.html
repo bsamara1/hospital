@@ -139,6 +139,34 @@
             margin-bottom: 25px;
         }
 
+        .avatar-circle {
+            width: 35px;
+            height: 35px;
+            background: #1e40af;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .user-profile-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .user-profile-link:hover {
+            background: #e9edf3;
+        }
+
         /* CARDS INDICADORES - IGUAL ADMIN COM MOVIMENTO */
         .cards {
             display: grid;
@@ -244,6 +272,7 @@
     <a href="agenda.html"><i class="fa fa-calendar"></i> Agenda</a>
     <a href="disponibilidade.html"><i class="fa fa-clock"></i> Disponibilidade</a>
     <a href="notificacao.html" class="active"><i class="fa fa-bell"></i> Notificações</a>
+    <a href="perfil.html"><i class="fa fa-id-badge"></i> Meu Perfil</a>
     <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a></div>
 </div>
       
@@ -255,7 +284,10 @@
                 <i class="fa fa-bell"></i>
                 <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
             </a>
-            <i class="fa fa-user-circle"></i><span id="usuarioNome">Dr. Mendes</span>
+            <a href="perfil.html" class="user-profile-link">
+                <div class="avatar-circle" id="usuarioAvatar">M</div>
+                <span id="usuarioNome">Dr. Mendes</span>
+            </a>
         </div>
     </div>
     <div class="header-line"></div>

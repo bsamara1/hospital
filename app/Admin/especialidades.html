@@ -133,37 +133,40 @@
       }
     }
 
-    function render() {
-      const lista = obterEspecialidadesLista();
+    async function render() {
+      const lista = await obterEspecialidadesLista();
       const tbody = document.getElementById("tabela-esp");
       tbody.innerHTML = "";
-      lista.forEach((e, index) => {
+      lista.forEach((e) => {
         tbody.innerHTML += `<tr>
               <td><b>${e}</b></td>
-              <td><button class="delete" onclick="remover(${index})"><i class="fa fa-trash"></i> Remover</button></td>
+              <td><button class="delete" onclick="remover('${e.replace(/'/g, "\\'")}')"><i class="fa fa-trash"></i> Remover</button></td>
           </tr>`;
       });
     }
 
-    function addEsp(e) {
+    async function addEsp(e) {
       e.preventDefault();
       const nome = document.getElementById("esp-nome").value.trim();
-      const lista = obterEspecialidadesLista();
-      if (!lista.includes(nome)) {
-        lista.push(nome);
-        salvarEspecialidadesLista(lista);
+      try {
+        await criarEspecialidadeApi(nome);
         if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Criou especialidade: ${nome}`);
+        document.getElementById("esp-nome").value = "";
+        await render();
+      } catch (erro) {
+        alert(erro.message);
       }
-      document.getElementById("esp-nome").value = "";
-      render();
     }
 
-    function remover(index) {
+    async function remover(nome) {
       if (!confirm("Remover esta especialidade clínica?")) return;
-      const lista = obterEspecialidadesLista();
-      lista.splice(index, 1);
-      salvarEspecialidadesLista(lista);
-      render();
+      try {
+        await removerEspecialidadeApi(nome);
+        if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Removeu especialidade: ${nome}`);
+        await render();
+      } catch (erro) {
+        alert(erro.message);
+      }
     }
   </script>
 </body>

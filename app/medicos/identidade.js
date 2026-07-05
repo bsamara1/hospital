@@ -3,7 +3,13 @@ const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null"
 
 function preencherUsuarioHeader() {
     const nomeEl = document.getElementById("usuarioNome");
+    const avatarEl = document.getElementById("usuarioAvatar");
     if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+    if (avatarEl && utilizadorLogado?.nome) {
+        const partes = utilizadorLogado.nome.trim().split(" ");
+        const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+        avatarEl.innerText = sigla.toUpperCase();
+    }
 }
 
 async function atualizarBadgeNotificacoes() {
