@@ -1,16 +1,41 @@
 const API_URL = "http://127.0.0.1:5000";
+const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
+
 let consultas = [];
 let corpo = null;
 
 async function initCancelamento() {
+    preencherUsuarioHeader();
     corpo = document.getElementById("tabelaCancelamento");
     await carregarConsultas();
 }
 
+function preencherUsuarioHeader() {
+    const nomeEl = document.getElementById("usuarioNome");
+    const emailEl = document.getElementById("usuarioEmail");
+    if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+    if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+}
+
 async function carregarConsultas() {
     const res = await fetch(`${API_URL}/consultas`);
-    consultas = await res.json();
+    const todasConsultas = await res.json();
+    const paciente = utilizadorLogado?.nome || "";
+    consultas = todasConsultas.filter(c => (c.paciente || "").toLowerCase() === paciente.toLowerCase());
     renderTabela();
+    atualizarBadgeNotificacoes();
+}
+
+function atualizarBadgeNotificacoes() {
+    const badge = document.getElementById("notifBadge");
+    if (!badge) return;
+    const relevantes = consultas.filter(c => c.estado === "pendente" || c.estado === "cancelada" || c.estado === "confirmada");
+    if (relevantes.length > 0) {
+        badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
 }
 
 function formatarData(dataString) {

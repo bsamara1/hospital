@@ -338,14 +338,91 @@ function fecharModalMedico() {
 }
 
 // =========================================================================
+// MÓDULO: NOTIFICAÇÕES (notificacoes.html + badge do sino em todas as páginas)
+// =========================================================================
+
+async function minhasConsultas() {
+    const paciente = nomePaciente();
+    if (!paciente) return [];
+    const todasConsultas = await loadConsultas();
+    return todasConsultas.filter(c => (c.paciente || "").toLowerCase() === paciente.toLowerCase());
+}
+
+function gerarNotificacoesPaciente(consultasPaciente) {
+    const notificacoes = consultasPaciente.map(c => {
+        if (c.estado === "cancelada") {
+            return { tipo: "cancelada", texto: `A sua consulta com ${c.medico} em ${formatDate(c.data)} foi cancelada.`, data: c.data };
+        }
+        if (c.estado === "pendente") {
+            return { tipo: "pendente", texto: `A sua consulta com ${c.medico} em ${formatDate(c.data)} às ${c.hora} aguarda confirmação.`, data: c.data };
+        }
+        if (c.estado === "confirmada") {
+            return { tipo: "confirmada", texto: `Consulta confirmada com ${c.medico} para ${formatDate(c.data)} às ${c.hora}.`, data: c.data };
+        }
+        if (c.estado === "presente") {
+            return { tipo: "presente", texto: `Presença registada na consulta com ${c.medico}.`, data: c.data };
+        }
+        if (c.estado === "realizada") {
+            return { tipo: "realizada", texto: `A sua consulta com ${c.medico} em ${formatDate(c.data)} foi concluída.`, data: c.data };
+        }
+        return null;
+    }).filter(Boolean);
+
+    return notificacoes.sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+}
+
+async function atualizarBadgeNotificacoes() {
+    const badge = document.getElementById("notifBadge");
+    if (!badge) return;
+
+    const minhas = await minhasConsultas();
+    const relevantes = minhas.filter(c => c.estado === "pendente" || c.estado === "cancelada" || c.estado === "confirmada");
+
+    if (relevantes.length > 0) {
+        badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
+}
+
+async function initNotificacoesPaciente() {
+    const minhas = await minhasConsultas();
+    const notificacoes = gerarNotificacoesPaciente(minhas);
+
+    const container = document.getElementById("listaNotificacoes");
+    if (!container) return;
+
+    if (notificacoes.length === 0) {
+        container.innerHTML = `<p style="text-align:center; color:#888; padding:20px;">Sem notificações no momento.</p>`;
+        return;
+    }
+
+    const icones = { cancelada: "fa-circle-xmark", pendente: "fa-clock", confirmada: "fa-circle-check", presente: "fa-user-check", realizada: "fa-flag-checkered" };
+    const cores = { cancelada: "#dc3545", pendente: "#e0a800", confirmada: "#28a745", presente: "#17a2b8", realizada: "#6c757d" };
+
+    container.innerHTML = notificacoes.map(n => `
+        <div style="display:flex; gap:12px; padding:14px; border-bottom:1px solid #eee;">
+            <i class="fa ${icones[n.tipo] || 'fa-bell'}" style="color:${cores[n.tipo] || '#555'}; font-size:18px; margin-top:2px;"></i>
+            <span>${escapeHtml(n.texto)}</span>
+        </div>
+    `).join("");
+}
+
+// =========================================================================
 // GATILHO DE ROTEAMENTO
 // =========================================================================
 window.addEventListener("DOMContentLoaded", () => {
+    preencherUsuarioHeader();
+    atualizarBadgeNotificacoes();
+
     if (document.getElementById("formMarcacao")) {
         initMarcarConsulta();
     } else if (document.getElementById("tabela-consultas")) {
         initMinhasConsultas();
     } else if (document.getElementById("listaMedicos")) {
         initListaMedicos();
+    } else if (document.getElementById("listaNotificacoes")) {
+        initNotificacoesPaciente();
     }
 });
