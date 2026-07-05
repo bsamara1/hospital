@@ -24,7 +24,6 @@
     "sintomas": [],
     "prioridade": "baixa"
   },
- 
   {
     "id": 1783258421950,
     "paciente": "alyTavares",
@@ -38,5 +37,21 @@
       "tosse"
     ],
     "prioridade": "media"
+  },
+  {
+    "id": 1783282774799,
+    "paciente": "alyTavares",
+    "medico": "Dr.liliana",
+    "especialidade": "Clínica Geral",
+    "data": "2026-07-17",
+    "hora": "08:00",
+    "estado": "pendente",
+    "sintomas": [
+      "dor-peito",
+      "falta-ar",
+      "febre-alta",
+      "tosse"
+    ],
+    "prioridade": "alta"
   }
 ]

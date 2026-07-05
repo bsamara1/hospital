@@ -3,118 +3,452 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recepcionista - Dashboard</title>
+<title>Pacientes - Dashboard</title>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link href="recepcionista-styles.css" rel="stylesheet">
+
+<style>
+
+/* RESET */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family: "Segoe UI", sans-serif;
+}
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:10px;
+font-weight:bold;
+color:#fff;
+}
+.logo span{
+  font-size:32px;
+  font-weight:bold;
+}
+
+.logo img{
+width:50px;
+height:50px;
+object-fit:contain;
+}
+
+body{
+display:flex;
+background:#f5f7fb;
+height:100vh;
+}
+
+/* SIDEBAR (MANTIDA ORIGINAL E INTOCÁVEL) */
+.sidebar{
+width:260px;
+background:#0b2a4a;
+color:#fff;
+display:flex;
+flex-direction:column;
+padding:20px;
+height:100vh;
+}
+.bottom{
+  margin-top:auto; 
+}
+
+.sidebar .logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-size:22px;
+font-weight:bold;
+margin-bottom:30px;
+}
+
+.sidebar .logo img{
+width:50px;
+height:50px;
+object-fit:contain;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+padding:12px 15px;
+margin:5px 0;
+display:flex;
+align-items:center;
+gap:10px;
+border-radius:8px;
+transition:0.3s;
+font-size:16px;
+}
+
+.sidebar a:hover, .sidebar a.active{
+background:#163a63;
+color:#fff;
+}
+
+.sidebar .logout{
+  color:#ff6b6b;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 15px;
+  border-radius:8px;
+  text-decoration:none;
+  margin:5px 0;
+  transition:0.3s;
+}
+.logout:hover{
+  background:#163a63;
+}
+
+.divider{
+  height:1px;
+  background:rgba(255,255,255,0.15);
+  margin:12px 0;
+}
+
+/* MAIN */
+.main{
+flex:1;
+padding:25px;
+overflow:auto;
+}
+
+/* HEADER & TOPBAR (MODIFICADO APENAS ESTE BLOCO IGUAL AO ADMIN INDEX) */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header-line {
+  margin-left: -25px;
+  margin-right: -25px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin-bottom: 25px;
+}
+
+.header h2 {
+  font-size: 20px;
+  color: #333;
+}
+
+.user-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #555;
+}
+
+.user-box i {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.user-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.user-profile-link:hover {
+  background: #e2e8f0;
+}
+
+.avatar-circle {
+  width: 35px;
+  height: 35px;
+  background: #1e40af;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* CARDS */
+.cards{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-bottom:25px;
+}
+
+.card{
+background:#fff;
+padding:18px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card h4{
+font-size:13px;
+color:#666;
+}
+
+.card p{
+font-size:22px;
+font-weight:bold;
+margin-top:10px;
+}
+
+/* TABLE CARD */
+.table-card{
+background:#fff;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.table-card h3{
+margin-bottom:15px;
+}
+
+.hero-card{
+background:#fff;
+padding:22px;
+border-radius:16px;
+box-shadow:0 5px 18px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+.hero-title{
+font-size:22px;
+font-weight:700;
+margin-bottom:10px;
+color:#222;
+}
+
+.hero-subtitle{
+font-size:16px;
+color:#555;
+margin-bottom:14px;
+}
+
+.hero-detail{
+font-size:16px;
+color:#333;
+margin-bottom:8px;
+}
+
+/* ALERTS */
+.alerts-grid{
+display:grid;
+grid-template-columns:1.2fr 1fr;
+gap:18px;
+margin-top:20px;
+}
+
+.alert-card,
+.notifications-card{
+background:#fff;
+padding:22px;
+border-radius:16px;
+box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+
+.alert-card h3,
+.notifications-card h3{
+font-size:18px;
+margin-bottom:14px;
+color:#1f3566;
+}
+
+.alert-card p{
+font-size:16px;
+color:#3b4255;
+line-height:1.6;
+}
+
+.notificacao{
+padding:16px;
+border-radius:14px;
+margin-bottom:12px;
+background:#f7faff;
+}
+
+.notificacao.nova{
+border:1px solid #dce9ff;
+}
+
+.notificacao-texto{
+font-size:15px;
+color:#2f3d60;
+margin-bottom:10px;
+}
+
+.notificacao button{
+background:#054a93;
+color:#fff;
+padding:8px 12px;
+border-radius:10px;
+font-size:13px;
+}
+
+/* TABLE */
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+th{
+text-align:left;
+color:#666;
+}
+
+/* STATUS */
+.status{
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+}
+
+.pending{background:#fff3cd;color:#856404;}
+.done{background:#d4edda;color:#155724;}
+.cancel{background:#f8d7da;color:#721c24;}
+
+/* BUTTONS */
+button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+margin-right:5px;
+}
+
+.confirm{background:#28a745;color:#fff;}
+.edit{background:#007bff;color:#fff;}
+.delete{background:#dc3545;color:#fff;}
+
+</style>
 </head>
+<script src="../js/consultas.js"></script>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo">
-      <img src="../assets/img/logo.png" alt="Logo HAN">
-      <span>HAN</span>
+    <img src="../assets/img/logo.png" alt="Logo HAN">
+    <span>HAN</span>
   </div>
-  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt="">Painel Principal</a>
-  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt="">Pacientes</a>
-  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/consulta.png" alt="texto">Consultas</a>
-  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/agendar.png" alt="">Agenda Médica</a>
-  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/presenca.png" alt="">Confirmar Presença</a>
-  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt="">Notificações</a>
-
+  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt=""> Pacientes</a>
+  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/agendar.png" alt=""> Agenda Médica</a>
+  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/presenca.png" alt=""> Confirmar Presença</a>
+  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
   <div class="bottom">
-      <div class="divider"></div>
-
-      <a class="logout" href="../login.html">
-          <img src="../assets/icons/sair.png" alt="Sair" style="width:20px;height:20px;">
-          Terminar sessão
-      </a>
+    <div class="divider"></div>
+    <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
   </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 
-<!-- HEADER -->
 <div class="header">
-
     <h2>Painel Principal</h2>
 
     <div class="user-box">
-        <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;">
+        <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
             <i class="fa fa-bell"></i>
             <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
         </a>
-        <i class="fa fa-user-circle"></i>
-        <div style="display:flex; flex-direction:column; line-height:1.1;">
-            <span id="usuarioNome" style="font-weight:700;">Recepcionista</span>
-            <span id="usuarioEmail" style="font-size:12px; color:#888;"></span>
-        </div>
+        
+        <a href="perfil.html" class="user-profile-link">
+            <div class="avatar-circle" id="usuarioAvatar">R</div>
+            <div style="display:flex; flex-direction:column; line-height:1.1;">
+                <span id="usuarioNome" style="font-weight:700;">Recepcionista</span>
+                <span id="usuarioEmail" style="font-size:12px; color:#888;">recepcao@hospital.cv</span>
+            </div>
+        </a>
     </div>
-
 </div>
 
 <div class="header-line"></div>
 
-<!-- CARDS -->
+<div id="dashboardResumo"></div>
+
+<div class="hero-card" style="background: linear-gradient(135deg, #0b2a4a, #163a63); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h2 style="margin-bottom: 8px;">Precisa de atendimento médico?</h2>
+        <p style="font-size: 14px; opacity: 0.9;">Inicie a sua marcação digital. O nosso sistema irá avaliar os seus sintomas para lhe dar a prioridade clínica adequada.</p>
+    </div>
+    <a href="marcar_consulta.html" style="background: #28a745; color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 15px; transition: 0.3s; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+        <i class="fa fa-plus-circle"></i> Marcar Consulta / Triagem
+    </a>
+</div>
+
 <div class="cards">
 
 <div class="card">
-<h4>Consultas Hoje</h4>
-<p id="consultasHoje">0</p>
+<h4>Próximas consultas</h4>
+<p>0</p>
 </div>
 
 <div class="card">
-<h4>Pacientes Registados</h4>
-<p id="pacientesTotal">0</p>
+<h4>Consultas marcadas</h4>
+<p>0</p>
 </div>
 
 <div class="card">
-<h4>Pendentes</h4>
-<p id="pendentes">0</p>
+<h4>Consultas realizadas</h4>
+<p>0</p>
 </div>
 
 <div class="card">
-<h4>Canceladas</h4>
-<p id="canceladas">0</p>
-</div>
-
-<div class="card">
-<h4>Médicos em Serviço</h4>
-<p id="medicosServico">0</p>
-</div>
-
-<div class="card">
-<h4>Presentes</h4>
-<p id="presentes">0</p>
+<h4>Notificações</h4>
+<p id="notificacoesCount">0</p>
 </div>
 
 </div>
 
-<div class="dashboard-section">
-  <div class="table-card">
-    <h3>Próximas Consultas</h3>
-    <div id="proximasConsultas"></div>
-  </div>
-  <div class="table-card">
-    <h3>Avisos do Dia</h3>
-    <div id="avisosDoDia"></div>
-  </div>
-</div>
-
-<div class="table-card">
-  <h3>Agenda Médica (Resumo)</h3>
-  <div id="agendaMedicaResumo"></div>
-</div>
-
-<div class="table-card">
-  <h3>Últimas Notificações</h3>
-  <div id="ultimasNotificacoes"></div>
+<div class="alerts-grid">
+    <div class="alert-card">
+        <h3>Avisos importantes</h3>
+        <p id="alertaImportante">Carregando avisos importantes...</p>
+    </div>
+    <div class="notifications-card">
+        <h3>Últimas notificações</h3>
+        <div id="listaNotificacoes"></div>
+    </div>
 </div>
 
 </div>
-<script src="js/recepcionista-common.js"></script>
-<script src="js/recepcionista-dashboard.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    configurarHeaderDinamico();
+  });
+
+  function configurarHeaderDinamico() {
+    const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+    if (utilizador) {
+      if (document.getElementById("usuarioNome") && utilizador.nome) document.getElementById("usuarioNome").innerText = utilizador.nome;
+      if (document.getElementById("usuarioEmail") && utilizador.email) document.getElementById("usuarioEmail").innerText = utilizador.email;
+      if (document.getElementById("usuarioAvatar") && utilizador.nome) {
+        const partes = utilizador.nome.trim().split(" ");
+        const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+        document.getElementById("usuarioAvatar").innerText = sigla.toUpperCase();
+      }
+    }
+  }
+</script>
 </body>
 </html>
