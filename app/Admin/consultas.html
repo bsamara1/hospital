@@ -5,25 +5,50 @@
   <title>Administrador - Histórico de Consultas & Relatórios</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
+    /* RESET & BASE */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
     body { display: flex; background: #f5f7fb; height: 100vh; }
+    
+    /* SIDEBAR */
     .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
-    .logo{ display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
     .logo span { font-size: 32px; font-weight: bold; }
     .logo img { width: 50px; height: 50px; object-fit: contain; }
-    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; }
-    .sidebar a:hover, .sidebar a.active { background: #163a63; }
+    .bottom { margin-top: auto; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; transition: 0.3s; cursor: pointer; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; color: #fff; }
+    .divider { height: 1px; background: rgba(255, 255, 255, 0.15); margin: 12px 0; }
+    .sidebar .logout { color: #ff6b6b; display: flex; align-items: center; gap: 10px; padding: 12px 15px; border-radius: 8px; }
+    .logout:hover { background: #163a63; }
+
+    /* MAIN CONTENT AREA */
     .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    
+    /* HEADER & TOPBAR */
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+    .user-box { display: flex; align-items: center; gap: 15px; color: #555; }
+    
+    .user-profile-link { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; padding: 5px 10px; border-radius: 8px; transition: background 0.2s; }
+    .user-profile-link:hover { background: #e2e8f0; }
+    
+    .avatar-circle { width: 35px; height: 35px; background: #1e40af; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
+
+    /* STATS CARDS */
     .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-    .stat-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-    .stat-card h4 { font-size: 13px; color: #777; margin-bottom: 5px; }
-    .stat-card p { font-size: 24px; font-weight: bold; }
-    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; text-align: left; }
-    .status { padding: 4px 10px; border-radius: 20px; font-size: 12px; text-transform: capitalize; font-weight: 600; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .stat-card h4 { font-size: 13px; color: #64748b; margin-bottom: 5px; font-weight: 600; }
+    .stat-card p { font-size: 24px; font-weight: bold; color: #0b2a4a; }
+
+    /* TABLES */
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    th { background: #f8fafc; color: #475569; font-weight: 600; }
+    tr:hover td { background-color: #f8fafc; }
+    
+    /* STATUS BADGES */
+    .status { padding: 4px 10px; border-radius: 20px; font-size: 12px; text-transform: capitalize; font-weight: 600; display: inline-block; }
     .confirmada, .done { background: #d4edda; color: #155724; }
     .pendente { background: #fff3cd; color: #856404; }
     .cancelada { background: #f8d7da; color: #721c24; }
@@ -33,30 +58,40 @@
 
   <div class="sidebar">
     <div class="logo">
-        <img src="../assets/img/logo.png" alt="Logo">
-        <span>HAN</span>
+      <img src="../assets/img/logo.png" alt="Logo HAN">
+      <span>HAN</span>
     </div>
+
     <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
     <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
     <a href="medicos.html"><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="especialidades.html"><i class="fa fa-stethoscope"></i> Especialidades</a>
     <a href="consultas.html" class="active"><i class="fa fa-calendar-alt"></i> Consultas</a>
     <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
     <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+
+    <div class="bottom">
+      <div class="divider"></div>
+      <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
+    </div>
   </div>
 
   <div class="main">
     <div class="header">
       <h2>Histórico Geral de Consultas</h2>
-      <div style="display:flex; align-items:center; gap:15px; color:#555;">
-        <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit;">
+      <div class="user-box">
+        <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
             <i class="fa fa-bell"></i>
             <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
         </a>
-        <i class="fa fa-user-circle"></i>
-        <div style="display:flex; flex-direction:column; line-height:1.1;">
+        
+        <a href="perfil.html" class="user-profile-link">
+          <div class="avatar-circle" id="usuarioAvatar">A</div>
+          <div style="display:flex; flex-direction:column; line-height:1.1;">
             <span id="usuarioNome" style="font-weight:700;">Administrador</span>
-            <span id="usuarioEmail" style="font-size:12px; color:#888;"></span>
-        </div>
+            <span id="usuarioEmail" style="font-size:12px; color:#888;">admin@hospital.cv</span>
+          </div>
+        </a>
       </div>
     </div>
     <div class="header-line"></div>
@@ -79,8 +114,28 @@
 
   <script src="storage.js"></script>
   <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      configurarHeaderDinamico();
+      render();
+    });
+
+    function configurarHeaderDinamico() {
+      const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+      if (utilizador) {
+        if (document.getElementById("usuarioNome") && utilizador.nome) document.getElementById("usuarioNome").innerText = utilizador.nome;
+        if (document.getElementById("usuarioEmail") && utilizador.email) document.getElementById("usuarioEmail").innerText = utilizador.email;
+        if (document.getElementById("usuarioAvatar") && utilizador.nome) {
+          const partes = utilizador.nome.trim().split(" ");
+          const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+          document.getElementById("usuarioAvatar").innerText = sigla.toUpperCase();
+        }
+      }
+    }
+
     async function render() {
-      const consultas = await obterConsultas();
+      const formulasDeSuporte = typeof obterConsultas === "function";
+      const consultas = formulasDeSuporte ? await obterConsultas() : [];
+      
       document.getElementById("c-total").innerText = consultas.length;
       document.getElementById("c-done").innerText = consultas.filter(c => c.estado === 'confirmada' || c.estado === 'done').length;
       document.getElementById("c-cancel").innerText = consultas.filter(c => c.estado === 'cancelada').length;
@@ -93,7 +148,7 @@
       }
       consultas.forEach(c => {
         tbody.innerHTML += `<tr>
-              <td>${c.paciente || c.nome}</td>
+              <td><b>${c.paciente || c.nome}</b></td>
               <td>${c.medico}</td>
               <td>${c.especialidade || 'Geral'}</td>
               <td>${c.data} às ${c.hora}</td>
@@ -101,7 +156,6 @@
           </tr>`;
       });
     }
-    window.onload = render;
   </script>
 </body>
 </html>
