@@ -7,14 +7,6 @@ let medicos = [];
 let abaAtiva = "agendadas";
 let consultaEmEdicao = null;
 
-const ESPECIALIDADES_LABEL = {
-    "clinica-geral": "Clínica Geral",
-    "cardiologia": "Cardiologia",
-    "ortopedia": "Ortopedia",
-    "pediatria": "Pediatria",
-    "dermatologia": "Dermatologia"
-};
-
 // =========================================================================
 // ACESSO AOS DADOS (API REAL DO BACKEND)
 // =========================================================================
@@ -93,17 +85,20 @@ async function initMarcarConsulta() {
     const selectMed = document.getElementById("medico");
     const form = document.getElementById("formMarcacao");
 
+    const especialidades = await fetchEspecialidades();
+    selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>' +
+        especialidades.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
+
     selectEsp.addEventListener("change", atualizarMedicosDisponiveis);
     selectMed.addEventListener("change", atualizarHorariosDisponiveis);
     form.addEventListener("submit", onSubmitMarcacao);
 }
 
 function atualizarMedicosDisponiveis() {
-    const espValue = document.getElementById("especialidade").value;
-    const label = ESPECIALIDADES_LABEL[espValue] || "";
+    const especialidade = document.getElementById("especialidade").value;
     const selectMed = document.getElementById("medico");
 
-    const filtrados = medicos.filter(m => m.especialidade === label && m.status !== "inativo");
+    const filtrados = medicos.filter(m => m.especialidade === especialidade && m.status !== "inativo");
     selectMed.innerHTML = '<option value="">Selecione o médico...</option>' +
         filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
 
@@ -134,8 +129,7 @@ async function onSubmitMarcacao(event) {
         return;
     }
 
-    const espValue = document.getElementById("especialidade").value;
-    const especialidade = ESPECIALIDADES_LABEL[espValue] || espValue;
+    const especialidade = document.getElementById("especialidade").value;
     const medico = document.getElementById("medico").value;
     const data = document.getElementById("dataConsulta").value;
     const hora = document.getElementById("horaConsulta").value;
