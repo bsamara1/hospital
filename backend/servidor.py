@@ -215,6 +215,22 @@ def api_criar_especialidade():
 
     return jsonify({"sucesso": True, "mensagem": "Especialidade criada com sucesso!", "especialidades": especialidades}), 201
 
+
+@app.route("/especialidades", methods=["DELETE"])
+def api_remover_especialidade():
+    nome_especialidade = request.args.get("nome", "").strip()
+    if not nome_especialidade:
+        return jsonify({"sucesso": False, "mensagem": "O nome da especialidade é obrigatório."}), 400
+
+    especialidades = carregar_json(ESPECIALIDADES_FILE)
+    especialidades_restantes = [e for e in especialidades if e.lower() != nome_especialidade.lower()]
+
+    if len(especialidades_restantes) == len(especialidades):
+        return jsonify({"sucesso": False, "mensagem": "Especialidade não encontrada."}), 404
+
+    guardar_json(ESPECIALIDADES_FILE, especialidades_restantes)
+    return jsonify({"sucesso": True, "mensagem": "Especialidade removida.", "especialidades": especialidades_restantes})
+
 # =========================
 # ROTAS API - MÉDICOS
 # =========================

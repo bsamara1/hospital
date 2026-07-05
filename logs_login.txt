@@ -80,3 +80,4 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 19:37:28
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-05 19:52:08
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-05 20:26:02
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-05 21:06:02
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 22:01:27

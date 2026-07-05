@@ -420,14 +420,6 @@
             <label for="select-esp">Especialidade Médica</label>
             <select id="select-esp" required>
               <option value="">Atribuir Especialidade...</option>
-              <option value="Clínica Geral">Clínica Geral</option>
-              <option value="Cardiologia">Cardiologia</option>
-              <option value="Pediatria">Pediatria</option>
-              <option value="Ortopedia">Ortopedia</option>
-              <option value="Dermatologia">Dermatologia</option>
-              <option value="Neurologia">Neurologia</option>
-              <option value="Ginecologia">Ginecologia</option>
-              <option value="Oftalmologia">Oftalmologia</option>
             </select>
           </div>
 
@@ -519,8 +511,20 @@
     // ADICIONADO: Gatilho para carregar o header dinâmico assim que a página abre
     document.addEventListener("DOMContentLoaded", () => {
       configurarHeaderDinamico();
+      carregarEspecialidadesSelect();
       render();
     });
+
+    async function carregarEspecialidadesSelect() {
+      const select = document.getElementById("select-esp");
+      const valorAtual = select.value;
+      const especialidades = await obterEspecialidadesLista();
+
+      select.innerHTML = '<option value="">Atribuir Especialidade...</option>' +
+        especialidades.map(e => `<option value="${e}">${e}</option>`).join("");
+
+      if (valorAtual) select.value = valorAtual;
+    }
 
     function configurarHeaderDinamico() {
       const utilizador = JSON.parse(localStorage.getItem("utilizador"));

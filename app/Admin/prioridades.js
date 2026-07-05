@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:5000";
+// API_URL já vem definido em storage.js (carregado antes deste ficheiro)
 
 // ==========================================
 // FUNÇÕES DE SUPORTE E LEITURA DA API

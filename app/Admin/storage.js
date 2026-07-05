@@ -280,15 +280,39 @@ async function obterConsultas() {
 }
 
 // ==========================================
-// ESPECIALIDADES (apenas local - sem endpoint no backend)
+// ESPECIALIDADES (API real)
 // ==========================================
 
-function obterEspecialidadesLista() {
-  return JSON.parse(localStorage.getItem(DB_ESPECIALIDADES)) || [];
+async function obterEspecialidadesLista() {
+  try {
+    const res = await fetch(`${API_URL}/especialidades`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (erro) {
+    console.warn("Não foi possível carregar especialidades do servidor.", erro);
+    return [];
+  }
 }
 
-function salvarEspecialidadesLista(lista) {
-  localStorage.setItem(DB_ESPECIALIDADES, JSON.stringify(lista));
+async function criarEspecialidadeApi(nome) {
+  const res = await fetch(`${API_URL}/especialidades`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome })
+  });
+  const dados = await res.json();
+  if (!res.ok || !dados.sucesso) {
+    throw new Error(dados.mensagem || "Não foi possível criar a especialidade.");
+  }
+  return dados;
+}
+
+async function removerEspecialidadeApi(nome) {
+  const res = await fetch(`${API_URL}/especialidades?nome=${encodeURIComponent(nome)}`, { method: "DELETE" });
+  const dados = await res.json();
+  if (!res.ok || !dados.sucesso) {
+    throw new Error(dados.mensagem || "Não foi possível remover a especialidade.");
+  }
 }
 
 // ==========================================
