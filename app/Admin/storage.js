@@ -11,6 +11,39 @@ const DB_ESPECIALIDADES = "han_db_especialidades";
 const DB_LOGS = "han_db_logs";
 const DB_ESTADOS_UTILIZADOR = "han_db_estados_utilizador";
 
+const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
+
+// ==========================================
+// CABEÇALHO: IDENTIDADE E NOTIFICAÇÕES (em todas as páginas do Admin)
+// ==========================================
+
+function preencherUsuarioHeader() {
+  const nomeEl = document.getElementById("usuarioNome");
+  const emailEl = document.getElementById("usuarioEmail");
+  if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
+  if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+}
+
+async function atualizarBadgeNotificacoes() {
+  const badge = document.getElementById("notifBadge");
+  if (!badge) return;
+
+  const consultas = await obterConsultas();
+  const relevantes = consultas.filter(c => c.estado === "pendente" || c.estado === "cancelada");
+
+  if (relevantes.length > 0) {
+    badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
+    badge.style.display = "inline-block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  preencherUsuarioHeader();
+  atualizarBadgeNotificacoes();
+});
+
 // ==========================================
 // UTILIZADORES (API real)
 // ==========================================
@@ -56,18 +89,17 @@ async function obterUsuariosGerais() {
   }
 }
 
-async function criarUtilizadorApi(nome, email, perfil, telefone = "") {
-  const senhaProvisoria = Math.random().toString(36).slice(-8);
+async function criarUtilizadorApi(nome, email, perfil, senha, telefone = "") {
   const res = await fetch(`${API_URL}/utilizadores`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome, email, telefone, senha: senhaProvisoria, tipo: mapearPerfilParaTipo(perfil) })
+    body: JSON.stringify({ nome, email, telefone, senha, tipo: mapearPerfilParaTipo(perfil) })
   });
   const dados = await res.json();
   if (!res.ok || !dados.sucesso) {
     throw new Error(dados.mensagem || "Não foi possível criar o utilizador.");
   }
-  return { ...dados.utilizador, senhaProvisoria };
+  return dados.utilizador;
 }
 
 async function alternarEstadoUtilizadorApi(email) {
