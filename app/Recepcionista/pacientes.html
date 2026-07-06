@@ -57,24 +57,22 @@
     </div>
   </div>
 
-  <div class="table-card">
-    <h3>Lista de Pacientes</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>BI</th>
-          <th>Data de Nascimento</th>
-          <th>Sexo</th>
-          <th>Nº de Telefone</th>
-          <th>Email</th>
-          <th>Ação</th>
-        </tr>
-      </thead>
-      <tbody id="pacientesTabela">
-        </tbody>
-    </table>
-  </div>
+<div class="table-card">
+  <h3>Lista de Pacientes</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Doc. Identificação (BI)</th>
+        <th>Data Nasc.</th>
+        <th>Género</th>
+        <th>Telefone</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="pacientesTabela"></tbody>
+  </table>
 </div>
 
 <div id="modalPaciente" class="modal-overlay">
@@ -90,11 +88,11 @@
       <option value="" disabled selected>Selecione o Sexo</option>
       <option value="Masculino">Masculino</option>
       <option value="Feminino">Feminino</option>
-    </select>
-
-    <input id="pacienteTelefone" type="text" placeholder="Telefone">
+    </select> <input id="pacienteTelefone" type="text" placeholder="Telefone">
     <input id="pacienteEmail" type="email" placeholder="Email">
     <input id="pacienteSenha" type="password" placeholder="Senha">
+    
+    <input id="pacienteTipo" type="hidden" value="Paciente">
 
     <div class="modal-actions">
       <button class="delete" type="button" onclick="fecharModal()">Cancelar</button>
