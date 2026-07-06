@@ -83,3 +83,11 @@ admin@hospital.cv;LOGIN_SUCESSO;2026-07-05 21:06:02
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 22:01:27
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 22:39:16
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 22:46:43
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-05 22:49:15
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:35:24
+admin@hosiptal.cv;LOGIN_FALHOU;2026-07-06 12:35:55
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:36:35
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:36:36
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-06 12:51:10
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:57:18
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 14:57:23
