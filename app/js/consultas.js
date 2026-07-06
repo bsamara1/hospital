@@ -5,14 +5,7 @@ const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null"
 let consultas = [];
 let medicos = [];
 let abaAtiva = "agendadas";
-
-const ESPECIALIDADES_LABEL = {
-    "clinica-geral": "Clínica Geral",
-    "cardiologia": "Cardiologia",
-    "ortopedia": "Ortopedia",
-    "pediatria": "Pediatria",
-    "dermatologia": "Dermatologia"
-};
+let consultaEmEdicao = null;
 
 // =========================================================================
 // ACESSO AOS DADOS (API REAL DO BACKEND)
@@ -51,8 +44,14 @@ function nomePaciente() {
 function preencherUsuarioHeader() {
     const nomeEl = document.getElementById("usuarioNome");
     const emailEl = document.getElementById("usuarioEmail");
+    const avatarEl = document.getElementById("usuarioAvatar");
     if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
     if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+    if (avatarEl && utilizadorLogado?.nome) {
+        const partes = utilizadorLogado.nome.trim().split(" ");
+        const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+        avatarEl.innerText = sigla.toUpperCase();
+    }
 }
 
 function escapeHtml(string) {
@@ -86,17 +85,20 @@ async function initMarcarConsulta() {
     const selectMed = document.getElementById("medico");
     const form = document.getElementById("formMarcacao");
 
+    const especialidades = await fetchEspecialidades();
+    selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>' +
+        especialidades.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
+
     selectEsp.addEventListener("change", atualizarMedicosDisponiveis);
     selectMed.addEventListener("change", atualizarHorariosDisponiveis);
     form.addEventListener("submit", onSubmitMarcacao);
 }
 
 function atualizarMedicosDisponiveis() {
-    const espValue = document.getElementById("especialidade").value;
-    const label = ESPECIALIDADES_LABEL[espValue] || "";
+    const especialidade = document.getElementById("especialidade").value;
     const selectMed = document.getElementById("medico");
 
-    const filtrados = medicos.filter(m => m.especialidade === label && m.status !== "inativo");
+    const filtrados = medicos.filter(m => m.especialidade === especialidade && m.status !== "inativo");
     selectMed.innerHTML = '<option value="">Selecione o médico...</option>' +
         filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
 
@@ -127,8 +129,7 @@ async function onSubmitMarcacao(event) {
         return;
     }
 
-    const espValue = document.getElementById("especialidade").value;
-    const especialidade = ESPECIALIDADES_LABEL[espValue] || espValue;
+    const especialidade = document.getElementById("especialidade").value;
     const medico = document.getElementById("medico").value;
     const data = document.getElementById("dataConsulta").value;
     const hora = document.getElementById("horaConsulta").value;
@@ -190,6 +191,7 @@ async function initMinhasConsultas() {
     preencherUsuarioHeader();
     const todasConsultas = await loadConsultas();
     consultas = todasConsultas.filter(c => (c.paciente || "").toLowerCase() === nomePaciente().toLowerCase());
+    medicos = await loadMedicos();
 
     document.getElementById("pesquisaGeral").addEventListener("input", renderTabelaConsultas);
     document.getElementById("filtroEstado").addEventListener("change", renderTabelaConsultas);
@@ -234,19 +236,142 @@ function renderTabelaConsultas() {
     }
 
     if (lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = lista.map(c => `
+    tbody.innerHTML = lista.map(c => {
+        const podeGerir = c.estado === "pendente" || c.estado === "confirmada";
+        const acoes = podeGerir
+            ? `<button type="button" onclick="abrirModalReagendar(${c.id})" style="background:#007bff; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; margin-right:5px;">Reagendar</button>
+               <button type="button" onclick="cancelarConsultaPaciente(${c.id})" style="background:#dc3545; color:#fff; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;">Cancelar</button>`
+            : `<small style="color:#aaa;">Sem ações</small>`;
+
+        return `
         <tr>
             <td>${formatDate(c.data)}</td>
             <td>${escapeHtml(c.hora)}</td>
             <td>${escapeHtml(c.medico)}</td>
             <td>${escapeHtml(c.especialidade || "")}</td>
             <td><span class="status ${c.estado}">${capitalize(c.estado)}</span></td>
+            <td>${acoes}</td>
         </tr>
-    `).join("");
+    `;
+    }).join("");
+}
+
+async function cancelarConsultaPaciente(id) {
+    if (!confirm("Deseja cancelar esta consulta?")) return;
+
+    try {
+        const resposta = await fetch(`${API_URL}/consultas/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ estado: "cancelada" })
+        });
+        const dados = await resposta.json();
+        if (!resposta.ok || !dados.sucesso) {
+            throw new Error(dados.mensagem || "Não foi possível cancelar a consulta.");
+        }
+
+        await initMinhasConsultas();
+        alert("Consulta cancelada com sucesso.");
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function abrirModalReagendar(id) {
+    const consulta = consultas.find(c => c.id === id);
+    if (!consulta) return;
+
+    consultaEmEdicao = consulta;
+    document.getElementById("modalTitle").innerText = "Reagendar Consulta";
+
+    const especialidades = await fetchEspecialidades();
+    const selectEsp = document.getElementById("especialidade");
+    selectEsp.innerHTML = '<option value="">Selecionar Especialidade</option>' +
+        especialidades.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
+    selectEsp.value = consulta.especialidade || "";
+
+    carregarListaMedicos();
+    document.getElementById("medico").value = consulta.medico || "";
+
+    document.getElementById("data").value = consulta.data || "";
+    carregarHorarios();
+    document.getElementById("hora").value = consulta.hora || "";
+
+    document.getElementById("modal").style.display = "flex";
+}
+
+async function fetchEspecialidades() {
+    try {
+        const res = await fetch(`${API_URL}/especialidades`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+    } catch (erro) {
+        console.warn("Não foi possível carregar especialidades.", erro);
+        return [];
+    }
+}
+
+function carregarListaMedicos() {
+    const esp = document.getElementById("especialidade").value;
+    const selectMed = document.getElementById("medico");
+    const filtrados = medicos.filter(m => m.especialidade === esp && m.status !== "inativo");
+
+    selectMed.innerHTML = '<option value="">Selecionar Médico</option>' +
+        filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
+
+    carregarHorarios();
+}
+
+function carregarHorarios() {
+    const medicoNome = document.getElementById("medico").value;
+    const medico = medicos.find(m => m.nome === medicoNome);
+    const selectHora = document.getElementById("hora");
+
+    const horarios = medico ? (medico.horarios || "").split(",").map(h => h.trim()).filter(Boolean) : [];
+    selectHora.innerHTML = '<option value="">Selecionar hora</option>' +
+        horarios.map(h => `<option value="${h}">${h}</option>`).join("");
+}
+
+async function guardarConsulta() {
+    if (!consultaEmEdicao) return;
+
+    const especialidade = document.getElementById("especialidade").value;
+    const medico = document.getElementById("medico").value;
+    const data = document.getElementById("data").value;
+    const hora = document.getElementById("hora").value;
+
+    if (!especialidade || !medico || !data || !hora) {
+        alert("Preencha especialidade, médico, data e hora.");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/consultas/${consultaEmEdicao.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ especialidade, medico, data, hora, estado: "pendente" })
+        });
+        const dados = await res.json();
+        if (!res.ok || !dados.sucesso) {
+            throw new Error(dados.mensagem || "Não foi possível reagendar a consulta.");
+        }
+
+        fecharModal();
+        await initMinhasConsultas();
+        alert("Consulta reagendada com sucesso!");
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function fecharModal() {
+    const modal = document.getElementById("modal");
+    if (modal) modal.style.display = "none";
+    consultaEmEdicao = null;
 }
 
 // =========================================================================
@@ -410,19 +535,53 @@ async function initNotificacoesPaciente() {
 }
 
 // =========================================================================
+// MÓDULO: PAINEL PRINCIPAL (pacientes/index.html)
+// =========================================================================
+
+async function initDashboardPaciente() {
+    const minhas = await minhasConsultas();
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataHoraConsulta = (c) => new Date(`${c.data}T${c.hora || "00:00"}`);
+
+    const ativas = minhas.filter(c => c.estado === "pendente" || c.estado === "confirmada");
+    const proximas = ativas
+        .filter(c => {
+            const d = new Date(`${c.data}T00:00:00`);
+            return !isNaN(d.getTime()) && d >= hoje;
+        })
+        .sort((a, b) => dataHoraConsulta(a) - dataHoraConsulta(b));
+    const realizadas = minhas.filter(c => c.estado === "realizada");
+
+    if (document.getElementById("cardProximas")) document.getElementById("cardProximas").innerText = proximas.length;
+    if (document.getElementById("cardMarcadas")) document.getElementById("cardMarcadas").innerText = ativas.length;
+    if (document.getElementById("cardRealizadas")) document.getElementById("cardRealizadas").innerText = realizadas.length;
+
+    const notificacoes = gerarNotificacoesPaciente(minhas);
+    if (document.getElementById("notificacoesCount")) document.getElementById("notificacoesCount").innerText = notificacoes.length;
+
+    const alerta = document.getElementById("alertaImportante");
+    if (alerta) {
+        if (proximas.length > 0) {
+            const prox = proximas[0];
+            alerta.innerText = `A sua próxima consulta é com ${prox.medico} em ${formatDate(prox.data)} às ${prox.hora}.`;
+        } else {
+            alerta.innerText = "Não tem consultas agendadas de momento.";
+        }
+    }
+}
+
+// =========================================================================
 // GATILHO DE ROTEAMENTO
 // =========================================================================
 window.addEventListener("DOMContentLoaded", () => {
     preencherUsuarioHeader();
     atualizarBadgeNotificacoes();
 
-    if (document.getElementById("formMarcacao")) {
-        initMarcarConsulta();
-    } else if (document.getElementById("tabela-consultas")) {
-        initMinhasConsultas();
-    } else if (document.getElementById("listaMedicos")) {
-        initListaMedicos();
-    } else if (document.getElementById("listaNotificacoes")) {
-        initNotificacoesPaciente();
-    }
+    if (document.getElementById("formMarcacao")) initMarcarConsulta();
+    if (document.getElementById("tabela-consultas")) initMinhasConsultas();
+    if (document.getElementById("listaMedicos")) initListaMedicos();
+    if (document.getElementById("listaNotificacoes")) initNotificacoesPaciente();
+    if (document.getElementById("cardMarcadas")) initDashboardPaciente();
 });

@@ -17,8 +17,14 @@ async function initReagendamento() {
 function preencherUsuarioHeader() {
     const nomeEl = document.getElementById("usuarioNome");
     const emailEl = document.getElementById("usuarioEmail");
+    const avatarEl = document.getElementById("usuarioAvatar");
     if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
     if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+    if (avatarEl && utilizadorLogado?.nome) {
+        const partes = utilizadorLogado.nome.trim().split(" ");
+        const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+        avatarEl.innerText = sigla.toUpperCase();
+    }
 }
 
 function atualizarBadgeNotificacoes() {

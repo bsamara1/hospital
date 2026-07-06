@@ -158,6 +158,11 @@ font-size:24px;
 color:#4a4a4a;
 }
 
+.avatar-circle{width:35px;height:35px;background:#1e40af;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;}
+
+.user-profile-link{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;padding:5px 10px;border-radius:8px;transition:background 0.2s;}
+.user-profile-link:hover{background:#e2e8f0;}
+
 .user-info{
 display:flex;
 flex-direction:column;
@@ -375,14 +380,13 @@ margin-right:5px;
 
     <div class="user-box">
         <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
-        <div class="user-profile">
-            <i class="fa fa-user-circle"></i>
+        <a href="perfil.html" class="user-profile-link">
+            <div class="avatar-circle" id="usuarioAvatar">P</div>
             <div class="user-info">
                 <span id="usuarioNome">Pacientes</span>
                 <span id="usuarioEmail"></span>
             </div>
-        </div>
-        <i class="fa fa-chevron-down"></i>
+        </a>
     </div>
 
 </div>
@@ -405,17 +409,17 @@ margin-right:5px;
 
 <div class="card">
 <h4>Próximas consultas</h4>
-<p>0</p>
+<p id="cardProximas">0</p>
 </div>
 
 <div class="card">
 <h4>Consultas marcadas</h4>
-<p>0</p>
+<p id="cardMarcadas">0</p>
 </div>
 
 <div class="card">
 <h4>Consultas realizadas</h4>
-<p>0</p>
+<p id="cardRealizadas">0</p>
 </div>
 
 <div class="card">

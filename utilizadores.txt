@@ -1,1 +1,13 @@
+<<<<<<< HEAD
 Joana De Lourdes Da Cunha Silva Cabral;joanalourdes.98@gmail.com;9876543;123456;9876543;joanalourdes.98@gmail.com;
+=======
+Benedita  Tavares;20050714F001N;2000-02-01;Feminino;99112233;admin@hospital.cv;123456;admin
+Rececao;000000000;1990-01-01;Masculino;99223344;rececao@hospital.cv;hospital;rececao
+alyTavares;23456789GF;2006-06-07;Feminino;98765;alytavares@gmail.com;teste;Paciente
+Dr. Mendes;100000001;1975-04-12;Masculino;9911111;mendes@hospital.cv;1234;medico
+Dr. Sousa;100000002;1980-08-22;Masculino;9922222;sousa@hospital.cv;1234;medico
+Dr. Carlos Semedo;100000003;1988-11-05;Masculino;9933333;carlos.semedo@hospital.cv;1234;medico
+Dr. lili;100000004;1992-02-14;Feminino;9944444;lili@hospital.cv;1234;medico
+Dr. Carla Semedo da Rosa;2090384334;1984-10-05;Feminino;987654;carlarosa@gmail.com;1234;medico
+Dr.liliana;12345632;1990-06-12;Feminino;987654;liliana@hospital.cv;1234;medico
+>>>>>>> 32b41ff31ffacf35e7e9e6fedefb94d69cff254f

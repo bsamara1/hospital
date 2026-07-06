@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administrador - Meu Perfil</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* RESET & BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      display: flex;
+      background: #f5f7fb;
+      height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background: #0b2a4a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 30px;
+    }
+
+    .logo span {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .logo img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .bottom {
+      margin-top: auto;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px 15px;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 8px;
+      transition: 0.3s;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: #163a63;
+      color: #fff;
+    }
+
+    .sidebar .logout {
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 15px;
+      border-radius: 8px;
+    }
+
+    .logout:hover {
+      background: #163a63;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+      margin: 12px 0;
+    }
+
+    /* MAIN CONTENT AREA */
+    .main {
+      flex: 1;
+      padding: 25px;
+      margin-left: 260px;
+      overflow: auto;
+    }
+
+    /* HEADER & TOPBAR */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .header-line {
+      margin-left: -25px;
+      margin-right: -25px;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.08);
+      margin-bottom: 25px;
+    }
+
+    .header h2 {
+      font-size: 20px;
+      color: #333;
+    }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #555;
+    }
+
+    .user-box i {
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* LINK DO PERFIL ESTILIZADO */
+    .user-profile-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      padding: 5px 10px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+
+    .user-profile-link:hover {
+      background: #e2e8f0;
+    }
+
+    .avatar-circle {
+      width: 35px;
+      height: 35px;
+      background: #1e40af;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /* GRID DE DUAS COLUNAS */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+      max-width: 1200px;
+      margin-top: 10px;
+    }
+
+    /* CARTÕES / SEÇÕES */
+    .section-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .section-card h3 {
+      font-size: 18px;
+      color: #0b2a4a;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+
+    /* CAMPOS DE FORMULÁRIO */
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+      color: #334155;
+      outline: none;
+    }
+
+    .form-group select:focus {
+      border-color: #1e40af;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: #475569;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #334155;
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #1e40af;
+    }
+
+    /* INPUT DE SENHA COM ÍCONE */
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrapper input {
+      padding-right: 40px;
+    }
+
+    .password-input-wrapper i {
+      position: absolute;
+      right: 15px;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    /* BOTÃO ESTILO COESIVO */
+    .btn-primary-blue {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #1e40af;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-primary-blue:hover {
+      background: #1e3a8a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <div class="logo">
+      <img src="../assets/img/logo.png" alt="Logo HAN">
+      <span>HAN</span>
+    </div>
+
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
+    <a href="medicos.html" ><i class="fa fa-user-md"></i> Médicos</a>
+    <a href="especialidades.html"><i class="fa fa-stethoscope"></i> Especialidades</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
+    <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
+
+    <div class="bottom">
+      <div class="divider"></div>
+      <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="header">
+      <h2>Meu Perfil</h2>
+      <div class="user-box">
+        <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
+          <i class="fa fa-bell"></i>
+          <span id="notifBadge"
+            style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
+        </a>
+
+        <a href="perfil.html" class="user-profile-link" style="background: #e2e8f0;">
+          <div class="avatar-circle" id="usuarioAvatar">A</div>
+          <div style="display:flex; flex-direction:column; line-height:1.1;">
+            <span id="usuarioNome" style="font-weight:700;">Administrador</span>
+            <span id="usuarioEmail" style="font-size:12px; color:#888;">admin@hospital.cv</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="header-line"></div>
+
+    <div class="profile-grid">
+
+      <div class="section-card">
+        <h3>Informações Pessoais</h3>
+
+        <div class="form-group">
+          <label for="nomePerfil">Nome Completo</label>
+          <input type="text" id="nomePerfil" placeholder="A carregar...">
+        </div>
+
+        <div class="form-group">
+          <label for="emailPerfil">Email</label>
+          <input type="email" id="emailPerfil" placeholder="A carregar...">
+        </div>
+
+        <div class="form-group">
+          <label for="biPerfil">BI</label>
+          <input type="text" id="biPerfil">
+        </div>
+
+
+
+        <div class="form-group">
+          <label for="telefonePerfil">Telefone</label>
+          <input type="text" id="telefonePerfil" placeholder="A carregar...">
+        </div>
+
+        <button class="btn-primary-blue" onclick="salvarPerfil()">Editar Informações</button>
+      </div>
+
+      <div class="section-card">
+        <h3>Alterar Palavra-passe</h3>
+
+        <div class="form-group">
+          <label for="atualPassword">Palavra-passe Atual</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="atualPassword" placeholder="Digite a palavra-passe atual">
+            <i class="fa-solid fa-eye-slash" onclick="toggleVisibilidadeSenha('atualPassword', this)"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="novaPassword">Nova Palavra-passe</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="novaPassword" placeholder="Digite a nova palavra-passe">
+            <i class="fa-solid fa-eye-slash" onclick="toggleVisibilidadeSenha('novaPassword', this)"></i>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarPassword">Confirmar Nova Palavra-passe</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="confirmarPassword" placeholder="Confirme a nova palavra-passe">
+            <i class="fa-solid fa-eye-slash" onclick="toggleVisibilidadeSenha('confirmarPassword', this)"></i>
+          </div>
+        </div>
+
+        <button class="btn-primary-blue" onclick="alterarPalavraPasse()">Alterar Palavra-passe</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="storage.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      configurarHeaderDinamico();
+      carregarPerfil();
+      if (typeof atualizarBadgeNotificacoes === "function") {
+        atualizarBadgeNotificacoes();
+      }
+    });
+
+    function configurarHeaderDinamico() {
+      const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+      if (utilizador) {
+        if (document.getElementById("usuarioNome") && utilizador.nome) {
+          document.getElementById("usuarioNome").innerText = utilizador.nome;
+        }
+        if (document.getElementById("usuarioEmail") && utilizador.email) {
+          document.getElementById("usuarioEmail").innerText = utilizador.email;
+        }
+        if (document.getElementById("usuarioAvatar") && utilizador.nome) {
+          const partes = utilizador.nome.trim().split(" ");
+          const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+          document.getElementById("usuarioAvatar").innerText = sigla.toUpperCase();
+        }
+      }
+    }
+
+    function carregarPerfil() {
+  const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+
+  if (!utilizador || !utilizador.email) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  // 1. Carregamento veloz inicial via Cache Local (LocalStorage)
+  // Corrigido: Removido o uso da variável 'dados' que ainda não existia aqui
+  document.getElementById("nomePerfil").value = utilizador.nome || "Administrador";
+  document.getElementById("emailPerfil").value = utilizador.email || "";
+  document.getElementById("telefonePerfil").value = utilizador.telefone || "";
+  document.getElementById("biPerfil").value = utilizador.bi || ""; // Corrigido para utilizador.bi
+
+  // 2. Vai buscar os dados atualizados ao servidor em tempo real
+  fetch(`${API_URL}/utilizador?email=${encodeURIComponent(utilizador.email)}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao obter dados");
+      return res.json();
+    })
+    .then(dados => {
+      // Corrigido: Garante que as propriedades batem certo com o que o servidor devolve
+      if (dados) {
+        document.getElementById("nomePerfil").value = dados.nome || "";
+        document.getElementById("emailPerfil").value = dados.email || "";
+        document.getElementById("telefonePerfil").value = dados.telefone || "";
+        // Nota: Verifique se o seu backend envia 'bi' ou 'bii'. O padrão esperado abaixo é 'bi'
+        document.getElementById("biPerfil").value = dados.bi || dados.bii || ""; 
+      }
+    })
+    .catch(err => console.warn("Aviso: Modo offline ativo. Dados carregados do LocalStorage.", err));
+}
+
+    function salvarPerfil() {
+      const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+
+      if (!utilizador) {
+        window.location.href = "../login.html";
+        return;
+      }
+
+      const dadosAtualizados = {
+        emailOriginal: utilizador.email,
+        nome: document.getElementById("nomePerfil").value.trim(),
+        bi: document.getElementById("biPerfil").value.trim(),
+        telefone: document.getElementById("telefonePerfil").value.trim(),
+        email: document.getElementById("emailPerfil").value.trim()
+      };
+
+      fetch(`${API_URL}/utilizador`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dadosAtualizados)
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.sucesso) {
+            alert("Perfil atualizado com sucesso!");
+
+            // Atualiza a memória local da sessão atual do navegador
+            utilizador.nome = dadosAtualizados.nome;
+            utilizador.email = dadosAtualizados.email;
+            utilizador.bi = dadosAtualizados.bi;
+            utilizador.telefone = dadosAtualizados.telefone;
+            localStorage.setItem("utilizador", JSON.stringify(utilizador));
+
+            // Atualiza os componentes do topo da página imediatamente
+            configurarHeaderDinamico();
+          } else {
+            alert(data.mensagem || "Erro ao atualizar perfil.");
+          }
+        })
+        .catch(err => alert("Erro na ligação ao servidor."));
+    }
+
+    function alterarPalavraPasse() {
+  const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+  
+  // Verifica se a sessão do utilizador existe
+  if (!utilizador || !utilizador.email) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  const senhaAtual = document.getElementById("atualPassword").value;
+  const novaSenha = document.getElementById("novaPassword").value;
+  const confirmarSenha = document.getElementById("confirmarPassword").value;
+
+  // 1. Validação de campos vazios
+  if (!senhaAtual || !novaSenha || !confirmarSenha) {
+    alert("Por favor, preencha todos os campos da palavra-passe.");
+    return;
+  }
+
+  // 2. Validação de igualdade
+  if (novaSenha !== confirmarSenha) {
+    alert("A nova palavra-passe e a confirmação não coincidem!");
+    return;
+  }
+
+  // 3. Validação de tamanho mínimo (Segurança recomendada)
+  if (novaSenha.length < 6) {
+    alert("A nova palavra-passe deve ter pelo menos 6 caracteres.");
+    return;
+  }
+
+  // Desativar o botão temporariamente para evitar múltiplos cliques
+  const botao = document.querySelector("button[onclick='alterarPalavraPasse()']");
+  if (botao) {
+    botao.disabled = true;
+    botao.innerText = "A guardar...";
+  }
+
+  // 4. Envio dos dados para o Servidor
+  fetch(`${API_URL}/alterar_senha`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email: utilizador.email,
+      senha_atual: senhaAtual,
+      nova_senha: novaSenha
+    })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Erro na resposta do servidor");
+      return res.json();
+    })
+    .then(data => {
+      // O seu backend deve devolver um objeto com { sucesso: true } ou { sucesso: false, mensagem: "..." }
+      if (data.sucesso) {
+        alert("Palavra-passe alterada com sucesso!");
+        
+        // Limpa os campos do formulário por segurança
+        document.getElementById("atualPassword").value = "";
+        document.getElementById("novaPassword").value = "";
+        document.getElementById("confirmarPassword").value = "";
+      } else {
+        alert(data.mensagem || "Erro ao alterar palavra-passe. Verifique a senha atual.");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Erro ao contactar o servidor. Verifique a sua ligação.");
+    })
+    .finally(() => {
+      // Reativar o botão após a resposta do servidor
+      if (botao) {
+        botao.disabled = false;
+        botao.innerText = "Alterar Palavra-passe";
+      }
+    });
+}
+
+    function toggleVisibilidadeSenha(idInput, icone) {
+      const input = document.getElementById(idInput);
+      if (input.type === "password") {
+        input.type = "text";
+        icone.classList.remove("fa-eye-slash");
+        icone.classList.add("fa-eye");
+      } else {
+        input.type = "password";
+        icone.classList.remove("fa-eye");
+        icone.classList.add("fa-eye-slash");
+      }
+    }
+  </script>
