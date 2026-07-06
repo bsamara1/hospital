@@ -4,35 +4,314 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Médico - Pacientes</title>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
-        body { display: flex; background: #f5f7fb; height: 100vh; }
-        .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
-        .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
-        .logo span { font-size: 32px; font-weight: bold; }
-        .logo img { width: 50px; height: 50px; object-fit: contain; }
-        .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; transition: 0.3s; font-size: 18px; }
-        .sidebar a:hover, .sidebar a.active { background: #163a63; color: #fff; }
-        .bottom { margin-top: auto; }
-        .sidebar .logout { color: #ff6b6b; display: flex; align-items: center; gap: 10px; padding: 12px 15px; border-radius: 8px; text-decoration: none; font-size: 18px;}
-        .divider { height: 1px; background: rgba(255,255,255,0.15); margin: 12px 0; }
-        .main { flex: 1; margin-left: 260px; padding: 25px; overflow-y: auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .header h2 { font-size: 20px; color: #333; }
-        .user-box { display: flex; align-items: center; gap: 15px; color: #555; }
-        .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
-        .avatar-circle { width: 35px; height: 35px; background: #1e40af; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
-        .user-profile-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 10px; border-radius: 8px; transition: background 0.2s; }
-        .user-profile-link:hover { background: #e9edf3; }
-        .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .table-card h3 { font-size: 16px; margin-bottom: 15px; color: #333; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 14px; text-align: left; }
-        th { color: #666; background: #f8f9fa; font-weight: 600; }
-        tr:hover td { background: #fbfcfe; }
-        .btn-view { background: #0b2a4a; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: 0.2s; }
-        .btn-view:hover { background: #163a63; }
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+        
+        body{
+            display: flex;
+            background: #f5f7fb;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar{
+            width: 260px;
+            background: #0b2a4a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            z-index: 10;
+        }
+        
+        .logo{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .logo span {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+        
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: #163a63;
+        }
+        
+        .bottom{
+            margin-top: auto;
+        }
+
+        .sidebar .logout {
+            color: #ff6b6b;
+            font-size: 16px;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255,255,255,0.15);
+            margin: 12px 0;
+        }
+
+        .content-container {
+            flex: 1;
+            margin-left: 260px;
+            display: flex;
+            height: 100vh;
+            width: calc(100% - 260px);
+            position: relative;
+        }
+
+        .main {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+        }
+
+        .header-line {
+            margin-left: -25px;
+            margin-right: -25px;
+            height: 1px;
+            background: rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .avatar-circle {
+            width: 35px;
+            height: 35px;
+            background: #1e40af;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .trigger-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .trigger-link:hover {
+            background: #e9edf3;
+        }
+
+        /* TABELA CARD RESPONSIVA */
+        .table-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .table-card h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13.5px;
+            color: #444;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-align: left;
+        }
+
+        th {
+            color: #666;
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: inline-block;
+            background: #e2f0d9;
+            color: #385723;
+        }
+
+        /* PAINÉIS LATERAIS DIREITOS */
+        .side-panel {
+            width: 0;
+            background: #fff;
+            border-left: 1px solid rgba(0,0,0,0.08);
+            box-shadow: -4px 0 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            height: 100vh;
+            position: relative;
+        }
+        .side-panel.open {
+            width: 420px;
+        }
+        .panel-header {
+            padding: 25px 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .panel-header h3 {
+            font-size: 16px;
+            color: #0b2a4a;
+            font-weight: 700;
+        }
+        .btn-close-panel {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+        .panel-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* ALERTAS SYNCED */
+        .alert-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .alert-item h4 {
+            font-size: 13.5px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .alert-item p {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.4;
+        }
+        .alert-item .time {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13.5px;
+            color: #334155;
+            outline: none;
+        }
+        .btn-primary-blue {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #1e40af;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -40,44 +319,105 @@
 <div class="sidebar">
     <div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
     <a href="index.html"><i class="fa fa-home"></i> Painel Principal</a>
-    <a href="pacientes.html"><i class="fa fa-user"></i> Pacientes</a>
+    <a href="pacientes.html" class="active"><i class="fa fa-user"></i> Pacientes</a>
     <a href="agenda.html"><i class="fa fa-calendar"></i> Agenda</a>
     <a href="disponibilidade.html"><i class="fa fa-clock"></i> Disponibilidade</a>
-    <a href="notificacao.html" class="active"><i class="fa fa-bell"></i> Notificações</a>
-    <a href="perfil.html"><i class="fa fa-id-badge"></i> Meu Perfil</a>
     <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a></div>
 </div>
 
-<div class="main">
-    <div class="header">
-        <h2>Meus Pacientes Ativos</h2>
-        <div class="user-box">
-            <a href="notificacao.html" style="position:relative; text-decoration:none; color:inherit;">
-                <i class="fa fa-bell"></i>
-                <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
-            </a>
-            <a href="perfil.html" class="user-profile-link">
-                <div class="avatar-circle" id="usuarioAvatar">M</div>
-                <span id="usuarioNome">Dr. Mendes</span>
-            </a>
+<div class="content-container">
+    <div class="main">
+        <div class="header">
+            <h2>Lista de Pacientes Ativos</h2>
+            <div class="user-box">
+                <div class="trigger-link" onclick="abrirPainel('panelNotificacoes')">
+                    <i class="fa fa-bell"></i>
+                    <span id="notifBadge" style="display:inline-block; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;">2</span>
+                </div>
+                <div class="trigger-link" onclick="abrirPainel('panelPerfil')">
+                    <div class="avatar-circle" id="usuarioAvatar">M</div>
+                    <div style="display:flex; flex-direction:column; line-height:1.1;">
+                        <span id="usuarioNome" style="font-weight:700;">Dr. Mendes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-line"></div>
+
+        <div class="table-card">
+            <h3>Pacientes Sob Sua Responsabilidade</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Paciente</th><th>Diagnóstico Clínico Principal</th><th>Última Consulta</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><b>Carlos Alberto</b></td><td>Insuficiência Cardíaca Leve</td><td>02/07/2026</td><td><span class="badge">ATIVA</span></td></tr>
+                        <tr><td><b>Lolo Medeiros</b></td><td>Check-up Geral / Rotina</td><td>30/06/2026</td><td><span class="badge">ATIVA</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="header-line"></div>
 
-    <div class="table-card">
-        <h3>Fichas Clínicas sob Responsabilidade</h3>
-        <table>
-            <thead>
-                <tr><th>Nome</th><th>Diagnóstico Clínico Principal</th><th>Última Consulta</th><th>Ações</th></tr>
-            </thead>
-            <tbody>
-                <tr><td><b>Carlos Alberto</b></td><td>Insuficiência Cardíaca Leve</td><td>02/07/2026</td><td><button class="btn-view"><i class="fa fa-folder-open"></i> Abrir Histórico</button></td></tr>
-                <tr><td><b>Lolo Medeiros</b></td><td>Check-up Geral / Rotina</td><td>30/06/2026</td><td><button class="btn-view"><i class="fa fa-folder-open"></i> Abrir Histórico</button></td></tr>
-            </tbody>
-        </table>
+    <div class="side-panel" id="panelNotificacoes">
+        <div class="panel-header">
+            <h3>Centro de Notificações</h3>
+            <button class="btn-close-panel" onclick="fecharPainel('panelNotificacoes')"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="panel-content">
+            <div class="alert-item">
+                <h4>Fila de Prioridade Modificada</h4>
+                <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>
+                <span class="time">Há 5 min</span>
+            </div>
+            <div class="alert-item">
+                <h4>Consulta Cancelada pela Receção</h4>
+                <p>A marcação de <b>Lolo Medeiros</b> agendada para 10/07 foi cancelada pelo sistema central.</p>
+                <span class="time">Há 1 hora</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-panel" id="panelPerfil">
+        <div class="panel-header">
+            <h3>Meu Perfil Profissional</h3>
+            <button class="btn-close-panel" onclick="fecharPainel('panelPerfil')"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label for="nomePerfil">Nome Completo</label>
+                <input type="text" id="nomePerfil" value="Dr. Mendes">
+            </div>
+            <div class="form-group">
+                <label for="emailPerfil">Email de Contacto</label>
+                <input type="email" id="emailPerfil" value="mendes@hospital.cv">
+            </div>
+            <div class="form-group">
+                <label for="tipoPerfil">Tipo de Utilizador</label>
+                <input type="text" id="tipoPerfil" value="Médico" readonly style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
+            </div>
+            <div class="form-group">
+                <label for="telefonePerfil">Telefone / Extensão</label>
+                <input type="text" id="telefonePerfil" value="9111111">
+            </div>
+            <button class="btn-primary-blue" onclick="salvarPerfilLocal()">Guardar Alterações</button>
+        </div>
     </div>
 </div>
 
+<script>
+    function abrirPainel(panelId) {
+        document.querySelectorAll('.side-panel').forEach(p => { if(p.id !== panelId) p.classList.remove('open'); });
+        document.getElementById(panelId).classList.toggle('open');
+    }
+    function fecharPainel(panelId) { document.getElementById(panelId).classList.remove('open'); }
+    function salvarPerfilLocal() {
+        const n = document.getElementById("nomePerfil").value;
+        if(n) document.getElementById("usuarioNome").innerText = n;
+        alert("Alterações guardadas com sucesso!"); fecharPainel('panelPerfil');
+    }
+</script>
 <script src="identidade.js"></script>
 </body>
 </html>

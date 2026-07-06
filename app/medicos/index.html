@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* RESET */
+        /* RESET & BASE */
         *{
             margin: 0;
             padding: 0;
@@ -20,9 +20,10 @@
             display: flex;
             background: #f5f7fb;
             height: 100vh;
+            overflow: hidden; /* Evita barras duplas com os painéis laterais */
         }
 
-        /* SIDEBAR ADMIN STYLE */
+        /* SIDEBAR */
         .sidebar{
             width: 260px;
             background: #0b2a4a;
@@ -32,6 +33,7 @@
             padding: 20px;
             height: 100vh;
             position: fixed;
+            z-index: 10;
         }
         
         .logo{
@@ -66,11 +68,11 @@
             border-radius: 8px;
             transition: 0.3s;
             font-size: 18px;
+            cursor: pointer;
         }
         
         .sidebar a:hover, .sidebar a.active {
             background: #163a63;
-            color: #fff;
         }
         
         .bottom{
@@ -79,17 +81,7 @@
 
         .sidebar .logout {
             color: #ff6b6b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 18px;
-        }
-
-        .logout:hover {
-            background: #163a63;
+            font-size: 16px;
         }
 
         .divider {
@@ -98,14 +90,24 @@
             margin: 12px 0;
         }
 
-        /* MAIN CONTENT COMPENSADO */
-        .main {
+        /* ESTRUTURA DOS CONTEÚDOS COM PAINÉIS LATERAIS */
+        .content-container {
             flex: 1;
             margin-left: 260px;
+            display: flex;
+            height: 100vh;
+            width: calc(100% - 260px);
+            position: relative;
+        }
+
+        /* MAIN CONTENT CORRIGIDO */
+        .main {
+            flex: 1;
             padding: 25px;
             overflow-y: auto;
         }
 
+        /* HEADER */
         .header {
             display: flex;
             justify-content: space-between;
@@ -123,12 +125,6 @@
             align-items: center;
             gap: 15px;
             color: #555;
-            font-size: 15px;
-        }
-
-        .user-box i {
-            font-size: 18px;
-            cursor: pointer;
         }
 
         .header-line {
@@ -152,7 +148,8 @@
             font-size: 14px;
         }
 
-        .user-profile-link {
+        /* Gatilhos interativos superiores */
+        .trigger-link {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -161,64 +158,77 @@
             padding: 5px 10px;
             border-radius: 8px;
             transition: background 0.2s;
+            cursor: pointer;
         }
 
-        .user-profile-link:hover {
+        .trigger-link:hover {
             background: #e9edf3;
         }
 
-        /* CARDS INDICADORES - IGUAL ADMIN COM MOVIMENTO */
+        /* CARDS INDICADORES */
         .cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
             margin-bottom: 25px;
         }
 
         .card {
             background: #fff;
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-left: 5px solid #0b2a4a;
             cursor: pointer;
-            /* Transição suave idêntica às animações fluidas do admin */
-            transition: background 0.2s, transform 0.2s, box-shadow 0.2s, border-left-width 0.1s;
+            transition: transform 0.2s, box-shadow 0.2s, border 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
         }
 
-        /* Efeito de movimento físico ao passar o rato (Hover dinâmico) */
-        .card:hover, .card.active-filter {
-            background: #e3edf7;
-            border-left-width: 7px;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .card.active-filter {
+            border-color: #007bff;
+            background-color: #f0f7ff;
         }
 
         .card h4 {
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
-            margin-bottom: 8px;
-            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .card p {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
-            color: #333;
+            margin-top: 10px;
         }
 
-        /* TABELA CARD STYLE */
+        /* TABELA CARD RESPONSIVA */
         .table-card {
             background: #fff;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
         }
 
         .table-card h3 {
+            margin-bottom: 15px;
             font-size: 16px;
             color: #333;
-            margin-bottom: 15px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            max-height: 450px;
+            overflow-y: auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -227,39 +237,163 @@
         }
 
         th, td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 13.5px;
+            color: #444;
+            vertical-align: middle;
+            white-space: nowrap;
+            text-transform: none;
             text-align: left;
         }
 
         th {
             color: #666;
-            background: #f8f9fa;
+            background-color: #f8fafc;
             font-weight: 600;
-        }
-
-        tr:hover td {
-            background: #fbfcfe;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .badge {
-            background: #fff3cd;
-            color: #856404;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: inline-block;
+            background: #fff2cc;
+            color: #7f6000;
         }
 
-        .badge.confirmada {
-            background: #d4edda;
-            color: #155724;
+        .badge.confirmada, .badge.ativa {
+            background: #e2f0d9;
+            color: #385723;
         }
 
         .badge.cancelada {
             background: #f8d7da;
             color: #721c24;
+        }
+
+        /* ESTRUTURA GENÉRICA PARA PAINÉIS LATERAIS DIREITOS */
+        .side-panel {
+            width: 0;
+            background: #fff;
+            border-left: 1px solid rgba(0,0,0,0.08);
+            box-shadow: -4px 0 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            height: 100vh;
+            position: relative;
+        }
+        .side-panel.open {
+            width: 420px;
+        }
+        .panel-header {
+            padding: 25px 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .panel-header h3 {
+            font-size: 16px;
+            color: #0b2a4a;
+            font-weight: 700;
+        }
+        .btn-close-panel {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-close-panel:hover {
+            color: #334155;
+        }
+        .panel-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* ESTILOS DE NOTIFICAÇÕES SEM FAIXA VERMELHA */
+        .alert-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .alert-item.urgente {
+            border-left: 1px solid #e2e8f0; /* Alinhado ao padrão comum, sem a cor vermelha */
+            background: #f8fafc;
+        }
+        .alert-item h4 {
+            font-size: 13.5px;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .alert-item p {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.4;
+        }
+        .alert-item .time {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        /* ESTILOS DO FORMULÁRIO DO PERFIL LATERAL */
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-group label {
+            font-size: 12.5px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13.5px;
+            color: #334155;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #1e40af;
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+        .btn-primary-blue {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #1e40af;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn-primary-blue:hover {
+            background: #1e3a8a;
         }
     </style>
 </head>
@@ -267,72 +401,166 @@
 
 <div class="sidebar">
     <div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
-    <a href="index.html"><i class="fa fa-home"></i> Painel Principal</a>
+    <a href="index.html" class="active"><i class="fa fa-home"></i> Painel Principal</a>
     <a href="pacientes.html"><i class="fa fa-user"></i> Pacientes</a>
     <a href="agenda.html"><i class="fa fa-calendar"></i> Agenda</a>
     <a href="disponibilidade.html"><i class="fa fa-clock"></i> Disponibilidade</a>
-    <a href="notificacao.html" class="active"><i class="fa fa-bell"></i> Notificações</a>
-    <a href="perfil.html"><i class="fa fa-id-badge"></i> Meu Perfil</a>
     <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a></div>
 </div>
       
-<div class="main">
-    <div class="header">
-        <h2>Painel Principal Médico</h2>
-        <div class="user-box">
-            <a href="notificacao.html" style="position:relative; text-decoration:none; color:inherit;">
-                <i class="fa fa-bell"></i>
-                <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
-            </a>
-            <a href="perfil.html" class="user-profile-link">
-                <div class="avatar-circle" id="usuarioAvatar">M</div>
-                <span id="usuarioNome">Dr. Mendes</span>
-            </a>
+<div class="content-container">
+    <div class="main">
+        <div class="header">
+            <h2>Painel Principal Médico</h2>
+            <div class="user-box">
+                <div class="trigger-link" onclick="abrirPainel('panelNotificacoes')">
+                    <i class="fa fa-bell"></i>
+                    <span id="notifBadge" style="display:inline-block; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;">2</span>
+                </div>
+                <div class="trigger-link" onclick="abrirPainel('panelPerfil')">
+                    <div class="avatar-circle" id="usuarioAvatar">M</div>
+                    <div style="display:flex; flex-direction:column; line-height:1.1;">
+                        <span id="usuarioNome" style="font-weight:700;">Dr. Mendes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-line"></div>
+
+        <div class="cards">
+            <div class="card active-filter" onclick="filtrarPainel('hoje', this)">
+                <h4>Consultas de Hoje</h4>
+                <p id="c-hoje">2</p>
+            </div>
+            <div class="card" onclick="filtrarPainel('pacientes', this)">
+                <h4>Pacientes Ativos</h4>
+                <p id="c-pacientes">2</p>
+            </div>
+            <div class="card" onclick="filtrarPainel('pendente', this)">
+                <h4>Pendentes</h4>
+                <p id="c-pendente">1</p>
+            </div>
+            <div class="card" onclick="filtrarPainel('cancelada', this)">
+                <h4>Canceladas</h4>
+                <p id="c-cancelada">1</p>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <h3 id="titulo-tabela">Consultas de Hoje</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead id="cabecalho-tabela-medico">
+                        <tr><th>Paciente</th><th>Hora Turno</th><th>Sintomas Principais</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody id="corpo-tabela-medico"></tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="header-line"></div>
 
-    <div class="cards">
-        <div class="card active-filter" onclick="filtrarPainel('hoje', this)">
-            <h4>Consultas de Hoje</h4>
-            <p id="c-hoje">2</p>
+    <div class="side-panel" id="panelNotificacoes">
+        <div class="panel-header">
+            <h3>Centro de Notificações</h3>
+            <button class="btn-close-panel" onclick="fecharPainel('panelNotificacoes')"><i class="fa fa-times"></i></button>
         </div>
-        <div class="card" onclick="filtrarPainel('pacientes', this)">
-            <h4>Pacientes Ativos</h4>
-            <p id="c-pacientes">12</p>
-        </div>
-        <div class="card" onclick="filtrarPainel('pendente', this)">
-            <h4>Pendentes</h4>
-            <p id="c-pendente" style="color: #ffc107;">1</p>
-        </div>
-        <div class="card" onclick="filtrarPainel('cancelada', this)">
-            <h4>Canceladas</h4>
-            <p id="c-cancelada" style="color: #dc3545;">1</p>
+        <div class="panel-content">
+            <div class="alert-item urgente">
+                <h4>Fila de Prioridade Modificada</h4>
+                <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>
+                <span class="time">Há 5 min</span>
+            </div>
+            <div class="alert-item">
+                <h4>Consulta Cancelada pela Receção</h4>
+                <p>A marcação de <b>Lolo Medeiros</b> agendada para 10/07 foi cancelada pelo sistema central.</p>
+                <span class="time">Há 1 hora</span>
+            </div>
         </div>
     </div>
 
-    <div class="table-card">
-        <h3 id="titulo-tabela">Consultas de Hoje</h3>
-        <table>
-            <thead>
-                <tr><th>Paciente</th><th>Hora Turno</th><th>Sintomas Principais</th><th>Estado</th></tr>
-            </thead>
-            <tbody id="corpo-tabela-medico">
-                </tbody>
-        </table>
+    <div class="side-panel" id="panelPerfil">
+        <div class="panel-header">
+            <h3>Meu Perfil Profissional</h3>
+            <button class="btn-close-panel" onclick="fecharPainel('panelPerfil')"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="panel-content">
+            <div class="form-group">
+                <label for="nomePerfil">Nome Completo</label>
+                <input type="text" id="nomePerfil" value="Dr. Mendes">
+            </div>
+            <div class="form-group">
+                <label for="emailPerfil">Email de Contacto</label>
+                <input type="email" id="emailPerfil" value="mendes@hospital.cv">
+            </div>
+            <div class="form-group">
+                <label for="tipoPerfil">Tipo de Utilizador</label>
+                <input type="text" id="tipoPerfil" value="Médico" readonly style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
+            </div>
+            <div class="form-group">
+                <label for="telefonePerfil">Telefone / Extensão</label>
+                <input type="text" id="telefonePerfil" value="9111111">
+            </div>
+            <button class="btn-primary-blue" onclick="salvarPerfilLocal()">Guardar Alterações</button>
+        </div>
     </div>
 </div>
 
 <script>
+    // Funções de Controlo dos Painéis Laterais
+    function abrirPainel(panelId) {
+        document.querySelectorAll('.side-panel').forEach(p => {
+            if(p.id !== panelId) p.classList.remove('open');
+        });
+        document.getElementById(panelId).classList.toggle('open');
+    }
+
+    function fecharPainel(panelId) {
+        document.getElementById(panelId).classList.remove('open');
+    }
+
+    function salvarPerfilLocal() {
+        const novoNome = document.getElementById("nomePerfil").value.trim();
+        if(novoNome) {
+            document.getElementById("usuarioNome").innerText = novoNome;
+        }
+        alert("Alterações guardadas com sucesso!");
+        fecharPainel('panelPerfil');
+    }
+
+    // Engine Original de Filtros e Dados Intacta
     const dadosConsultas = [
         { paciente: "Carlos Alberto", hora: "09:00", sintomas: "Dor no peito, Falta de ar", estado: "pendente", tipo: "hoje" },
         { paciente: "Aline Santos", hora: "10:30", sintomas: "Avaliação de Rotina", estado: "confirmada", tipo: "hoje" },
         { paciente: "Mariana Sousa", hora: "14:00", sintomas: "Retorno de Exames", estado: "cancelada", tipo: "outros" }
     ];
 
+    const dadosPacientesAtivos = [
+        { paciente: "Carlos Alberto", diagnostico: "Insuficiência Cardíaca Leve", ultimaConsulta: "02/07/2026", estado: "ativa" },
+        { paciente: "Lolo Medeiros", diagnostico: "Check-up Geral / Rotina", ultimaConsulta: "30/06/2026", estado: "ativa" }
+    ];
+
     function renderTabela(tipo) {
+        const thead = document.getElementById("cabecalho-tabela-medico");
         const tbody = document.getElementById("corpo-tabela-medico");
         tbody.innerHTML = "";
+        
+        if (tipo === 'pacientes') {
+            thead.innerHTML = `<tr><th>Paciente</th><th>Diagnóstico Clínico Principal</th><th>Última Consulta</th><th>Estado</th></tr>`;
+            
+            dadosPacientesAtivos.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${p.paciente}</b></td>
+                        <td>${p.diagnostico}</td>
+                        <td>${p.ultimaConsulta}</td>
+                        <td><span class="badge ativa">${p.estado.toUpperCase()}</span></td>
+                    </tr>
+                `;
+            });
+            return;
+        }
+
+        thead.innerHTML = `<tr><th>Paciente</th><th>Hora Turno</th><th>Sintomas Principais</th><th>Estado</th></tr>`;
         
         let filtrados = [];
         if (tipo === 'hoje') {
@@ -341,9 +569,6 @@
             filtrados = dadosConsultas.filter(c => c.estado === 'pendente');
         } else if (tipo === 'cancelada') {
             filtrados = dadosConsultas.filter(c => c.estado === 'cancelada');
-        } else if (tipo === 'pacientes') {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">Listagem de fichas de pacientes ativa no menu "Pacientes".</td></tr>`;
-            return;
         }
 
         if(filtrados.length === 0) {
