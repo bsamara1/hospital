@@ -258,8 +258,23 @@
 
         .table-responsive {
             width: 100%;
+            max-height: 420px;
+            overflow-y: auto;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        table thead th {
+            text-align: left;
+            color: #666;
+            background-color: #f8fafc;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            box-shadow: inset 0 -1px 0 #eee;
         }
 
         table {
@@ -268,7 +283,8 @@
             min-width: 1050px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px 12px;
             border-bottom: 1px solid #eee;
             font-size: 13.5px;
@@ -294,14 +310,40 @@
             display: inline-block;
         }
 
-        .perfil-paciente { background: #e2f0d9; color: #385723; }
-        .perfil-medico { background: #fce4d6; color: #c65911; }
-        .perfil-recepcionista { background: #fff2cc; color: #7f6000; }
-        .perfil-rececao { background: #fff2cc; color: #7f6000; }
-        .perfil-admin { background: #e8f4fd; color: #1d4ed8; }
+        .perfil-paciente {
+            background: #e2f0d9;
+            color: #385723;
+        }
 
-        .status-ativo { background: #d4edda; color: #155724; }
-        .status-desativado { background: #f8d7da; color: #721c24; }
+        .perfil-medico {
+            background: #fce4d6;
+            color: #c65911;
+        }
+
+        .perfil-recepcionista {
+            background: #fff2cc;
+            color: #7f6000;
+        }
+
+        .perfil-rececao {
+            background: #fff2cc;
+            color: #7f6000;
+        }
+
+        .perfil-admin {
+            background: #e8f4fd;
+            color: #1d4ed8;
+        }
+
+        .status-ativo {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-desativado {
+            background: #f8d7da;
+            color: #721c24;
+        }
 
         /* BOTÕES */
         button {
@@ -366,9 +408,11 @@
         <div class="header">
             <h2>Gestão de Utilizadores</h2>
             <div class="user-box">
-                <a href="consultas.html" style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
+                <a href="consultas.html"
+                    style="position:relative; text-decoration:none; color:inherit; margin-right: 5px;">
                     <i class="fa fa-bell"></i>
-                    <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
+                    <span id="notifBadge"
+                        style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span>
                 </a>
 
                 <a href="perfil.html" class="user-profile-link">
@@ -498,6 +542,7 @@
         async function render() {
             const lista = await obterUsuariosGerais();
 
+            // Contadores Dinâmicos corrigidos incluindo Administradores
             document.getElementById("totalGeral").innerText = lista.length;
             document.getElementById("totalPacientes").innerText = lista.filter(u => String(u.perfil).toLowerCase() === "paciente").length;
             document.getElementById("totalMedicos").innerText = lista.filter(u => String(u.perfil).toLowerCase() === "medico").length;
@@ -520,30 +565,44 @@
                 return;
             }
 
-            // Renderiza as colunas seguindo estritamente a nova ordem do cabeçalho
             listaFiltrada.forEach(u => {
-    const emailSeguro = encodeURIComponent(u.email || '');
+                const emailSeguro = encodeURIComponent(u.email || '');
 
-    tbody.innerHTML += `
-        <tr>
-            <td><b>${u.nome}</b></td>
-            <td>${u.bi}</td>
-            <td>${u.dataNascimento}</td>
-            <td>${u.sexo}</td>
-            <td>${u.telefone}</td> <td>${u.email}</td>
-            <td><span class="badge perfil-${String(u.perfil).toLowerCase()}">${u.perfil}</span></td>
-            <td><span class="badge status-${String(u.estado).toLowerCase()}">${u.estado}</span></td>
-            <td style="white-space: nowrap; text-align: center;">
-                <button class="btn-status" onclick="alternarEstado('${emailSeguro}')">
-                    <i class="fa fa-sync-alt"></i> Alternar
-                </button>
-                <button class="btn-delete" onclick="removerUtilizador('${emailSeguro}')">
-                    <i class="fa fa-trash"></i> Remover
-                </button>
-            </td>
-        </tr>
-    `;
-});
+                tbody.innerHTML += `
+            <tr>
+                <td><b>${u.nome}</b></td>
+                <td>${u.bi}</td>
+                <td>${u.dataNascimento}</td>
+                <td>${u.sexo}</td>
+                <td>${u.telefone}</td> 
+                <td>${u.email}</td>
+                <td><span class="badge perfil-${String(u.perfil).toLowerCase()}">${u.perfil}</span></td>
+                <td><span class="badge status-${String(u.estado).toLowerCase()}">${u.estado}</span></td>
+                <td style="white-space: nowrap; text-align: center;">
+                    <button class="btn-status" onclick="alternarEstado('${emailSeguro}')">
+                        <i class="fa fa-sync-alt"></i> Alternar
+                    </button>
+                    <button class="btn-delete" onclick="removerUtilizador('${emailSeguro}')">
+                        <i class="fa fa-trash"></i> Remover
+                    </button>
+                </td>
+            </tr>
+        `;
+            });
+        }
+
+        // Correção Assíncrona Crítica (Adicionado async/await)
+        async function alternarEstado(emailSeguro) {
+            const email = decodeURIComponent(emailSeguro);
+            try {
+                await alternarEstadoUtilizadorApi(email); // Agora o sistema espera a BD atualizar
+                if (typeof registrarLogAcesso === "function") {
+                    registrarLogAcesso("Administrador", `Alternou o estado do utilizador: ${email}`);
+                }
+                await render(); // Atualiza a tabela com o dado real atualizado
+            } catch (erro) {
+                alert("Erro ao alternar estado: " + erro.message);
+            }
         }
 
         function gerirFiltroUtilizadores(perfil, elementoCard) {
@@ -585,20 +644,20 @@
 
             try {
                 if (typeof criarUtilizadorApi === "function") {
-                    await criarUtilizadorApi(nome, 
-            bi, 
-            data_nascimento, 
-            sexo, 
-            n_telefone, 
-            email, 
-            senha, 
-            tipo);
+                    await criarUtilizadorApi(nome,
+                        bi,
+                        data_nascimento,
+                        sexo,
+                        n_telefone,
+                        email,
+                        senha,
+                        tipo);
                 }
-                
+
                 if (typeof registrarLogAcesso === "function") {
                     registrarLogAcesso("Administrador", `Adicionou o utilizador: ${nome} (${tipo})`);
                 }
-                
+
                 document.getElementById("form-user").reset();
                 await render();
                 alert("Utilizador criado com sucesso.");
@@ -607,12 +666,7 @@
             }
         }
 
-        async function alternarEstado(emailSeguro) {
-            const email = decodeURIComponent(emailSeguro);
-            await alternarEstadoUtilizadorApi(email);
-            if (typeof registrarLogAcesso === "function") registrarLogAcesso("Administrador", `Alternou o estado do utilizador: ${email}`);
-            render();
-        }
+
 
         async function removerUtilizador(emailSeguro) {
             if (!confirm("Tem a certeza que deseja remover este utilizador do sistema?")) return;

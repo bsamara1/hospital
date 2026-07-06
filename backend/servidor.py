@@ -287,7 +287,7 @@ def api_criar_medico():
     return jsonify({"sucesso": True, "medico": novo_medico}), 201
 
 
-@app.route("/medicos/<int:medico_id>", methods=["PATCH"])
+@app.route("/medicos/<int:medico_id>", methods=["PUT"])
 def api_atualizar_medico(medico_id):
     dados = request.get_json() or {}
     lista = carregar_medicos()
