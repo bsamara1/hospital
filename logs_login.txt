@@ -92,3 +92,10 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-06 12:51:10
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:57:18
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 14:57:23
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 16:20:51
+mendes@hospital.cv;LOGIN_SUCESSO;2026-07-06 16:34:12
+mendes@hospital.cv;LOGIN_FALHOU;2026-07-06 17:39:08
+mendes@hospital.cv;LOGIN_FALHOU;2026-07-06 17:39:10
+mendes@hospital.cv;LOGIN_FALHOU;2026-07-06 17:39:13
+mendes@hospital.cv;LOGIN_SUCESSO;2026-07-06 17:40:38
+mendes@hospital.cv;LOGIN_SUCESSO;2026-07-06 17:41:40
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-06 19:27:43

@@ -11,233 +11,112 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 .sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
 .sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
 .sidebar .logo img{width:50px;height:50px;object-fit:contain;}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;transition:0.3s;font-size:16px;}
-.sidebar a:hover,.sidebar a.active{background:#163a63;}
+.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;transition: 0.3s ease, transform 0.2s ease;font-size:16px;}
+.sidebar a:hover,.sidebar a.active{background:#163a63;transform: translateX(5px);}
+.sidebar a:active{transform: scale(0.98) translateX(5px);}
 .sidebar .bottom{margin-top:auto;}
 .logout{color:#ff6b6b;}
 .divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
-
-/* Main Layout */
-.main{flex:1;padding:30px 40px;overflow:auto;}
-.profile-title-container {margin-bottom: 25px;}
-.profile-title-container h2 {font-size: 24px; color: #0b2a4a; font-weight: 700; margin-bottom: 4px;}
-.profile-title-container p {font-size: 14px; color: #64748b;}
-
-/* Grid de duas colunas */
-.profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    align-items: start;
-    max-width: 1200px;
-}
-
-/* Cartões */
-.section-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 30px;
-    border: 1px solid #e2e8f0;
-}
-
-.section-card h3 {
-    font-size: 18px;
-    color: #0b2a4a;
-    margin-bottom: 25px;
-    font-weight: 700;
-}
-
-/* Campos de Formulário */
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 13px;
-    color: #475569;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #334155;
-    background-color: #ffffff;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.form-group input:focus {
-    border-color: #1e40af;
-}
-
-/* Input de Senha com Ícone */
-.password-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.password-input-wrapper input {
-    padding-right: 40px;
-}
-
-.password-input-wrapper i {
-    position: absolute;
-    right: 15px;
-    color: #94a3b8;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-/* Botões do Formato do Print */
-.btn-primary-blue {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background: #1e40af;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 10px;
-}
-
-.btn-primary-blue:hover {
-    background: #1e3a8a;
-}
+.main{flex:1;padding:25px;overflow:auto;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.header-line{margin-left:-25px;margin-right:-25px;height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
+.header h2{font-size:20px;color:#333;}
+.user-box{display:flex;align-items:center;gap:16px;color:#555;}
+.avatar-circle{width:35px;height:35px;background:#1e40af;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;}
+.user-profile-link{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;padding:5px 10px;border-radius:8px;transition:background 0.2s;}
+.user-profile-link:hover{background:#e2e8f0;}
+.user-info{display:flex;flex-direction:column;line-height:1.1;}
+.user-info #usuarioNome{font-weight:700;color:#222;}
+.user-info #usuarioEmail{font-size:13px;color:#6f7287;}
+.user-box i{font-size:18px;color:#4a4a4a;cursor:pointer;}
+.profile-container{background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);max-width:600px;margin:0 auto;}
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;font-size:14px;font-weight:600;color:#4a5568;margin-bottom:8px;}
+.form-control{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;color:#334155;background:#fff;outline:none;transition:border-color 0.2s;}
+.form-control:focus{border-color:#0b2a4a;box-shadow:0 0 0 3px rgba(11,42,74,0.1);}
+.btn-primary-blue{width:100%;padding:12px;border:none;border-radius:8px;background:#1e40af;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s, transform 0.1s;}
+.btn-primary-blue:hover{background:#1d4ed8;transform:scale(1.01);}
+.btn-primary-blue:active{transform:scale(0.99);}
 </style>
 </head>
 <body>
-
 <div class="sidebar">
-  <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
-  <a href="index.html">🏠 Início</a>
-  <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
-  <a href="consultas.html">📋 Minhas Consultas</a>
-  <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
-  <a href="notificacoes.html">🔔 Notificações</a>
-  <a class="active" href="perfil.html">👤 Meu Perfil</a>
-  <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html">🚪 Terminar sessão</a></div>
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
+    <a href="index.html"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+    <a href="marcar_consulta.html"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
+    <a href="consultas.html"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+    <a href="medicos.html"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
+    <a href="notificacoes.html"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
+    <a href="perfil.html" class="active"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
+    <div class="bottom">
+        <div class="divider"></div>
+        <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+    </div>
 </div>
-
 <div class="main">
-  <div class="profile-title-container">
-    <h2>Meu Perfil</h2>
-    <p>Gerir informações da sua conta.</p>
-  </div>
-
-  <div class="profile-grid">
-    
-    <div class="section-card">
-      <h3>Informações Pessoais</h3>
-      
-      <div class="form-group">
-        <label for="nomePerfil">Nome Completo</label>
-        <input type="text" id="nomePerfil" value="Administrador">
-      </div>
-      
-      <div class="form-group">
-        <label for="emailPerfil">Email</label>
-        <input type="email" id="emailPerfil" value="admin@sibes.cv">
-      </div>
-      
-      <div class="form-group">
-        <label for="tipoPerfil">Tipo de Utilizador</label>
-        <input type="text" id="tipoPerfil" value="Administrador" readonly style="background-color: #f8fafc;">
-      </div>
-      
-      <div class="form-group">
-        <label for="telefonePerfil">Telefone</label>
-        <input type="text" id="telefonePerfil" value="+238 999 99 99">
-      </div>
-      
-      <button class="btn-primary-blue" onclick="salvarPerfil()">Editar Informações</button>
+    <div class="header">
+        <h2>Meu Perfil Profissional</h2>
+        <div class="user-box">
+            <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
+            <a href="perfil.html" class="user-profile-link">
+                <div class="avatar-circle" id="usuarioAvatar">P</div>
+                <div class="user-info">
+                    <span id="usuarioNome">Pacientes</span>
+                    <span id="usuarioEmail"></span>
+                </div>
+            </a>
+        </div>
     </div>
-
-    <div class="section-card">
-      <h3>Alterar Palavra-passe</h3>
-      
-      <div class="form-group">
-        <label for="atualPassword">Palavra-passe Atual</label>
-        <div class="password-input-wrapper">
-          <input type="password" id="atualPassword" placeholder="Digite a palavra-passe atual">
-          <i class="fa-solid fa-eye-slash"></i>
+    <div class="header-line"></div>
+    <div class="profile-container">
+        <div class="form-group">
+            <label for="nomePerfil">Nome Completo</label>
+            <input type="text" id="nomePerfil" class="form-control" value="">
         </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="novaPassword">Nova Palavra-passe</label>
-        <div class="password-input-wrapper">
-          <input type="password" id="novaPassword" placeholder="Digite a nova palavra-passe">
-          <i class="fa-solid fa-eye-slash"></i>
+        <div class="form-group">
+            <label for="emailPerfil">Email de Contacto</label>
+            <input type="email" id="emailPerfil" class="form-control" value="">
         </div>
-      </div>
-      
-      <div class="form-group">
-        <label for="confirmarPassword">Confirmar Nova Palavra-passe</label>
-        <div class="password-input-wrapper">
-          <input type="password" id="confirmarPassword" placeholder="Confirme a nova palavra-passe">
-          <i class="fa-solid fa-eye-slash"></i>
+        <div class="form-group">
+            <label for="tipoPerfil">Tipo de Utilizador</label>
+            <input type="text" id="tipoPerfil" class="form-control" value="" readonly style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
         </div>
-      </div>
-      
-      <button class="btn-primary-blue">Alterar Palavra-passe</button>
+        <div class="form-group">
+            <label for="telefonePerfil">Telefone / Extensão</label>
+            <input type="text" id="telefonePerfil" class="form-control" value="">
+        </div>
+        <button class="btn-primary-blue" onclick="salvarPerfil()">Guardar Alterações</button>
     </div>
-
-  </div>
 </div>
+<script src="../js/consultas.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", carregarPerfil);
-
-function carregarPerfil(){
-
-    // 1. buscar utilizador guardado no login
+document.addEventListener("DOMContentLoaded", () => {
     const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-
     if(!utilizador){
         window.location.href = "../login.html";
         return;
     }
-
-    // 2. chamar backend com o email
-    fetch(`http://127.0.0.1:5000/utilizador?email=${utilizador.email}`)
+    fetch(`http://127.0.0.1:5000/utilizador?email=\${utilizador.email}`)
     .then(res => res.json())
     .then(dados => {
-
-        // 3. preencher os campos do formulário
         document.getElementById("nomePerfil").value = dados.nome;
         document.getElementById("emailPerfil").value = dados.email;
         document.getElementById("telefonePerfil").value = dados.telefone;
         document.getElementById("tipoPerfil").value = dados.tipo;
-
     });
-
-}
+});
 function salvarPerfil(){
-
     const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-
     if(!utilizador){
         window.location.href = "../login.html";
         return;
     }
-
     const dadosAtualizados = {
         emailOriginal: utilizador.email,
         nome: document.getElementById("nomePerfil").value,
         email: document.getElementById("emailPerfil").value,
         telefone: document.getElementById("telefonePerfil").value
-        // ❌ NÃO enviar tipo
     };
-
     fetch("http://127.0.0.1:5000/utilizador", {
         method: "PATCH",
         headers: {
@@ -247,29 +126,17 @@ function salvarPerfil(){
     })
     .then(res => res.json())
     .then(data => {
-
         if(data.sucesso){
-
-            alert("Perfil atualizado com sucesso!");
-
-            // atualizar localStorage
+            alert("Perfil updated successfully!");
             utilizador.nome = dadosAtualizados.nome;
             utilizador.email = dadosAtualizados.email;
-
             localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
-
+            location.reload();
         } else {
             alert(data.mensagem || "Erro ao atualizar perfil");
         }
-
-    })
-    .catch(err => {
-        console.error(err);
-        alert("Erro na ligação ao servidor");
     });
 }
-
 </script>
-<script src="../js/consultas.js"></script>
 </body>
 </html>
