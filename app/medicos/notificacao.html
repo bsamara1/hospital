@@ -8,6 +8,8 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
         body { display: flex; background: #f5f7fb; height: 100vh; }
+        
+        /* SIDEBAR ADMIN STYLE */
         .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
         .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 30px; }
         .logo span { font-size: 32px; font-weight: bold; }
@@ -16,18 +18,22 @@
         .sidebar a:hover, .sidebar a.active { background: #163a63; color: #fff; }
         .bottom { margin-top: auto; }
         .sidebar .logout { color: #ff6b6b; display: flex; align-items: center; gap: 10px; padding: 12px 15px; border-radius: 8px; text-decoration: none; font-size: 18px;}
+        .sidebar .logout:hover { background: #163a63; }
         .divider { height: 1px; background: rgba(255,255,255,0.15); margin: 12px 0; }
+        
+        /* MAIN CONTENT COMPENSADO */
         .main { flex: 1; margin-left: 260px; padding: 25px; overflow-y: auto; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .header h2 { font-size: 20px; color: #333; }
-        .user-box { display: flex; align-items: center; gap: 15px; color: #555; }
+        .user-box { display: flex; align-items: center; gap: 15px; color: #555; font-size: 15px; }
         .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
         .avatar-circle { width: 35px; height: 35px; background: #1e40af; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; }
         .user-profile-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 5px 10px; border-radius: 8px; transition: background 0.2s; }
         .user-profile-link:hover { background: #e9edf3; }
         
-        .alert-item { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #ffc107; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .alert-item.urgente { border-left-color: #dc3545; background: #fff5f5; }
+        /* LISTA DE NOTIFICAÇÕES PADRONIZADA (SEM FAIXAS COLORIDAS) */
+        .alert-item { background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.03); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s, background 0.2s; }
+        .alert-item:hover { transform: translateX(4px); background: #fbfcfe; }
         .alert-text h4 { font-size: 15px; color: #333; margin-bottom: 4px; }
         .alert-text p { font-size: 13px; color: #666; }
         .time { font-size: 12px; color: #999; }
@@ -41,8 +47,6 @@
     <a href="pacientes.html"><i class="fa fa-user"></i> Pacientes</a>
     <a href="agenda.html"><i class="fa fa-calendar"></i> Agenda</a>
     <a href="disponibilidade.html"><i class="fa fa-clock"></i> Disponibilidade</a>
-    <a href="notificacao.html" class="active"><i class="fa fa-bell"></i> Notificações</a>
-    <a href="perfil.html"><i class="fa fa-id-badge"></i> Meu Perfil</a>
     <div class="bottom"><div class="divider"></div><a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a></div>
 </div>
 
@@ -62,7 +66,7 @@
     </div>
     <div class="header-line"></div>
 
-    <div class="alert-item urgente">
+    <div class="alert-item">
         <div class="alert-text">
             <h4>Fila de Prioridade Modificada</h4>
             <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>

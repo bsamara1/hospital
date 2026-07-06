@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pacientes - Rececionista</title>
+<title>Pacientes - Minhas Consultas</title>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
@@ -59,15 +59,25 @@ align-items:center;
 gap:10px;
 border-radius:8px;
 font-size:16px;
-transition:0.3s;
+transition: 0.3s ease, transform 0.2s ease;
 }
 
-.sidebar a:hover{
+.sidebar a:hover,
+.sidebar a.active{
 background:#163a63;
+transform: translateX(5px);
 }
 
-.bottom{
+.sidebar a:active {
+transform: scale(0.98) translateX(5px);
+}
+
+.sidebar .bottom{
 margin-top:auto;
+}
+
+.logout{
+color:#ff6b6b;
 }
 
 .divider{
@@ -76,53 +86,30 @@ background:rgba(255,255,255,0.15);
 margin:12px 0;
 }
 
-.logout{
-color:#ff6b6b;
-}
-
-/* MAIN */
+/* MAIN CONTENT */
 .main{
 flex:1;
 padding:25px;
 overflow:auto;
 }
 
-/* HEADER */
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:25px;
 }
+.header-line{
+  margin-left:-25px;
+  margin-right:-25px;
+  height:1px;
+  background:rgba(0,0,0,0.08);
+  margin-bottom:25px;
+}
 
 .header h2{
 font-size:20px;
 color:#333;
-}
-
-.add-btn{
-background:#054a93;
-color:#fff;
-padding:10px 15px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-display:flex;
-align-items:center;
-gap:6px;
-transition:0.3s;
-}
-
-.add-btn:hover{
-opacity:0.8;
-}
-
-.header-line{
-margin-left:-25px;
-margin-right:-25px;
-height:1px;
-background:rgba(0,0,0,0.08);
-margin-bottom:25px;
 }
 
 .user-box{
@@ -131,81 +118,51 @@ align-items:center;
 gap:16px;
 color:#555;
 }
-
-.user-profile{
-display:flex;
-align-items:center;
-gap:10px;
-padding:10px 14px;
-border-radius:16px;
-box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
-background:#fff;
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    background: #1e40af;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
 }
-
-.user-profile .fa-user-circle{
-font-size:24px;
-color:#4a4a4a;
+.user-profile-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background 0.2s;
 }
-
-.avatar-circle{width:35px;height:35px;background:#1e40af;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;}
-
-.user-profile-link{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;padding:5px 10px;border-radius:8px;transition:background 0.2s;}
-.user-profile-link:hover{background:#e2e8f0;}
-
+.user-profile-link:hover {
+    background: #e2e8f0;
+}
 .user-info{
-display:flex;
-flex-direction:column;
-line-height:1.1;
+  display:flex;
+  flex-direction:column;
+  line-height:1.1;
 }
-
 .user-info #usuarioNome{
-font-weight:700;
-color:#222;
+  font-weight:700;
+  color:#222;
 }
-
 .user-info #usuarioEmail{
-font-size:13px;
-color:#6f7287;
+  font-size:13px;
+  color:#6f7287;
 }
-
 .user-box i{
 font-size:18px;
 color:#4a4a4a;
 cursor:pointer;
 }
 
-.user-box .fa-chevron-down{
-font-size:12px;
-color:#6f7287;
-}
-
-/* CARDS */
-.cards{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-margin-bottom:25px;
-}
-
-.card{
-background:#fff;
-padding:18px;
-border-radius:12px;
-box-shadow:0 4px 12px rgba(0,0,0,0.05);
-}
-
-.card h4{
-font-size:13px;
-color:#666;
-}
-
-.card p{
-font-size:22px;
-font-weight:bold;
-margin-top:10px;
-}
-
-/* TABLE */
+/* TABELA CARD RESPONSIVA */
 .table-card{
 background:#fff;
 padding:20px;
@@ -213,213 +170,154 @@ border-radius:12px;
 box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
+.table-card h3{
+margin-bottom:15px;
+font-size:16px;
+color:#333;
+}
+
+.table-responsive{
+width:100%;
+overflow-x:auto;
+}
+
 table{
 width:100%;
 border-collapse:collapse;
 }
 
-th,td{
-padding:12px;
+th, td{
+padding:12px 15px;
 border-bottom:1px solid #eee;
 font-size:14px;
+color:#444;
+vertical-align:middle;
+white-space:nowrap;
 text-align:left;
 }
 
 th{
 color:#666;
+background-color:#f8fafc;
+font-weight:600;
 }
 
-/* STATUS */
-.pendente{
-background:#fff3cd;
-color:#856404;
-padding:4px 8px;
-border-radius:10px;
-}
-
-.confirmada{
-background:#d4edda;
-color:#155724;
-padding:4px 8px;
-border-radius:10px;
-}
-
-.cancelada{
-background:#f8d7da;
-color:#721c24;
-padding:4px 8px;
-border-radius:10px;
-}
-
-/* BUTTONS */
-button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
-cursor:pointer;
+/* BADGES DE STATUS DE CONSULTA */
+.badge{
+padding:5px 12px;
+border-radius:20px;
 font-size:12px;
+font-weight:600;
+display:inline-block;
+background:#fff2cc;
+color:#7f6000;
 }
 
-button.view{background:#6c757d;color:#fff;}
-
-.tab-button{
-padding:10px 14px;
-border:1px solid #ddd;
-background:#fff;
-color:#333;
-border-radius:8px;
-cursor:pointer;
+.badge.confirmada{
+background:#e2f0d9;
+color:#385723;
 }
 
-.active-tab{
-background:#007bff;
-color:#fff;
-border-color:#007bff;
+.badge.cancelada{
+background:#fce4d6;
+color:#c65911;
 }
-
-.confirm{background:#28a745;color:#fff;}
-.edit{background:#007bff;color:#fff;}
-.cancel{background:#dc3545;color:#fff;}
-
 </style>
 </head>
-
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="logo">
-        <img src="../assets/img/logo.png" alt="Logo"> HAN
-    </div>
-    <a href="index.html">🏠 Início</a>
-    <a href="marcar_consulta.html">➕ Marcar Consulta / Triagem</a>
-    <a href="consultas.html">📋 Minhas Consultas</a>
-    <a href="medicos.html">👨‍⚕️ Corpo Médico</a>
-    <a href="notificacoes.html">🔔 Notificações</a>
-    <a href="perfil.html">👤 Meu Perfil</a>
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo HAN"><span>HAN</span></div>
+    <a href="index.html"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
+    <a href="marcar_consulta.html"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
+    <a href="consultas.html" class="active"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
+    <a href="medicos.html"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
+    <a href="notificacoes.html"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
+    <a href="perfil.html"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
     <div class="bottom">
         <div class="divider"></div>
-        <a class="logout" href="../login.html">🚪 Terminar sessão</a>
+        <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
     </div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-  <!-- HEADER -->
-  <div class="header">
-
-      <h2>Minhas Consultas</h2>
-
-      <div class="user-box">
-          <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
-          <a href="perfil.html" class="user-profile-link">
+    <div class="header">
+        <h2>Histórico de Consultas</h2>
+        <div class="user-box">
+            <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
+            <a href="perfil.html" class="user-profile-link">
             <div class="avatar-circle" id="usuarioAvatar">P</div>
             <div class="user-info">
                 <span id="usuarioNome">Pacientes</span>
                 <span id="usuarioEmail"></span>
             </div>
         </a>
-      </div>
+        </div>
+    </div>
+    <div class="header-line"></div>
 
-  </div>
-
-  <div class="header-line"></div>
-
-  <div class="tabs" style="margin-bottom:20px; display:flex; gap:10px; flex-wrap:wrap;">
-      <button id="abaAgendadas" class="tab-button active-tab" onclick="ativarAba('agendadas')">Consultas Marcadas</button>
-      <button id="abaHistorico" class="tab-button" onclick="ativarAba('historico')">Histórico de Consultas</button>
-  </div>
-
-  <!-- CARDS -->
-  <div class="cards">
-
-      <div class="card">
-          <h4>Pendentes</h4>
-          <p id="pendentes">0</p>
-      </div>
-
-      <div class="card">
-          <h4>Confirmadas</h4>
-          <p id="confirmadas">0</p>
-      </div>
-
-      <div class="card">
-          <h4>Canceladas</h4>
-          <p id="canceladas">0</p>
-      </div>
-
-  </div>
-  <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-    <input type="text" id="pesquisaGeral" placeholder="🔍 Pesquise por Especialidade, Médico, Data ou Estado" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd; flex: 1;">
-    <select id="filtroEstado" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
-        <option value="todas">Todos os Estados</option>
-        <option value="agendadas">Apenas Ativas/Agendadas</option>
-        <option value="pendente">Pendentes</option>
-        <option value="confirmada">Confirmadas</option>
-        <option value="realizada">Realizadas (Histórico)</option>
-        <option value="cancelada">Canceladas</option>
-    </select>
+    <div class="table-card">
+        <h3>Todas as Minhas Consultas Agendadas</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Médico</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Especialidade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="listaMinhasConsultas">
+                    </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-  <!-- TABLE -->
-  <div class="table-card">
-
-      <table>
-
-          <thead>
-              <tr>
-                  <th>Data</th>
-                  <th>Hora</th>
-                  <th>Médico</th>
-                  <th>Especialidade</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-              </tr>
-          </thead>
-
-          <tbody id="tabela-consultas">
-              <!-- JS vai preencher -->
-          </tbody>
-
-      </table>
-
-  </div>
-
-</div>
-
-<!-- JS -->
 <script src="../js/consultas.js"></script>
-<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000070; justify-content:center; align-items:center;">
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarHistoricoConsultas();
+    });
 
-  <div style="background:#fff; padding:20px; border-radius:10px; width:400px;">
+    function carregarHistoricoConsultas() {
+        const tbody = document.getElementById("listaMinhasConsultas");
+        tbody.innerHTML = "";
 
-    <h3 id="modalTitle">Marcar Consulta</h3>
+        const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
 
-    <select id="especialidade" style="width:100%; margin:5px 0;" onchange="carregarListaMedicos()">
-      <option value="">Selecionar Especialidade</option>
-    </select>
+        if (!utilizador) return;
 
-    <select id="medico" style="width:100%; margin:5px 0;" onchange="carregarHorarios()">
-      <option value="">Selecionar Médico</option>
-    </select>
+        const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
 
-    <input type="date" id="data" style="width:100%; margin:5px 0;" onchange="carregarHorarios()">
+        if (minhasConsultas.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Ainda não efetuou nenhuma marcação de consulta.</td></tr>`;
+            return;
+        }
 
-    <select id="hora" style="width:100%; margin:5px 0;">
-      <option value="">Selecionar hora</option>
-    </select>
+        minhasConsultas.forEach(c => {
+            const badgeClass = c.estado === 'confirmada' ? 'badge confirmada' : (c.estado === 'cancelada' ? 'badge cancelada' : 'badge');
+            
+            let dataFormatada = c.data;
+            if(c.data.includes("-")) {
+                const partes = c.data.split("-");
+                dataFormatada = `\${partes[2]}/\${partes[1]}/\${partes[0]}`;
+            }
 
-    <button onclick="guardarConsulta()" style="background:#28a745; color:#fff; width:100%; margin-top:10px;">
-      Guardar
-    </button>
-
-    <button onclick="fecharModal()" style="width:100%; margin-top:5px;">
-      Cancelar
-    </button>
-
-  </div>
-
-</div>
+            tbody.innerHTML += `
+                <tr>
+                    <td><b>\${c.medico}</b></td>
+                    <td>\${dataFormatada}</td>
+                    <td>\${c.hora}</td>
+                    <td>\${c.especialidade}</td>
+                    <td><span class="\${badgeClass}">\${c.estado.toUpperCase()}</span></td>
+                </tr>
+            `;
+        });
+    }
+</script>
 </body>
 </html>
