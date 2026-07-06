@@ -1,8 +1,12 @@
+// =========================================================================
+// CONFIGURAÇÕES, VALIDAÇÃO DE SESSÃO E UTILITÁRIOS GLOBAIS
+// =========================================================================
 const API_URL = "http://127.0.0.1:5000";
 
 const utilizadorLogado = JSON.parse(localStorage.getItem("utilizador") || "null");
 const tipoUtilizador = String(utilizadorLogado?.tipo || "").toLowerCase();
 
+// Proteção de Rotas: Garante que apenas a receção ou admin acede
 if (!utilizadorLogado || !["rececao", "recepcionista", "admin"].includes(tipoUtilizador)) {
     window.location.href = "../login.html";
 }
@@ -15,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
             localStorage.removeItem("email");
         });
     }
-
     preencherUsuarioHeader();
     atualizarBadgeNotificacoes();
 });
@@ -25,6 +28,14 @@ function preencherUsuarioHeader() {
     const emailEl = document.getElementById("usuarioEmail");
     if (nomeEl && utilizadorLogado?.nome) nomeEl.innerText = utilizadorLogado.nome;
     if (emailEl && utilizadorLogado?.email) emailEl.innerText = utilizadorLogado.email;
+    
+    // Configura o avatar com siglas dinâmicas se existir o elemento na página
+    const avatarEl = document.getElementById("usuarioAvatar");
+    if (avatarEl && utilizadorLogado?.nome) {
+        const partes = utilizadorLogado.nome.trim().split(" ");
+        const sigla = partes.length > 1 ? (partes[0][0] + partes[partes.length - 1][0]) : partes[0][0];
+        avatarEl.innerText = sigla.toUpperCase();
+    }
 }
 
 async function atualizarBadgeNotificacoes() {
@@ -42,6 +53,9 @@ async function atualizarBadgeNotificacoes() {
     }
 }
 
+// =========================================================================
+// COMUNICAÇÃO COM AS FONTES DE DADOS (API COM FALLBACK PARA TXT)
+// =========================================================================
 async function loadConsultas() {
     try {
         const res = await fetch(`${API_URL}/consultas`);
@@ -49,11 +63,12 @@ async function loadConsultas() {
         return await res.json();
     } catch {
         try {
-            const res = await fetch("../../../consultas.txt");
+            // Fallback para ler o ficheiro local se a API estiver offline
+            const res = await fetch("consultas.txt");
             if (!res.ok) throw new Error();
             return await res.json();
         } catch (error) {
-            console.warn("Não foi possível carregar consultas:", error);
+            console.warn("Não foi possível carregar consultas de nenhuma fonte:", error);
             return [];
         }
     }
@@ -63,7 +78,9 @@ async function loadPacientes() {
     try {
         const res = await fetch(`${API_URL}/utilizadores`);
         if (!res.ok) throw new Error();
-        return await res.json();
+        const dados = await res.json();
+        // Filtra para garantir que apenas utilizadores do tipo Paciente são retornados
+        return dados.filter(u => String(u.tipo).toLowerCase() === "paciente");
     } catch (error) {
         console.warn("Não foi possível carregar pacientes:", error);
         return [];
@@ -103,6 +120,9 @@ async function criarConsulta(dados) {
     return data.consulta;
 }
 
+// =========================================================================
+// TRATAMENTO DE FORMATOS E DATA
+// =========================================================================
 function parseDate(value) {
     if (!value) return null;
     const parts = value.split("-");
@@ -141,18 +161,6 @@ function escapeHtml(text) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
-
-function estadoBadge(estado) {
-    const map = {
-        pendente: "pendente",
-        confirmada: "confirmada",
-        cancelada: "cancelada",
-        presente: "presente",
-        realizada: "realizada"
-    };
-    const cls = map[estado] || "pendente";
-    return `<span class="badge ${cls}">${capitalize(estado)}</span>`;
 }
 
 function marcarSidebarAtiva(pagina) {

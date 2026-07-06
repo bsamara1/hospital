@@ -31,7 +31,7 @@
     "especialidade": "Clínica Geral",
     "data": "2026-07-10",
     "hora": "10:00",
-    "estado": "pendente",
+    "estado": "confirmada",
     "sintomas": [
       "febre-alta",
       "tosse"

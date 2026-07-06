@@ -1,21 +1,12 @@
-// =========================================================================
-// VARIÁVEIS GLOBAIS E ESTADO DA APLICAÇÃO
-// =========================================================================
 let consultas = [];
 let pacientes = [];
 let medicos = [];
 let consultaEmEdicao = null;
 
-// =========================================================================
-// INICIALIZADORES DE PÁGINA (ROTEAMENTO)
-// =========================================================================
-
-// Inicialização para a página de Gestão de Consultas / Dashboard
 async function initConsultas() {
     marcarSidebarAtiva("consultas");
     [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
 
-    // Configura os ouvintes de evento para filtros e busca
     const pesquisaInput = document.getElementById("pesquisaConsulta");
     const filtroSelect = document.getElementById("filtroEstado");
 
@@ -24,21 +15,16 @@ async function initConsultas() {
 
     preencherSelectPacientes();
     preencherSelectEspecialidades();
+
+    // Verificação de redirecionamento vindo do Painel Principal
+    const pacienteFiltroExterno = localStorage.getItem("filtroConsultaPaciente");
+    if (pacienteFiltroExterno && pesquisaInput) {
+        pesquisaInput.value = pacienteFiltroExterno;
+        localStorage.removeItem("filtroConsultaPaciente");
+    }
+
     renderTabela();
 }
-
-// Inicialização para a página de Listagem de Pacientes Ativos
-async function initPacientesAtivos() {
-    marcarSidebarAtiva("pacientes");
-    // Carrega em paralelo os dados necessários dos seus arquivos/APIs
-    [consultas, pacientes] = await Promise.all([loadConsultas(), loadPacientes()]);
-    
-    renderTabelaPacientesAtivos();
-}
-
-// =========================================================================
-// MÓDULO: GESTÃO DE CONSULTAS (DASHBOARD)
-// =========================================================================
 
 function preencherSelectPacientes() {
     const select = document.getElementById("consultaPaciente");
@@ -101,9 +87,9 @@ function renderTabela() {
 
     tbody.innerHTML = lista.map(c => `
         <tr>
-            <td>${escapeHtml(c.paciente)}</td>
+            <td><b>${escapeHtml(c.paciente)}</b></td>
             <td>${escapeHtml(c.medico)}</td>
-            <td>${escapeHtml(c.especialidade || "")}</td>
+            <td>${escapeHtml(c.especialidade || "Geral")}</td>
             <td>${formatDate(c.data)}</td>
             <td>${escapeHtml(c.hora)}</td>
             <td>${estadoBadge(c.estado)}</td>
@@ -149,11 +135,10 @@ function fecharModal() {
 }
 
 async function guardarConsulta() {
-    const paciente = document.getElementById("consultaPaciente").value.trim();
+    const paciente = document.getElementById("consultaPaciente").value;
     const medicoOpt = document.getElementById("consultaMedico");
-    const medico = medicoOpt.value.trim();
-    const especialidade = document.getElementById("consultaEspecialidade").value.trim() ||
-        medicoOpt.selectedOptions[0]?.dataset.esp || "";
+    const medico = medicoOpt.value;
+    const especialidade = document.getElementById("consultaEspecialidade").value || medicoOpt.selectedOptions[0]?.dataset.esp || "Geral";
     const data = document.getElementById("consultaData").value;
     const hora = document.getElementById("consultaHora").value;
 
@@ -166,13 +151,13 @@ async function guardarConsulta() {
         if (consultaEmEdicao) {
             await atualizarConsulta(consultaEmEdicao.id, { paciente, medico, especialidade, data, hora, estado: "pendente" });
         } else {
-            await criarConsulta({ paciente, medico, especialidade, data, hora });
+            await criarConsulta({ paciente, medico, especialidade, data, hora, estado: "pendente", prioridade: "Média" });
         }
         consultas = await loadConsultas();
         fecharModal();
         renderTabela();
     } catch (error) {
-        alert(error.message || "Não foi possível guardar a consulta.");
+        alert(error.message || "Erro ao guardar agendamento.");
     }
 }
 
@@ -181,9 +166,7 @@ async function confirmarConsulta(id) {
         await atualizarConsulta(id, { estado: "confirmada" });
         consultas = await loadConsultas();
         renderTabela();
-    } catch (error) {
-        alert(error.message || "Não foi possível confirmar a consulta.");
-    }
+    } catch (error) { alert(error.message); }
 }
 
 async function cancelarConsulta(id) {
@@ -192,9 +175,7 @@ async function cancelarConsulta(id) {
         await atualizarConsulta(id, { estado: "cancelada" });
         consultas = await loadConsultas();
         renderTabela();
-    } catch (error) {
-        alert(error.message || "Não foi possível cancelar a consulta.");
-    }
+    } catch (error) { alert(error.message); }
 }
 
 function verDetalhes(id) {
@@ -208,11 +189,11 @@ function verDetalhes(id) {
         conteudo.innerHTML = `
             <p><strong>Paciente:</strong> ${escapeHtml(c.paciente)}</p>
             <p><strong>Médico:</strong> ${escapeHtml(c.medico)}</p>
-            <p><strong>Especialidade:</strong> ${escapeHtml(c.especialidade || "—")}</p>
+            <p><strong>Especialidade:</strong> ${escapeHtml(c.especialidade || "Geral")}</p>
             <p><strong>Data:</strong> ${formatDate(c.data)}</p>
             <p><strong>Hora:</strong> ${escapeHtml(c.hora)}</p>
             <p><strong>Estado:</strong> ${estadoBadge(c.estado)}</p>
-            <p><strong>Sintomas:</strong> ${escapeHtml(c.sintomas ? c.sintomas.join(', ') : "Não informados")}</p>
+            <p><strong>Triagem Original:</strong> ${escapeHtml(c.prioridade || c.triagem || "Média")}</p>
         `;
     }
     if (modalDetalhes) modalDetalhes.style.display = "flex";
@@ -222,65 +203,10 @@ function fecharDetalhes() {
     document.getElementById("modalDetalhes").style.display = "none";
 }
 
-// =========================================================================
-// MÓDULO: LISTAGEM DE PACIENTES COM CONSULTA MARCADA (`pacientes.html`)
-// =========================================================================
-
-function renderTabelaPacientesAtivos() {
-    const tbody = document.getElementById("pacientesTabela");
-    if (!tbody) return; // Segurança para rodar apenas se o elemento existir na tela
-
-    tbody.innerHTML = "";
-
-    // Filtra consultas removendo as canceladas (mantém pendentes, confirmadas e realizadas se desejar)
-    const consultasAtivas = consultas.filter(c => c.estado !== "cancelada");
-
-    if (consultasAtivas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#777;">Nenhum paciente com consulta ativa encontrado.</td></tr>`;
-        return;
-    }
-
-    // Filtro de Chave Única (Evita duplicar paciente na lista se ele tiver mais de um agendamento)
-    const mapaPacientes = new Map();
-
-    consultasAtivas.forEach(c => {
-        const dataFormatada = typeof formatDate === "function" ? formatDate(c.data) : c.data;
-        const sintomasTexto = c.sintomas && c.sintomas.length > 0 ? c.sintomas.join(', ') : "Rotina / Geral";
-        
-        // A chave em caixa baixa (.toLowerCase()) evita duplicações por erros de digitação
-        mapaPacientes.set(c.paciente.toLowerCase(), {
-            nomeOriginal: c.paciente,
-            sintomas: sintomasTexto,
-            agendaInfo: `${dataFormatada} às ${escapeHtml(c.hora)}`,
-            idConsulta: c.id
-        });
-    });
-
-    // Converte o mapa para linhas de tabela HTML
-    tbody.innerHTML = Array.from(mapaPacientes.values()).map(p => `
-        <tr>
-            <td style="text-transform: capitalize;"><strong>${escapeHtml(p.nomeOriginal)}</strong></td>
-            <td><span style="font-size:13px; color:#666;">${escapeHtml(p.sintomas)}</span></td>
-            <td>${p.agendaInfo}</td>
-            <td>
-                <button class="view" type="button" onclick="verDetalhes(${p.idConsulta})">
-                    <i class="fa fa-eye"></i> Detalhes
-                </button>
-            </td>
-        </tr>
-    `).join("");
+function estadoBadge(estado) {
+    const map = { pendente: "pendente", confirmada: "confirmada", cancelada: "cancelada", presente: "presente", realizada: "realizada" };
+    const cls = map[estado] || "pendente";
+    return `<span class="badge ${cls}">${capitalize(estado)}</span>`;
 }
 
-// =========================================================================
-// GATILHO DE ROTEAMENTO EXECUTADO AO CARREGAR A PÁGINA
-// =========================================================================
-window.addEventListener("DOMContentLoaded", () => {
-    // 1. Se contiver a tabela padrão de consultas, inicializa fluxo do Dashboard
-    if (document.getElementById("tabelaConsultas")) {
-        initConsultas();
-    } 
-    // 2. Se contiver o ID da tabela de pacientes, inicializa o fluxo de listagem de Pacientes
-    else if (document.getElementById("pacientesTabela")) {
-        initPacientesAtivos();
-    }
-});
+window.addEventListener("DOMContentLoaded", initConsultas);
