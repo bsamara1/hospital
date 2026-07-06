@@ -20,7 +20,7 @@
     "especialidade": "Cardiologia",
     "data": "2026-07-05",
     "hora": "23:06",
-    "estado": "pendente",
+    "estado": "cancelada",
     "sintomas": [],
     "prioridade": "baixa"
   },
