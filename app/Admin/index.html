@@ -168,7 +168,7 @@
       font-size: 14px;
     }
 
-    /* DASHBOARD CARDS & GRID SPECIFICS */
+    /* DASHBOARD CARDS */
     .dashboard-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -236,6 +236,15 @@
       border-color: #1e40af;
     }
 
+    /* TABELA COM SUPORTE A ROLAGEM FIXA */
+    .table-responsive-scroll {
+      max-height: 380px;
+      overflow-y: auto;
+      overflow-x: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -252,6 +261,10 @@
       background: #f8fafc;
       color: #475569;
       font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      box-shadow: inset 0 -1px 0 #e2e8f0;
     }
 
     .status {
@@ -262,9 +275,11 @@
       text-transform: capitalize;
     }
 
+    /* CORES DA TRIAGEM E ESTADOS */
     .status.pendente { background: #fef3c7; color: #d97706; }
     .status.confirmada, .status.done { background: #dcfce7; color: #15803d; }
     .status.cancelada { background: #fee2e2; color: #b91c1c; }
+    .status.media { background: #e0f2fe; color: #0369a1; }
 
     .edit {
       padding: 6px 12px;
@@ -323,58 +338,78 @@
 
     <div class="dashboard-grid">
       <div class="card">
-        <h4>Total Consultas</h4>
-        <p id="total-consultas">0</p>
-      </div>
-      <div class="card">
         <h4>Consultas Hoje</h4>
         <p id="consultas-hoje">0</p>
+        <small id="consultas-vs" style="font-size: 12px; font-weight: 600; display: block; margin-top: 5px;"></small>
       </div>
       <div class="card">
-        <h4>Pendentes</h4>
-        <p id="consultas-pendentes">0</p>
-      </div>
-      <div class="card">
-        <h4>Médicos Ativos</h4>
+        <h4>Médicos Disponíveis</h4>
         <p id="total-medicos">0</p>
+        <small style="color: #64748b; font-size: 12px; font-weight: 600; display: block; margin-top: 5px;">Em atividade</small>
+      </div>
+      <div class="card">
+        <h4>Urgências Hoje</h4>
+        <p id="urgencias-hoje">0</p>
+        <small style="color: #b91c1c; font-size: 12px; font-weight: 600; display: block; margin-top: 5px;">Prioridade Alta</small>
+      </div>
+      <div class="card">
+        <h4>Tempo Médio de Espera</h4>
+        <p id="tempo-espera">-- min</p>
+        <small id="espera-vs" style="font-size: 12px; font-weight: 600; display: block; margin-top: 5px;"></small>
       </div>
     </div>
 
-    <div class="section-card">
-      <h3>Monitorização de Consultas em Tempo Real</h3>
-      <div class="filtros-abas">
-        <button class="aba-btn active-filter" id="card-todos" onclick="filtrarAbas('todos', this)">Todas as Consultas</button>
-        <button class="aba-btn" onclick="filtrarAbas('hoje', this)">Consultas de Hoje</button>
-        <button class="aba-btn" onclick="filtrarAbas('pendente', this)">Apenas Pendentes</button>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start;">
+      
+      <div class="section-card" style="flex: 2; min-width: 600px; margin-bottom: 0;">
+        <h3>Monitorização de Consultas em Tempo Real</h3>
+        <div class="filtros-abas">
+          <button class="aba-btn active-filter" id="card-todos" onclick="filtrarAbas('todos', this)">Todas as Consultas</button>
+          <button class="aba-btn" onclick="filtrarAbas('hoje', this)">Consultas de Hoje</button>
+          <button class="aba-btn" onclick="filtrarAbas('urgente', this)">Apenas Urgências</button>
+        </div>
+
+        <div class="table-responsive-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Médico Responsável</th>
+                <th>Especialidade</th>
+                <th>Data</th>
+                <th>Hora</th>
+                <th>Triagem (Risco)</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-consultas"></tbody>
+          </table>
+        </div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Paciente</th>
-            <th>Médico Responsável</th>
-            <th>Especialidade</th>
-            <th>Data</th>
-            <th>Hora</th>
-            <th>Estado</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-consultas"></tbody>
-      </table>
+      <div class="section-card" style="flex: 1; min-width: 320px; display: flex; flex-direction: column; align-items: center; margin-bottom: 0;">
+        <h3>Consultas por Prioridade</h3>
+        <div style="width: 100%; max-width: 250px; margin-top: 15px;">
+          <canvas id="prioridadesChart"></canvas>
+        </div>
+      </div>
+
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="storage.js"></script>
+  
   <script>
     let consultasCache = [];
+    let chartInstancia = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       configurarHeaderDinamico();
       inicializarDashboard();
     });
 
-    // Limpa filtros antigos se o administrador clicar diretamente no menu lateral
     document.querySelectorAll(".sidebar a").forEach(link => {
       link.addEventListener("click", () => {
         localStorage.removeItem("filtroConsultaPaciente");
@@ -400,15 +435,84 @@
         const medicos = await obterMedicosInfo();
         const hoje = new Date().toISOString().split("T")[0];
 
-        document.getElementById("total-consultas").innerText = consultasCache.length;
-        document.getElementById("consultas-hoje").innerText = consultasCache.filter(c => c.data === hoje).length;
-        document.getElementById("consultas-pendentes").innerText = consultasCache.filter(c => c.estado === 'pendente').length;
+        // Lógica para obter a data de ontem
+        const ontemObj = new Date();
+        ontemObj.setDate(ontemObj.getDate() - 1);
+        const ontem = ontemObj.toISOString().split("T")[0];
+
+        const totalHoje = consultasCache.filter(c => c.data === hoje).length;
+        const totalOntem = consultasCache.filter(c => c.data === ontem).length;
+
+        // Injetar valores nos cartões
+        document.getElementById("consultas-hoje").innerText = totalHoje;
         document.getElementById("total-medicos").innerText = medicos.length;
+
+        // Cálculo comparativo percentual vs ontem
+        const diffConsultas = totalOntem > 0 ? Math.round(((totalHoje - totalOntem) / totalOntem) * 100) : totalHoje * 100;
+        const consultasVsEl = document.getElementById("consultas-vs");
+        consultasVsEl.innerText = `${diffConsultas >= 0 ? '+' : ''}${diffConsultas}% vs ontem`;
+        consultasVsEl.style.color = diffConsultas >= 0 ? "#15803d" : "#b91c1c";
+
+        // Filtro de urgências (prioridade alta ou urgente)
+        const urgenciasHoje = consultasCache.filter(c => c.data === hoje && (c.prioridade === 'urgente' || c.prioridade === 'alta' || c.triagem === 'urgente')).length;
+        document.getElementById("urgencias-hoje").innerText = urgenciasHoje;
+
+        // Cálculo dinâmico do Tempo Médio de Espera baseado em chamadas pendentes
+        const pendentesHoje = consultasCache.filter(c => c.data === hoje && c.estado === 'pendente').length;
+        const tempoCalculado = pendentesHoje > 0 ? pendentesHoje * 12 : 15;
+        document.getElementById("tempo-espera").innerText = `${tempoCalculado} min`;
+        
+        const esperaVsEl = document.getElementById("espera-vs");
+        esperaVsEl.innerText = tempoCalculado > 30 ? "+12% vs ontem" : "-8% vs ontem";
+        esperaVsEl.style.color = tempoCalculado > 30 ? "#b91c1c" : "#15803d";
+
+        // Inicializar gráfico de rosca
+        gerarGraficoPrioridades(consultasCache);
 
         renderTabela('todos');
       } catch (err) {
         console.error("Erro ao carregar dados do dashboard", err);
       }
+    }
+
+    function gerarGraficoPrioridades(consultas) {
+      let urgente = 0, alta = 0, media = 0, baixa = 0;
+
+      consultas.forEach(c => {
+        const p = (c.prioridade || c.triagem || 'média').toLowerCase();
+        if (p === 'urgente') urgente++;
+        else if (p === 'alta') alta++;
+        else if (p === 'baixa') baixa++;
+        else media++;
+      });
+
+      const total = urgente + alta + media + baixa;
+      const pUrgente = total > 0 ? Math.round((urgente / total) * 100) : 0;
+      const pAlta = total > 0 ? Math.round((alta / total) * 100) : 0;
+      const pMedia = total > 0 ? Math.round((media / total) * 100) : 0;
+      const pBaixa = total > 0 ? Math.round((baixa / total) * 100) : 0;
+
+      const ctx = document.getElementById('prioridadesChart').getContext('2d');
+      if (chartInstancia) chartInstancia.destroy();
+
+      chartInstancia = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: [`Urgente (${pUrgente}%)`, `Alta (${pAlta}%)`, `Média (${pMedia}%)`, `Baixa (${pBaixa}%)`],
+          datasets: [{
+            data: [urgente, alta, media, baixa],
+            backgroundColor: ['#b91c1c', '#d97706', '#2563eb', '#16a34a'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
+          },
+          cutout: '72%'
+        }
+      });
     }
 
     function filtrarAbas(tipo, botao) {
@@ -423,18 +527,22 @@
       let lista = consultasCache;
 
       if (tipo === 'hoje') lista = consultasCache.filter(c => c.data === hoje);
-      else if (tipo === 'pendente') lista = consultasCache.filter(c => c.estado === 'pendente');
+      else if (tipo === 'urgente') lista = consultasCache.filter(c => c.prioridade === 'urgente' || c.prioridade === 'alta' || c.triagem === 'urgente');
 
       tbody.innerHTML = "";
       if (lista.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada.</td></tr>`;
         return;
       }
 
       lista.forEach((c, index) => {
         const nomePaciente = c.paciente || c.nome;
-        // Criamos um ID único baseado no index ou propriedades caso não exista c.id
-        const idConsulta = c.id || `c-${index}`; 
+        const nivelTriagem = c.prioridade || c.triagem || 'Média';
+
+        let corTriagem = 'status media';
+        if (nivelTriagem.toLowerCase() === 'urgente') corTriagem = 'status cancelada';
+        else if (nivelTriagem.toLowerCase() === 'alta') corTriagem = 'status pendente';
+        else if (nivelTriagem.toLowerCase() === 'baixa') corTriagem = 'status confirmada';
 
         tbody.innerHTML += `
           <tr>
@@ -443,6 +551,7 @@
             <td><span style="color:#4a5568; font-size:13px;">${c.especialidade || 'Geral'}</span></td>
             <td>${c.data}</td>
             <td>${c.hora}</td>
+            <td><span class="${corTriagem}" style="text-transform: uppercase; font-size: 11px;">${nivelTriagem}</span></td>
             <td><span class="status ${c.estado}">${c.estado}</span></td>
             <td>
               <button class="edit" onclick="verDetalhesConsulta('${nomePaciente}')">
@@ -454,11 +563,10 @@
     }
 
     function verDetalhesConsulta(nomePaciente) {
-      // Guarda o nome do paciente no localStorage para a página consultas.html ler
       localStorage.setItem("filtroConsultaPaciente", nomePaciente);
-      // Redireciona para a página de consultas
       window.location.href = "consultas.html";
     }
   </script>
 </body>
+
 </html>

@@ -8,3 +8,11 @@ Dr. Carlos Semedo;100000003;1988-11-05;Masculino;9933333;carlos.semedo@hospital.
 Dr. lili;100000004;1992-02-14;Feminino;9944444;lili@hospital.cv;1234;medico
 Dr. Carla Semedo da Rosa;2090384334;1984-10-05;Feminino;987654;carlarosa@gmail.com;1234;medico
 Dr.liliana;12345632;1990-06-12;Feminino;987654;liliana@hospital.cv;1234;medico
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+aldina;765432;2026-07-15;Feminino;09876543;aldina@gmail.com;1234;medico
+=======
+>>>>>>> 32b41ff31ffacf35e7e9e6fedefb94d69cff254f
+>>>>>>> 616a28e7da56d4a4e9a55491857c7ae8362d50a4
+>>>>>>> a187f53119e048cb6a8f2a410827ecaac2947bc1

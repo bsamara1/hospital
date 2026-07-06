@@ -225,12 +225,14 @@ async function obterMedicosInfo() {
   }
 }
 
-async function criarMedicoApi(nome, especialidade, horarios) {
+// Substitui esta função inteira dentro do teu storage.js:
+async function criarMedicoApi(dadosMed) {
   const res = await fetch(`${API_URL}/medicos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nome, especialidade, horarios, status: "ativo" })
+    body: JSON.stringify(dadosMed) // Envia o objeto plano mapeado corretamente
   });
+  
   const dados = await res.json();
   if (!res.ok || !dados.sucesso) {
     throw new Error(dados.mensagem || "Não foi possível criar o médico.");
