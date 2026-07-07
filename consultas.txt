@@ -67,5 +67,21 @@
       "febre-alta"
     ],
     "prioridade": "alta"
+  },
+  {
+    "id": 1783448729254,
+    "paciente": "Lili Lopes",
+    "medico": "Dr.liliana",
+    "especialidade": "Clínica Geral",
+    "data": "2026-07-18",
+    "hora": "08:00",
+    "estado": "pendente",
+    "sintomas": [
+      "dor-peito",
+      "falta-ar",
+      "febre-alta",
+      "dor-cabeca"
+    ],
+    "prioridade": "alta"
   }
 ]

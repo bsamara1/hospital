@@ -13,10 +13,20 @@ async function initConsultas() {
     }
     
     try {
-        // Carrega os dados das funções de persistência global existentes no seu sistema
         [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
+        
+        // Debug para verificar no Console do Navegador (F12) se os dados estão corretos
+        console.log("Pacientes carregados:", pacientes);
+        console.log("Médicos carregados:", medicos);
     } catch (error) {
-        console.error("Erro ao carregar dados iniciais de persistência local:", error);
+        console.error("Erro ao carregar dados iniciais:", error);
+
+        // Fallback: Carrega os dados das funções de persistência global existentes no seu sistema
+        try {
+            [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
+        } catch (innerError) {
+            console.error("Erro ao carregar dados iniciais de persistência local:", innerError);
+        }
     }
 
     const pesquisaInput = document.getElementById("pesquisaConsulta");
@@ -27,7 +37,7 @@ async function initConsultas() {
 
     // 1º Carrega os pacientes do TXT, depois lê as especialidades e monta a tabela
     await preencherSelectPacientes();
-    await carregarMedicosETxt(); // Nova função unificada para garantir sincronismo
+    await carregarMedicosETxt(); // Função unificada para garantir sincronismo
     preencherSelectEspecialidades();
 
     const pacienteFiltroExterno = localStorage.getItem("filtroConsultaPaciente");
@@ -90,7 +100,7 @@ async function preencherSelectPacientes() {
         if (pacientes && pacientes.length > 0) {
             const apenasPacientes = pacientes.filter(p => p.tipo && p.tipo.toLowerCase() === "paciente");
             select.innerHTML = '<option value="">Selecionar paciente</option>' +
-                apenasPacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
+                apenaPacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
         }
     }
 }
@@ -282,7 +292,6 @@ function fecharModal() {
     consultaEmEdicao = null;
 }
 
-// 9. SUBMISSÃO COM VÍNCULO DE EMAIL ADQUIRIDO
 async function guardarConsulta() {
     const paciente = document.getElementById("consultaPaciente").value;
     const medico = document.getElementById("consultaMedico").value;
