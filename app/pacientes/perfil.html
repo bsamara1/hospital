@@ -37,6 +37,20 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 .btn-primary-blue{width:100%;padding:12px;border:none;border-radius:8px;background:#1e40af;color:#ffffff;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s, transform 0.1s;}
 .btn-primary-blue:hover{background:#1d4ed8;transform:scale(1.01);}
 .btn-primary-blue:active{transform:scale(0.99);}
+
+/* ALERT NOTIFICATION STATUS */
+.alert-sucesso {
+    display: none;
+    background: #e2f0d9;
+    color: #385723;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid #b8db9e;
+}
 </style>
 </head>
 <body>
@@ -55,7 +69,7 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 </div>
 <div class="main">
     <div class="header">
-        <h2>Meu Perfil Profissional</h2>
+        <h2>Meu Perfil de Utente</h2>
         <div class="user-box">
             <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
             <a href="perfil.html" class="user-profile-link">
@@ -68,7 +82,12 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
         </div>
     </div>
     <div class="header-line"></div>
+    
     <div class="profile-container">
+        <div id="mensagemSucesso" class="alert-sucesso">
+            <i class="fa fa-check-circle"></i> Perfil atualizado com sucesso localmente!
+        </div>
+
         <div class="form-group">
             <label for="nomePerfil">Nome Completo</label>
             <input type="text" id="nomePerfil" class="form-control" value="">
@@ -79,63 +98,125 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
         </div>
         <div class="form-group">
             <label for="tipoPerfil">Tipo de Utilizador</label>
-            <input type="text" id="tipoPerfil" class="form-control" value="" readonly style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
+            <input type="text" id="tipoPerfil" class="form-control" value="Paciente" readonly style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
         </div>
         <div class="form-group">
-            <label for="telefonePerfil">Telefone / Extensão</label>
+            <label for="telefonePerfil">Telefone / Contacto Direto</label>
             <input type="text" id="telefonePerfil" class="form-control" value="">
         </div>
         <button class="btn-primary-blue" onclick="salvarPerfil()">Guardar Alterações</button>
     </div>
 </div>
+
 <script src="../js/consultas.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-    if(!utilizador){
-        window.location.href = "../login.html";
-        return;
+    // Garantir sessão simulada base inicial se por acaso aceder diretamente
+    if (!localStorage.getItem('utilizadorLogado')) {
+        localStorage.setItem('utilizadorLogado', JSON.stringify({
+            nome: "João Baptista Silva",
+            email: "joao.silva@email.cv",
+            telefone: "+238 991 23 45",
+            tipo: "Paciente"
+        }));
     }
-    fetch(`http://127.0.0.1:5000/utilizador?email=\${utilizador.email}`)
-    .then(res => res.json())
-    .then(dados => {
-        document.getElementById("nomePerfil").value = dados.nome;
-        document.getElementById("emailPerfil").value = dados.email;
-        document.getElementById("telefonePerfil").value = dados.telefone;
-        document.getElementById("tipoPerfil").value = dados.tipo;
-    });
+
+    carregarDadosFormulario();
+    atualizarContadorNotificacoes();
 });
-function salvarPerfil(){
+
+function carregarDadosFormulario() {
     const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-    if(!utilizador){
+    if (!utilizador) return;
+
+    // Atualiza cabeçalho superior direito
+    document.getElementById("usuarioNome").textContent = utilizador.nome;
+    document.getElementById("usuarioEmail").textContent = utilizador.email;
+    document.getElementById("usuarioAvatar").textContent = utilizador.nome ? utilizador.nome.charAt(0).toUpperCase() : "P";
+
+    // Preenche os campos de input do formulário central
+    document.getElementById("nomePerfil").value = utilizador.nome || "";
+    document.getElementById("emailPerfil").value = utilizador.email || "";
+    document.getElementById("telefonePerfil").value = utilizador.telefone || "+238 ";
+    document.getElementById("tipoPerfil").value = utilizador.tipo || "Paciente";
+}
+
+function salvarPerfil() {
+    const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+    if (!utilizador) {
         window.location.href = "../login.html";
         return;
     }
-    const dadosAtualizados = {
-        emailOriginal: utilizador.email,
-        nome: document.getElementById("nomePerfil").value,
-        email: document.getElementById("emailPerfil").value,
-        telefone: document.getElementById("telefonePerfil").value
-    };
-    fetch("http://127.0.0.1:5000/utilizador", {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(dadosAtualizados)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.sucesso){
-            alert("Perfil updated successfully!");
-            utilizador.nome = dadosAtualizados.nome;
-            utilizador.email = dadosAtualizados.email;
-            localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
-            location.reload();
-        } else {
-            alert(data.mensagem || "Erro ao atualizar perfil");
+
+    const novoNome = document.getElementById("nomePerfil").value.trim();
+    const novoEmail = document.getElementById("emailPerfil").value.trim();
+    const novoTelefone = document.getElementById("telefonePerfil").value.trim();
+
+    if (!novoNome || !novoEmail) {
+        alert("Por favor, preencha os campos obrigatórios de Nome e Email.");
+        return;
+    }
+
+    const emailAntigo = utilizador.email;
+
+    // 1. Atualizar dados do objeto de sessão ativa
+    utilizador.nome = novoNome;
+    utilizador.email = novoEmail;
+    utilizador.telefone = novoTelefone;
+    localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
+
+    // 2. Sincronizar dados antigos na base global 'consultasHAN' para manter a integridade dos dados
+    let consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
+    let houveAlteracaoConsultas = false;
+
+    consultas.forEach(c => {
+        if (c.pacienteEmail === emailAntigo) {
+            c.pacienteEmail = novoEmail;
+            houveAlteracaoConsultas = true;
         }
     });
+
+    if (houveAlteracaoConsultas) {
+        localStorage.setItem('consultasHAN', JSON.stringify(consultas));
+    }
+
+    // Mostrar feedback visual elegante ao utilizador
+    const alerta = document.getElementById("mensagemSucesso");
+    alerta.style.display = "block";
+    
+    // Atualizar componentes dinâmicos em tempo real sem quebrar a navegação
+    carregarDadosFormulario();
+
+    setTimeout(() => {
+        alerta.style.display = "none";
+    }, 3000);
+}
+
+function atualizarContadorNotificacoes() {
+    const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
+    const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+    const lidas = JSON.parse(localStorage.getItem('notificacoesLidas')) || [];
+    const badge = document.getElementById("notifBadge");
+
+    if (!utilizador || !badge) return;
+
+    const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
+    let naoLidas = 0;
+
+    minhasConsultas.forEach(c => {
+        const statusLimpo = (c.status || 'Pendente').toLowerCase();
+        const idNotificacao = `notif_${c.id}_${statusLimpo}`;
+        if (!lidas.includes(idNotificacao)) {
+            naoLidas++;
+        }
+    });
+
+    if (naoLidas > 0) {
+        badge.textContent = naoLidas;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
 }
 </script>
 </body>

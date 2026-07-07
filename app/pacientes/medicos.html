@@ -25,8 +25,6 @@ transition: 0.3s ease, transform 0.2s ease;}
 .header-line{margin-left:-25px;margin-right:-25px;height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
 .header h2{font-size:20px;color:#333;}
 .user-box{display:flex;align-items:center;gap:16px;color:#555;}
-.user-profile{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);background:#fff;}
-.user-profile .fa-user-circle{font-size:24px;color:#4a4a4a;}
 
 .avatar-circle{width:35px;height:35px;background:#1e40af;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;}
 
@@ -36,49 +34,53 @@ transition: 0.3s ease, transform 0.2s ease;}
 .user-info #usuarioNome{font-weight:700;color:#222;}
 .user-info #usuarioEmail{font-size:13px;color:#6f7287;}
 .user-box i{font-size:18px;color:#4a4a4a;cursor:pointer;}
-.user-box .fa-chevron-down{font-size:12px;color:#6f7287;}
+
 .table-card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
-.table-card h3{margin-bottom:15px;}
-#listaMedicos .medicos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;}
-#listaMedicos .medico-card{border:1px solid #e1e8f0;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.04);background:#fff;display:flex;flex-direction:column;gap:12px;}
-.medico-photo{width:100%;height:180px;border-radius:16px;object-fit:cover;}
+.table-card h3{margin-bottom:15px; color:#333; font-size:16px;}
+.medicos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+.medico-card{border:1px solid #e1e8f0;border-radius:16px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.04);background:#fff;display:flex;flex-direction:column;gap:14px;}
+
 .medico-info{display:grid;gap:8px;}
-.medico-nome{font-size:20px;font-weight:700;color:#1f3566;}
-.medico-especialidade{font-size:15px;color:#555;}
-.medico-meta{font-size:14px;color:#555;}
-.medico-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-.medico-tag{padding:8px 12px;border-radius:999px;background:#eef4ff;color:#1d3f7a;font-size:13px;}
-.medico-actions{display:flex;justify-content:flex-end;}
-.medico-actions button{padding:10px 16px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;transition:0.2s, transform 0.1s;}
+.medico-nome{font-size:18px;font-weight:700;color:#1f3566;}
+.medico-especialidade{font-size:14px;color:#1e40af;font-weight:600;background:#eff6ff;padding:4px 10px;border-radius:6px;width:fit-content;}
+.medico-meta{font-size:13px;color:#64748b;display:flex;align-items:center;gap:6px;}
+.medico-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.medico-tag{padding:5px 10px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:500;}
+
+.medico-actions{display:flex;justify-content:flex-end;margin-top:auto;padding-top:10px;}
+.medico-actions button{padding:10px 16px;border:none;border-radius:10px;background:#054a93;color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:0.2s, transform 0.1s;}
 .medico-actions button:hover{opacity:0.95;transform:scale(1.02);}
 .medico-actions button:active{transform:scale(0.98);}
-input#pesquisaMedico{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;}
-button.search-btn{padding:12px 18px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;transition:0.2s;}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,42,74,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;}
-.modal-content{background:#fff;border-radius:18px;width:min(720px,95%);padding:24px;box-shadow:0 18px 50px rgba(0,0,0,0.18);}
+
+input#pesquisaMedico{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;outline:none;font-size:14px;transition:border-color 0.2s;}
+input#pesquisaMedico:focus{border-color:#054a93;}
+
+/* MODAL */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(11,42,74,0.45);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter: blur(2px);}
+.modal-content{background:#fff;border-radius:18px;width:min(500px,95%);padding:24px;box-shadow:0 18px 50px rgba(0,0,0,0.18);}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-.modal-header h3{margin:0;color:#17224a;}
-.modal-close{background:transparent;border:none;font-size:28px;line-height:1;color:#555;cursor:pointer;}
-.modal-body{display:grid;gap:14px;}
-.modal-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.modal-row strong{color:#333;}
-.modal-section{background:#f8faff;padding:18px;border-radius:14px;}
+.modal-header h3{margin:0;color:#17224a;font-size:18px;}
+.modal-close{background:transparent;border:none;font-size:28px;line-height:1;color:#94a3b8;cursor:pointer;transition:color 0.2s;}
+.modal-close:hover{color:#334155;}
+.modal-body{display:grid;gap:16px;}
+.modal-section{background:#f8faff;padding:16px;border-radius:12px;border:1px solid #e2e8f0;}
+.modal-section p{font-size:14px;color:#334155;margin-bottom:8px;display:flex;justify-content:space-between;}
+.modal-section p strong{color:#0f172a;}
 .modal-footer{display:flex;justify-content:flex-end;margin-top:20px;}
-.modal-footer button{padding:12px 18px;border:none;border-radius:10px;background:#054a93;color:#fff;cursor:pointer;transition: 0.2s;}
+.modal-footer button{padding:10px 20px;border:none;border-radius:10px;background:#64748b;color:#fff;font-weight:600;cursor:pointer;transition: 0.2s;}
 .modal-footer button:hover{opacity:0.9;}
+.modal-footer .btn-agendar{background:#28a745;margin-right:10px;}
 </style>
 </head>
 <body>
 <div class="sidebar">
-    <div class="logo"><img src="../assets/img/logo.png" alt="Logo HAN">
-    <span>HAN</span>
-    </div>
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo HAN"><span>HAN</span></div>
     <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
     <a href="marcar_consulta.html" data-page="marcar consulta"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
     <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
     <a href="medicos.html" data-page="medicos" class="active"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
     <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
-    <a href="perfil.html" data-page="medicos"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
+    <a href="perfil.html" data-page="perfil"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
     <div class="bottom">
         <div class="divider"></div>
         <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
@@ -86,7 +88,7 @@ button.search-btn{padding:12px 18px;border:none;border-radius:10px;background:#0
 </div>
 <div class="main">
     <div class="header">
-        <h2>Todos os Médicos</h2>
+        <h2>Corpo Médico Disponível</h2>
         <div class="user-box">
             <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
             <a href="perfil.html" class="user-profile-link">
@@ -99,10 +101,15 @@ button.search-btn{padding:12px 18px;border:none;border-radius:10px;background:#0
         </div>
     </div>
     <div class="header-line"></div>
-    <div class="table-card" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-        <input id="pesquisaMedico" placeholder="Pesquisar por nome, especialidade ou horário" oninput="renderMedicos()">
+    
+    <div class="table-card">
+        <input id="pesquisaMedico" placeholder="Pesquisar por nome de médico, especialidade ou horários disponíveis..." oninput="renderMedicos()">
     </div>
-    <div id="listaMedicos" class="table-card"></div>
+    
+    <div class="table-card">
+        <h3>Lista de Profissionais</h3>
+        <div id="listaMedicos" class="medicos-grid"></div>
+    </div>
 
     <div id="modalAgenda" class="modal" style="display:none;">
         <div class="modal-content">
@@ -112,11 +119,132 @@ button.search-btn{padding:12px 18px;border:none;border-radius:10px;background:#0
             </div>
             <div class="modal-body" id="modalMedicoDetalhes"></div>
             <div class="modal-footer">
+                <button class="btn-agendar" onclick="redirecionarParaMarcacao()">Marcar Consulta</button>
                 <button onclick="fecharModalMedico()">Fechar</button>
             </div>
         </div>
     </div>
 </div>
+
 <script src="../js/consultas.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Inicializar dados de sessão simulados para o paciente caso não existam
+        if (!localStorage.getItem('utilizadorLogado')) {
+            localStorage.setItem('utilizadorLogado', JSON.stringify({
+                nome: "João Baptista Silva",
+                email: "joao.silva@email.cv"
+            }));
+        }
+
+        carregarDadosPerfil();
+        renderMedicos();
+    });
+
+    function carregarDadosPerfil() {
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        if (utilizador) {
+            document.getElementById('usuarioNome').textContent = utilizador.nome;
+            document.getElementById('usuarioEmail').textContent = utilizador.email;
+            if (utilizador.nome) {
+                document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
+            }
+        }
+    }
+
+    function renderMedicos() {
+        const grid = document.getElementById("listaMedicos");
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        const termoPesquisa = document.getElementById("pesquisaMedico").value.toLowerCase();
+
+        // Variável 'medicosHospital' herdada diretamente do teu script externo ../js/consultas.js
+        if (typeof medicosHospital === 'undefined') {
+            grid.innerHTML = `<p style="color:red; grid-column: 1/-1;">Erro: A base de dados de médicos não foi carregada corretamente.</p>`;
+            return;
+        }
+
+        // Filtrar apenas médicos ativos e que correspondam ao termo de busca
+        const medicosFiltrados = medicosHospital.filter(m => {
+            const statusAtivo = (m.status || '').toLowerCase() === 'ativo';
+            const correspondeNome = (m.nome || '').toLowerCase().includes(termoPesquisa);
+            const correspondeEspecialidade = (m.especialidade || '').toLowerCase().includes(termoPesquisa);
+            const correspondeHorarios = (m.horarios || '').toLowerCase().includes(termoPesquisa);
+            
+            return statusAtivo && (correspondeNome || correspondeEspecialidade || correspondeHorarios);
+        });
+
+        if (medicosFiltrados.length === 0) {
+            grid.innerHTML = `<p style="color:#888; grid-column: 1/-1; text-align:center; padding: 20px;">Nenhum médico encontrado com os critérios de pesquisa.</p>`;
+            return;
+        }
+
+        medicosFiltrados.forEach(m => {
+            // Dividir os horários para exibição rápida em tags
+            const listaHoras = m.horarios ? m.horarios.split(',') : [];
+            let tagsHorarios = listaHoras.slice(0, 3).map(h => `<span class="medico-tag">${h.trim()}</span>`).join('');
+            if (listaHoras.length > 3) {
+                tagsHorarios += `<span class="medico-tag">+${listaHoras.length - 3} h</span>`;
+            }
+
+            grid.innerHTML += `
+                <div class="medico-card">
+                    <div class="medico-info">
+                        <span class="medico-nome">${m.nome}</span>
+                        <span class="medico-especialidade">${m.especialidade}</span>
+                        <div class="medico-meta" style="margin-top: 5px;">
+                            <i class="fa fa-envelope"></i> ${m.email || 'N/D'}
+                        </div>
+                        <div class="medico-meta">
+                            <i class="fa fa-phone"></i> ${m.telefone || 'N/D'}
+                        </div>
+                        <div style="margin-top:8px;">
+                            <small style="color:#64748b; font-weight:600; display:block; margin-bottom:4px;">Horários Disponíveis:</small>
+                            <div class="medico-tags">${tagsHorarios || '<span class="medico-tag">Sem horários</span>'}</div>
+                        </div>
+                    </div>
+                    <div class="medico-actions">
+                        <button onclick="abrirModalMedico(${m.id})"><i class="fa fa-calendar-alt"></i> Ver Agenda</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function abrirModalMedico(id) {
+        const medico = medicosHospital.find(m => m.id === id);
+        if (!medico) return;
+
+        document.getElementById("modalMedicoNome").textContent = `Agenda Avançada: ${medico.nome}`;
+        
+        const listaHoras = medico.horarios ? medico.horarios.split(',') : [];
+        const badgesHorarios = listaHoras.map(h => `<span class="medico-tag" style="background:#e2f0d9; color:#385723; font-weight:600; padding:6px 12px;">${h.trim()}</span>`).join(' ');
+
+        const corpoModal = document.getElementById("modalMedicoDetalhes");
+        corpoModal.innerHTML = `
+            <div class="modal-section">
+                <p><strong>Especialidade:</strong> <span>${medico.especialidade}</span></p>
+                <p><strong>Contacto Direto:</strong> <span>${medico.telefone || 'Não disponível'}</span></p>
+                <p><strong>E-mail Clínico:</strong> <span>${medico.email || 'Não disponível'}</span></p>
+                <p><strong>Género:</strong> <span>${medico.genero || 'Não especificado'}</span></p>
+            </div>
+            <div>
+                <h4 style="font-size:14px; margin-bottom:8px; color:#1e293b;">Todos os Turnos de Atendimento:</h4>
+                <div class="medico-tags">${badgesHorarios || 'Nenhum horário configurado.'}</div>
+            </div>
+        `;
+
+        document.getElementById("modalAgenda").style.display = "flex";
+    }
+
+    function fecharModalMedico() {
+        document.getElementById("modalAgenda").style.display = "none";
+    }
+
+    function redirecionarParaMarcacao() {
+        window.location.href = "marcar_consulta.html";
+    }
+</script>
 </body>
 </html>
