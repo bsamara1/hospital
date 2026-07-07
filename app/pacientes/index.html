@@ -41,7 +41,7 @@ background:#f5f7fb;
 height:100vh;
 }
 
-/* SIDEBAR (Atualizada igual a marcar_consulta) */
+/* SIDEBAR */
 .sidebar{
 width:260px;
 background:#0b2a4a;
@@ -120,19 +120,6 @@ align-items:center;
 gap:16px;
 color:#555;
 }
-.user-profile{  
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:16px;
-  box-shadow: 0 14px 32px rgba(15, 28, 59, 0.08);
-  background:#fff;
-}
-.user-profile .fa-user-circle{
-  font-size:24px;
-  color:#4a4a4a;
-}
 .avatar-circle {
     width: 35px;
     height: 35px;
@@ -176,10 +163,7 @@ font-size:18px;
 color:#4a4a4a;
 cursor:pointer;
 }
-.user-box .fa-chevron-down{
-  font-size:12px;
-  color:#6f7287;
-}
+
 /* CARDS */
 .cards{display:grid;
 grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
@@ -282,6 +266,7 @@ font-weight:600;
 display:inline-block;
 background:#fff2cc;
 color:#7f6000;
+text-transform: uppercase;
 }
 
 .badge.confirmada{
@@ -292,94 +277,6 @@ color:#385723;
 .badge.cancelada{
 background:#fce4d6;
 color:#c65911;
-}
-
-/* SIDE PANEL (PERFIL) */
-.side-panel {
-    width: 0;
-    background: #fff;
-    border-left: 1px solid rgba(0,0,0,0.08);
-    box-shadow: -4px 0 12px rgba(0,0,0,0.03);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    transition: width 0.3s ease;
-    height: 100vh;
-    position: relative;
-}
-
-.side-panel.open {
-    width: 420px;
-}
-
-.panel-header {
-    padding: 25px 20px 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-}
-
-.panel-header h3 {
-    font-size: 16px;
-    color: #0b2a4a;
-    font-weight: 700;
-}
-
-.btn-close-panel {
-    background: none;
-    border: none;
-    font-size: 18px;
-    color: #94a3b8;
-    cursor: pointer;
-}
-
-.panel-content {
-    padding: 20px;
-    overflow-y: auto;
-    flex: 1;
-}
-
-.form-group {
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group label {
-    font-size: 12.5px;
-    color: #475569; 
-    font-weight: 600;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 13.5px;
-    color: #334155;
-    outline: none;
-}
-
-.btn-primary-blue {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #1e40af;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-}
-.btn-primary-blue:hover {
-    opacity: 0.95;
-}
-.btn-primary-blue:active {
-    transform: scale(0.99);
 }
 </style>
 </head>
@@ -427,30 +324,31 @@ color:#c65911;
 
 <div class="cards">
 
-<div class="card" onclick="filtrarPainel('hoje', this)">
-<h4>Próximas consultas</h4>
+<div class="card active-filter" id="cardFiltroHoje" onclick="filtrarPainel('hoje', this)">
+<h4>Consultas Confirmadas</h4>
 <p id="cardProximas">0</p>
 </div>
 
 <div class="card" onclick="filtrarPainel('pendente', this)">
-<h4>Consultas pendentes</h4>
+<h4>Consultas Pendentes</h4>
 <p id="cardMarcadas">0</p>
 </div>
 
 <div class="card" onclick="filtrarPainel('cancelada', this)">
-<h4>Consultas canceladas</h4>
+<h4>Consultas Canceladas</h4>
 <p id="cardRealizadas">0</p>
 </div>
 
 </div>
 
 <div class="table-card">
-<h3 id="titulo-tabela">Consultas de Hoje</h3>
+<h3 id="titulo-tabela">Consultas Confirmadas</h3>
 <div class="table-responsive">
 <table>
 <thead>
 <tr>
 <th>Médico</th>
+<th>Data</th>
 <th>Hora Turno</th>
 <th>Sintomas Principais</th>
 <th>Estado</th>
@@ -463,35 +361,59 @@ color:#c65911;
 </div>
 
 </div>
-<script src="../js/consultas.js"></script>
+
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // Inicializar dados de sessão simulados para o paciente caso não existam
+        if (!localStorage.getItem('utilizadorLogado')) {
+            localStorage.setItem('utilizadorLogado', JSON.stringify({
+                nome: "João Baptista Silva",
+                email: "joao.silva@email.cv"
+            }));
+        }
+
+        carregarDadosPerfil();
         carregarDadosPainel();
         renderTabela('hoje');
     });
 
+    function carregarDadosPerfil() {
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        if (utilizador) {
+            document.getElementById('usuarioNome').textContent = utilizador.nome;
+            document.getElementById('usuarioEmail').textContent = utilizador.email;
+            if (utilizador.nome) {
+                document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
+            }
+        }
+    }
+
     function carregarDadosPainel() {
-        const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+        // Alinhado com a chave global 'consultasHAN'
+        const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
         const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
 
         if (!utilizador) return;
 
+        // Filtrar consultas deste paciente específico
         const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
 
-        const proximas = minhasConsultas.filter(c => c.estado === 'confirmada').length;
-        const marcadas = minhasConsultas.filter(c => c.estado === 'pendente').length;
-        const realizadas = minhasConsultas.filter(c => c.estado === 'cancelada').length;
+        // Contadores baseados no status da consulta
+        const proximas = minhasConsultas.filter(c => (c.status || '').toLowerCase() === 'confirmada').length;
+        const marcadas = minhasConsultas.filter(c => (c.status || '').toLowerCase() === 'pendente').length;
+        const realizadas = minhasConsultas.filter(c => (c.status || '').toLowerCase() === 'cancelada').length;
 
-        document.getElementById('cardProximas').innerText = proximas;
-        document.getElementById('cardMarcadas').innerText = marcadas;
-        document.getElementById('cardRealizadas').innerText = realizadas;
+        document.getElementById('cardProximas').textContent = proximas;
+        document.getElementById('cardMarcadas').textContent = marcadas;
+        document.getElementById('cardRealizadas').textContent = realizadas;
     }
 
     function renderTabela(categoria) {
         const tbody = document.getElementById("tabela-consultas");
+        if (!tbody) return;
         tbody.innerHTML = "";
 
-        const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+        const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
         const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
 
         if (!utilizador) return;
@@ -499,26 +421,54 @@ color:#c65911;
         let filtrados = consultas.filter(c => c.pacienteEmail === utilizador.email);
 
         if(categoria === 'hoje') {
-            filtrados = filtrados.filter(c => c.estado === 'confirmada');
+            filtrados = filtrados.filter(c => (c.status || '').toLowerCase() === 'confirmada');
         } else if(categoria === 'pendente') {
-            filtrados = filtrados.filter(c => c.estado === 'pendente');
+            filtrados = filtrados.filter(c => (c.status || '').toLowerCase() === 'pendente');
         } else if(categoria === 'cancelada') {
-            filtrados = filtrados.filter(c => c.estado === 'cancelada');
+            filtrados = filtrados.filter(c => (c.status || '').toLowerCase() === 'cancelada');
         }
 
         if(filtrados.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta nesta categoria.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta encontrada nesta categoria.</td></tr>`;
             return;
         }
 
+        // Mapeamento dos códigos internos de sintomas para nomes limpos na visualização do painel
+        const mapaSintomas = {
+            "dor-peito": "Dor no Peito",
+            "falta-ar": "Falta de Ar",
+            "febre-alta": "Febre Alta",
+            "dor-cabeca": "Dor de Cabeça",
+            "tosse": "Tosse / Coriza",
+            "rotina": "Check-up de Rotina"
+        };
+
         filtrados.forEach(c => {
-            const badgeClass = c.estado === 'confirmada' ? 'badge confirmada' : (c.estado === 'cancelada' ? 'badge cancelada' : 'badge');
+            const statusLimpo = (c.status || 'Pendente').toLowerCase();
+            let badgeClass = 'badge';
+            if (statusLimpo === 'confirmada') badgeClass = 'badge confirmada';
+            if (statusLimpo === 'cancelada') badgeClass = 'badge cancelada';
+
+            // Formatação amigável para a lista de sintomas capturados do array
+            let textoSintomas = "Consulta de rotina";
+            if (c.sintomas && c.sintomas.length > 0) {
+                textoSintomas = c.sintomas.map(s => mapaSintomas[s] || s).join(", ");
+            }
+
+            // Formatação de data (AAAA-MM-DD para DD/MM/AAAA)
+            let dataFormatada = c.data;
+            if (c.data && c.data.includes("-")) {
+                const partes = c.data.split("-");
+                dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+            }
+
             tbody.innerHTML += `
                 <tr>
-                    <td><b>\${c.medico}</b></td>
-                    <td>\${c.hora}</td>
-                    <td>\${c.sintomas || 'Consulta de rotina'}</td>
-                    <td><span class="\${badgeClass}">\${c.estado.toUpperCase()}</span></td>
+                    <td><b>${c.medico}</b></td>
+                    <td>${dataFormatada}</td>
+                    <td>${c.hora}</td>
+                    <td><span style="font-size: 13px; color: #555;">${textoSintomas}</span></td>
+                    <td><span class="${badgeClass}">${statusLimpo}</span></td>
                 </tr>
             `;
         });
