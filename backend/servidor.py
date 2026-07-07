@@ -603,7 +603,7 @@ def gerar_codigo_2fa(email):
 
     msg = Message(
         subject="Código de Verificação - Hospital Agostinho Neto",
-        sender=app.config["MAIL_USERNAME"],
+        sender="btavares.l23@us.edu.cv",
         recipients=[email]
     )
     msg.body = f"\nOlá,\n\nO seu código de verificação é:\n\n{codigo}\n\nEste código é válido por 5 minutos.\n"
@@ -612,9 +612,10 @@ def gerar_codigo_2fa(email):
         mail.send(msg)
         return jsonify({"sucesso": True, "dois_fatores": True, "email": email})
     except Exception as e:
-        print(e)
-        return jsonify({"sucesso": False, "mensagem": "Erro ao enviar o código."}), 500
-
+        # Pega no erro exato do sistema de e-mail e mostra no ecrã
+        erro_detalhado = str(e)
+        print(f"[ERRO SMTP DETETADO]: {erro_detalhado}")
+        return jsonify({"sucesso": False, "mensagem": f"Erro do Servidor de Email: {erro_detalhado}"}), 500
 
 @app.route("/verificar_codigo", methods=["POST"])
 def verificar_codigo():
