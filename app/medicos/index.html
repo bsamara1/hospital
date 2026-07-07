@@ -20,7 +20,7 @@
             display: flex;
             background: #f5f7fb;
             height: 100vh;
-            overflow: hidden; /* Evita barras duplas com os painéis laterais */
+            overflow: hidden;
         }
 
         /* SIDEBAR */
@@ -90,7 +90,6 @@
             margin: 12px 0;
         }
 
-        /* ESTRUTURA DOS CONTEÚDOS COM PAINÉIS LATERAIS */
         .content-container {
             flex: 1;
             margin-left: 260px;
@@ -100,7 +99,6 @@
             position: relative;
         }
 
-        /* MAIN CONTENT CORRIGIDO */
         .main {
             flex: 1;
             padding: 25px;
@@ -148,7 +146,6 @@
             font-size: 14px;
         }
 
-        /* Gatilhos interativos superiores */
         .trigger-link {
             display: flex;
             align-items: center;
@@ -228,7 +225,6 @@
             max-height: 450px;
             overflow-y: auto;
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -243,7 +239,6 @@
             color: #444;
             vertical-align: middle;
             white-space: nowrap;
-            text-transform: none;
             text-align: left;
         }
 
@@ -276,7 +271,7 @@
             color: #721c24;
         }
 
-        /* ESTRUTURA GENÉRICA PARA PAINÉIS LATERAIS DIREITOS */
+        /* PAINÉIS LATERAIS DIREITOS */
         .side-panel {
             width: 0;
             background: #fff;
@@ -310,10 +305,6 @@
             font-size: 18px;
             color: #94a3b8;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-close-panel:hover {
-            color: #334155;
         }
         .panel-content {
             padding: 20px;
@@ -321,7 +312,6 @@
             flex: 1;
         }
 
-        /* ESTILOS DE NOTIFICAÇÕES SEM FAIXA VERMELHA */
         .alert-item {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -331,10 +321,6 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-        }
-        .alert-item.urgente {
-            border-left: 1px solid #e2e8f0; /* Alinhado ao padrão comum, sem a cor vermelha */
-            background: #f8fafc;
         }
         .alert-item h4 {
             font-size: 13.5px;
@@ -353,7 +339,7 @@
             margin-top: 2px;
         }
 
-        /* ESTILOS DO FORMULÁRIO DO PERFIL LATERAL */
+        /* FORMULÁRIO DO PERFIL */
         .form-group {
             margin-bottom: 16px;
             display: flex;
@@ -373,11 +359,6 @@
             font-size: 13.5px;
             color: #334155;
             outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-group input:focus {
-            border-color: #1e40af;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
         }
         .btn-primary-blue {
             width: 100%;
@@ -389,11 +370,6 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-        .btn-primary-blue:hover {
-            background: #1e3a8a;
         }
     </style>
 </head>
@@ -419,8 +395,9 @@
                 </div>
                 <div class="trigger-link" onclick="abrirPainel('panelPerfil')">
                     <div class="avatar-circle" id="usuarioAvatar">M</div>
-                    <div style="display:flex; flex-direction:column; line-height:1.1;">
-                        <span id="usuarioNome" style="font-weight:700;">Dr. Mendes</span>
+                    <div style="display:flex; flex-direction:column; line-height:1.2;">
+                        <span id="usuarioNome" style="font-weight:700; color:#333; font-size:14px;">Dr. Mendes</span>
+                        <span id="usuarioEmail" style="color:#777; font-size:12px;">mendes@hospital.cv</span>
                     </div>
                 </div>
             </div>
@@ -465,7 +442,7 @@
             <button class="btn-close-panel" onclick="fecharPainel('panelNotificacoes')"><i class="fa fa-times"></i></button>
         </div>
         <div class="panel-content">
-            <div class="alert-item urgente">
+            <div class="alert-item">
                 <h4>Fila de Prioridade Modificada</h4>
                 <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>
                 <span class="time">Há 5 min</span>
@@ -506,7 +483,6 @@
 </div>
 
 <script>
-    // Funções de Controlo dos Painéis Laterais
     function abrirPainel(panelId) {
         document.querySelectorAll('.side-panel').forEach(p => {
             if(p.id !== panelId) p.classList.remove('open');
@@ -520,14 +496,19 @@
 
     function salvarPerfilLocal() {
         const novoNome = document.getElementById("nomePerfil").value.trim();
-        if(novoNome) {
-            document.getElementById("usuarioNome").innerText = novoNome;
-        }
+        const novoEmail = document.getElementById("emailPerfil").value.trim();
+        if(novoNome) document.getElementById("usuarioNome").innerText = novoNome;
+        if(novoEmail) document.getElementById("usuarioEmail").innerText = novoEmail;
+        
+        let user = JSON.parse(localStorage.getItem("utilizador") || "{}");
+        user.nome = novoNome || "Dr. Mendes";
+        user.email = novoEmail || "mendes@hospital.cv";
+        localStorage.setItem("utilizador", JSON.stringify(user));
+        
         alert("Alterações guardadas com sucesso!");
         fecharPainel('panelPerfil');
     }
 
-    // Engine Original de Filtros e Dados Intacta
     const dadosConsultas = [
         { paciente: "Carlos Alberto", hora: "09:00", sintomas: "Dor no peito, Falta de ar", estado: "pendente", tipo: "hoje" },
         { paciente: "Aline Santos", hora: "10:30", sintomas: "Avaliação de Rotina", estado: "confirmada", tipo: "hoje" },
@@ -546,30 +527,17 @@
         
         if (tipo === 'pacientes') {
             thead.innerHTML = `<tr><th>Paciente</th><th>Diagnóstico Clínico Principal</th><th>Última Consulta</th><th>Estado</th></tr>`;
-            
             dadosPacientesAtivos.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td><b>${p.paciente}</b></td>
-                        <td>${p.diagnostico}</td>
-                        <td>${p.ultimaConsulta}</td>
-                        <td><span class="badge ativa">${p.estado.toUpperCase()}</span></td>
-                    </tr>
-                `;
+                tbody.innerHTML += `<tr><td><b>${p.paciente}</b></td><td>${p.diagnostico}</td><td>${p.ultimaConsulta}</td><td><span class="badge ativa">${p.estado.toUpperCase()}</span></td></tr>`;
             });
             return;
         }
 
         thead.innerHTML = `<tr><th>Paciente</th><th>Hora Turno</th><th>Sintomas Principais</th><th>Estado</th></tr>`;
-        
         let filtrados = [];
-        if (tipo === 'hoje') {
-            filtrados = dadosConsultas.filter(c => c.tipo === 'hoje');
-        } else if (tipo === 'pendente') {
-            filtrados = dadosConsultas.filter(c => c.estado === 'pendente');
-        } else if (tipo === 'cancelada') {
-            filtrados = dadosConsultas.filter(c => c.estado === 'cancelada');
-        }
+        if (tipo === 'hoje') filtrados = dadosConsultas.filter(c => c.tipo === 'hoje');
+        else if (tipo === 'pendente') filtrados = dadosConsultas.filter(c => c.estado === 'pendente');
+        else if (tipo === 'cancelada') filtrados = dadosConsultas.filter(c => c.estado === 'cancelada');
 
         if(filtrados.length === 0) {
             tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">Nenhuma consulta nesta categoria.</td></tr>`;
@@ -578,35 +546,33 @@
 
         filtrados.forEach(c => {
             const badgeClass = c.estado === 'confirmada' ? 'badge confirmada' : (c.estado === 'cancelada' ? 'badge cancelada' : 'badge');
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${c.paciente}</b></td>
-                    <td>${c.hora}</td>
-                    <td>${c.sintomas}</td>
-                    <td><span class="${badgeClass}">${c.estado.toUpperCase()}</span></td>
-                </tr>
-            `;
+            tbody.innerHTML += `<tr><td><b>${c.paciente}</b></td><td>${c.hora}</td><td>${c.sintomas}</td><td><span class="${badgeClass}">${c.estado.toUpperCase()}</span></td></tr>`;
         });
     }
 
     function filtrarPainel(tipoFiltro, elementoCard) {
         document.querySelectorAll('.card').forEach(card => card.classList.remove('active-filter'));
         elementoCard.classList.add('active-filter');
-        
-        const titulos = {
-            'hoje': 'Consultas de Hoje',
-            'pacientes': 'Lista de Pacientes Ativos',
-            'pendente': 'Consultas Pendentes',
-            'cancelada': 'Consultas Canceladas'
-        };
-        
+        const titulos = { 'hoje': 'Consultas de Hoje', 'pacientes': 'Lista de Pacientes Ativos', 'pendente': 'Consultas Pendentes', 'cancelada': 'Consultas Canceladas' };
         document.getElementById("titulo-tabela").innerText = titulos[tipoFiltro];
         renderTabela(tipoFiltro);
     }
 
+    function aplicarIdentidadeFixa() {
+        document.getElementById("usuarioNome").innerText = "Dr. Mendes";
+        document.getElementById("usuarioEmail").innerText = "mendes@hospital.cv";
+        document.getElementById("usuarioAvatar").innerText = "M";
+        document.getElementById("nomePerfil").value = "Dr. Mendes";
+        document.getElementById("emailPerfil").value = "mendes@hospital.cv";
+    }
+
+    aplicarIdentidadeFixa();
     window.onload = function() {
+        aplicarIdentidadeFixa();
         renderTabela('hoje');
     };
+    document.addEventListener("DOMContentLoaded", aplicarIdentidadeFixa);
+    window.addEventListener("load", aplicarIdentidadeFixa);
 </script>
 
 <script src="identidade.js"></script>
