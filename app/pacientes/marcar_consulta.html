@@ -3,146 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pacientes - Nova Consulta & Triagem</title>
+    <title>Pacientes - Nova Consulta</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* RESET & BASE STYLES (Mantendo a identidade do HAN) */
+        /* RESET & BASE STYLES */
         *{
             margin:0;
             padding:0;
             box-sizing:border-box;
             font-family: "Segoe UI", sans-serif;
+            font-size: 13px;
         }
 
         body{
             display:flex;
             background:#f5f7fb;
             height:100vh;
+            overflow: hidden;
         }
 
-        /* SIDEBAR */
-        .sidebar{
-            width:260px;
-            background:#0b2a4a;
-            color:#fff;
-            display:flex;
-            flex-direction:column;
-            padding:20px;
-            height:100vh;
-        }
-        .bottom{
-            margin-top:auto; 
+        /* SIDEBAR ESTILO ADMINISTRAÇÃO (IGUAL À IMAGEM) */
+        .sidebar {
+            width: 250px;
+            background: #0b2a4a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            height: 100vh;
         }
 
-        .sidebar .logo{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            font-size:22px;
-            font-weight:bold;
-            margin-bottom:30px;
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: bold;
+            padding: 0 24px;
+            margin-bottom: 30px;
         }
 
-        .sidebar .logo img{
-            width:50px;
-            height:50px;
-            object-fit:contain;
+        .sidebar .logo span {
+            font-size: 20px;
         }
 
-        .sidebar a{
-            color:white;
-            text-decoration:none;
-            padding:12px 15px;
-            margin:5px 0;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            border-radius:8px;
-            transition:0.3s;
-            font-size:16px;
+        .sidebar .logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
         }
 
-        .sidebar a:hover, .sidebar a.active{
-            background:#163a63;
-            color:#fff;
+        /* Links com margem lateral e cantos arredondados (pills) */
+        .sidebar a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 12px 20px;
+            margin: 4px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .sidebar .logout{
-            color:#ff6b6b;
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:12px 15px;
-            border-radius:8px;
-            text-decoration:none;
-            margin:5px 0;
-            transition:0.3s;
-        }
-        .logout:hover{
-            background:#163a63;
+        .sidebar a i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
         }
 
-        .divider{
-            height:1px;
-            background:rgba(255,255,255,0.15);
-            margin:12px 0;
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
         }
 
-        /* MAIN CONTENT */
+        .sidebar a.active {
+            background: #1d3b5a; /* Cor azul suave de destaque */
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .sidebar .bottom {
+            margin-top: auto;
+            padding: 0 16px;
+        }
+
+        .sidebar .logout {
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar .logout:hover {
+            background: rgba(255, 69, 69, 0.1);
+        }
+
+        /* CONTEÚDO PRINCIPAL COMPACTO */
         .main{
             flex:1;
-            padding:25px;
+            padding: 15px;
             overflow:auto;
         }
 
-        /* HEADER */
+        /* TOPO (Header) */
         .header{
             display:flex;
             justify-content:space-between;
             align-items:center;
-            margin-bottom:25px;
+            margin-bottom: 15px;
         }
         .header-line{
-            margin-left:-25px;
-            margin-right:-25px;
+            margin-left:-15px;
+            margin-right:-15px;
             height:1px;
             background:rgba(0,0,0,0.08);
-            margin-bottom:25px;
+            margin-bottom: 15px;
         }
 
         .header h2{
-            font-size:20px;
+            font-size: 18px;
             color:#333;
         }
 
         .user-box{
             display:flex;
             align-items:center;
-            gap:16px;
+            gap: 12px;
             color:#555;
         }
 
-        .user-profile{
+        .avatar-circle{
+            width: 32px;
+            height: 32px;
+            background:#1e40af;
+            color:#fff;
+            border-radius:50%;
             display:flex;
             align-items:center;
-            gap:10px;
-            padding:10px 14px;
-            border-radius:16px;
-            box-shadow:0 14px 32px rgba(15, 28, 59, 0.08);
-            background:#fff;
+            justify-content:center;
+            font-weight:bold;
+            font-size: 13px;
         }
 
-        .user-profile .fa-user-circle{
-            font-size:24px;
-            color:#4a4a4a;
+        .user-profile-link{
+            display:flex;
+            align-items:center;
+            gap: 8px;
+            text-decoration:none;
+            color:inherit;
+            padding: 5px 8px;
+            border-radius:8px;
+            transition:background 0.2s;
         }
-
-        .avatar-circle{width:35px;height:35px;background:#1e40af;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;}
-
-        .user-profile-link{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;padding:5px 10px;border-radius:8px;transition:background 0.2s;}
-        .user-profile-link:hover{background:#e2e8f0;}
+        .user-profile-link:hover{
+            background:#e2e8f0;
+        }
 
         .user-info{
             display:flex;
@@ -153,63 +179,60 @@
         .user-info #usuarioNome{
             font-weight:700;
             color:#222;
+            font-size: 13.5px;
         }
 
         .user-info #usuarioEmail{
-            font-size:13px;
+            font-size: 12px;
             color:#6f7287;
         }
 
         .user-box i{
-            font-size:18px;
+            font-size: 16px;
             color:#4a4a4a;
             cursor:pointer;
         }
 
-        .user-box .fa-chevron-down{
-            font-size:12px;
-            color:#6f7287;
-        }
-
-        /* FORM CARD & LAYOUT */
+        /* FORMULÁRIO COMPACTO */
         .form-card{
             background:#fff;
-            padding:30px;
-            border-radius:16px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.05);
-            max-width: 800px;
-            margin: 0 auto 25px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.05);
+            max-width: 650px;
+            margin: 0 auto 20px auto;
         }
 
         .form-card h3{
             color: #1f3566;
-            margin-bottom: 20px;
-            font-size: 20px;
-            border-bottom: 2px solid #f0f4f8;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-bottom: 1px solid #f0f4f8;
+            padding-bottom: 8px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            font-size: 14px;
+            font-size: 12.5px;
             font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
+            color: #475569; 
+            margin-bottom: 6px;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 15px;
-            color: #333;
+            font-size: 13.5px;
+            color: #334155;
             background-color: #fff;
             transition: border-color 0.3s;
+            height: 38px;
         }
 
         .form-control:focus {
@@ -218,20 +241,25 @@
             box-shadow: 0 0 0 3px rgba(5, 74, 147, 0.1);
         }
 
-        /* SEÇÃO DE TRIAGEM (SINTOMAS) */
+        textarea.form-control {
+            height: auto;
+            padding: 10px;
+        }
+
+        /* CAIXA DE SINTOMAS COMPACTA */
         .triagem-box {
             background: #f8fafc;
             border: 1px dashed #cbd5e1;
             border-radius: 12px;
-            padding: 20px;
-            margin-top: 25px;
+            padding: 15px;
+            margin-top: 20px;
         }
 
         .triagem-title {
-            font-size: 16px;
+            font-size: 14.5px;
             font-weight: 700;
             color: #0b2a4a;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -240,20 +268,20 @@
         .sintomas-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
 
         .checkbox-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: #fff;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             cursor: pointer;
             transition: 0.2s;
-            font-size: 14px;
+            font-size: 13px;
             color: #334155;
         }
 
@@ -263,42 +291,32 @@
         }
 
         .checkbox-label input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             cursor: pointer;
-        }
-
-        /* ALERTA DINÂMICO DE PRIORIDADE (RESULTADO DA TRIAGEM) */
-        .resultado-triagem {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none; /* Ativado via JS posterior */
-            font-size: 14px;
-            font-weight: 600;
         }
 
         /* BOTÕES */
         .btn-container {
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
-            margin-top: 25px;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         .btn-submit {
             background: #28a745;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
-            font-size: 15px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-submit:hover {
@@ -308,11 +326,11 @@
         .btn-cancel {
             background: #eaedf1;
             color: #4a5568;
-            padding: 12px 24px;
+            padding: 10px 18px;
             border: none;
             border-radius: 8px;
-            font-weight: bold;
-            font-size: 15px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             text-decoration: none;
             display: flex;
@@ -321,6 +339,17 @@
 
         .btn-cancel:hover {
             background: #e2e8f0;
+        }
+
+        .alert-sucesso {
+            background: #e2f0d9;
+            color: #385723;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #b8db9e;
+            font-weight: 600;
+            font-size: 13.5px;
         }
     </style>
 </head>
@@ -331,15 +360,16 @@
         <img src="../assets/img/logo.png" alt="Logo HAN">
         <span>HAN</span>
     </div>
-    <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
-    <a href="marcar_consulta.html" data-page="marcar consulta" class="active"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
-    <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
-    <a href="medicos.html" data-page="medicos"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
-    <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
-    <a href="perfil.html" data-page="medicos"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
+    
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="marcar_consulta.html" class="active"><i class="fa fa-calendar-plus"></i> Marcar Consulta</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Corpo Médico</a>
+    <a href="notificacoes.html"><i class="fa fa-bell"></i> Notificações</a>
+    <a href="perfil.html"><i class="fa fa-user-circle"></i> Meu Perfil</a>
+    
     <div class="bottom">
-        <div class="divider"></div>
-        <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+        <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
     </div>
 </div>
 
@@ -355,7 +385,7 @@
             <a href="perfil.html" class="user-profile-link">
                 <div class="avatar-circle" id="usuarioAvatar">P</div>
                 <div class="user-info">
-                    <span id="usuarioNome">Pacientes</span>
+                    <span id="usuarioNome">Paciente</span>
                     <span id="usuarioEmail"></span>
                 </div>
             </a>
@@ -367,7 +397,9 @@
     <div class="form-card">
         <h3>Formulário de Agendamento</h3>
         
-        <form id="formMarcacao" action="#" method="POST">
+        <div id="mensagemFeedback"></div>
+
+        <form id="formMarcacao" onsubmit="salvarAgendamento(event)">
             
             <div class="form-group">
                 <label for="especialidade">Especialidade Médica</label>
@@ -378,12 +410,12 @@
 
             <div class="form-group">
                 <label for="medico">Médico Pretendido</label>
-                <select id="medico" class="form-control" required>
+                <select id="medico" class="form-control" required disabled>
                     <option value="">Selecione primeiro a especialidade...</option>
                 </select>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                 <div class="form-group">
                     <label for="dataConsulta">Data Disponível</label>
                     <input type="date" id="dataConsulta" class="form-control" required>
@@ -404,52 +436,50 @@
             <div class="triagem-box">
                 <div class="triagem-title">
                     <i class="fa fa-notes-medical" style="color: #054a93;"></i>
-                    Triagem Inicial Automática (Informe os seus sintomas atuais)
+                    Triagem Inicial Automática
                 </div>
                 
-                <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">
-                    Selecione abaixo os sintomas que justificam esta consulta. O sistema irá calcular a sua prioridade na fila.
+                <p style="font-size: 12.5px; color: #64748b; margin-bottom: 10px;">
+                    Selecione abaixo os sintomas atuais. O sistema irá calcular a sua prioridade.
                 </p>
 
                 <div class="sintomas-grid">
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="dor-peito">
-                        <span>Dor forte no peito / Palpitação</span>
+                        <span>Dor forte no peito</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="falta-ar">
-                        <span>Falta de ar grave / Dificuldade respiratória</span>
+                        <span>Dificuldade respiratória</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="febre-alta">
-                        <span>Febre alta (acima de 38.5°C)</span>
+                        <span>Febre alta (> 38.5°C)</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="dor-cabeca">
-                        <span>Dor de cabeça intensa e súbita</span>
+                        <span>Dor de cabeça intensa</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="tosse">
-                        <span>Tosse persistente ou coriza</span>
+                        <span>Tosse persistente</span>
                     </label>
                     <label class="checkbox-label">
                         <input type="checkbox" name="sintoma" value="rotina">
-                        <span>Apenas consulta de rotina / Check-up</span>
+                        <span>Consulta de rotina</span>
                     </label>
                 </div>
 
-                <div class="form-group" style="margin-top: 15px;">
-                    <label for="observacoes">Outros detalhes ou observações (Opcional)</label>
-                    <textarea id="observacoes" class="form-control" rows="3" placeholder="Descreva brevemente como se sente..."></textarea>
+                <div class="form-group" style="margin-top: 12px; margin-bottom: 0;">
+                    <label for="observacoes">Observações (Opcional)</label>
+                    <textarea id="observacoes" class="form-control" rows="2" placeholder="Como se sente..."></textarea>
                 </div>
             </div>
-
-            <div id="mensagemFeedback"></div>
 
             <div class="btn-container">
                 <a href="index.html" class="btn-cancel">Cancelar</a>
                 <button type="submit" class="btn-submit">
-                    <i class="fa fa-check-circle"></i> Confirmar Agendamento
+                    <i class="fa fa-check-circle"></i> Confirmar
                 </button>
             </div>
 
@@ -457,6 +487,111 @@
     </div>
 
 </div>
-<script src="../js/consultas.js"></script>
+
+<script>
+    // Lista de médicos extraída do teu JSON
+    const baseMedicos = [
+      { "id": 1, "nome": "Dr. Mendes", "especialidade": "Cardiologia", "status": "ativo" },
+      { "id": 2, "nome": "Dr. Sousa", "especialidade": "Ortopedia", "status": "ativo" },
+      { "id": 3, "nome": "Dr. Carlos Semedo", "especialidade": "Clínica Geral", "status": "ativo" },
+      { "id": 4, "nome": "Dr. lili", "especialidade": "Dermatologia", "status": "ativo" },
+      { "id": 5, "nome": "Dr. Carla Semedo da Rosa", "especialidade": "Ginecologia", "status": "ativo" },
+      { "id": 6, "nome": "Dr.liliana", "especialidade": "Clínica Geral", "status": "ativo" },
+      { "id": 1783357638429, "nome": "sdfg", "especialidade": "Clínica Geral", "status": "ativo" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarDadosSessao();
+        popularMenuEspecialidades();
+        
+        const campoEspecialidade = document.getElementById("especialidade");
+        if (campoEspecialidade) {
+            campoEspecialidade.addEventListener("change", atualizarMenuMedicos);
+        }
+
+        // Bloquear dias retroativos
+        const hoje = new Date().toISOString().split('T')[0];
+        const inputData = document.getElementById('dataConsulta');
+        if(inputData) inputData.min = hoje;
+    });
+
+    // Popula especialidades sem duplicar
+    function popularMenuEspecialidades() {
+        const selectEsp = document.getElementById("especialidade");
+        if (!selectEsp) return;
+        selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>';
+        const especialidadesUnicas = [...new Set(baseMedicos.filter(m => m.status === "ativo").map(m => m.especialidade))];
+        especialidadesUnicas.forEach(esp => {
+            const opt = document.createElement("option");
+            opt.value = esp;
+            opt.textContent = esp;
+            selectEsp.appendChild(opt);
+        });
+    }
+
+    // Filtra e injeta os médicos dinamicamente
+    function atualizarMenuMedicos() {
+        const selectEsp = document.getElementById("especialidade");
+        const selectMed = document.getElementById("medico");
+        if (!selectEsp || !selectMed) return;
+        const escolha = selectEsp.value;
+        if (!escolha) {
+            selectMed.innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
+            selectMed.disabled = true;
+            return;
+        }
+        selectMed.disabled = false;
+        selectMed.innerHTML = '<option value="">Selecione o médico...</option>';
+        const medicosFiltrados = baseMedicos.filter(m => m.especialidade === escolha && m.status === "ativo");
+        
+        baseMedicos.filter(m => m.especialidade === escolha && m.status === "ativo").forEach(medico => {
+            const opt = document.createElement("option");
+            opt.value = medico.nome;
+            opt.textContent = medico.nome;
+            selectMed.appendChild(opt);
+        });
+    }
+
+    function carregarDadosSessao() {
+        let utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+        if (!utilizador) {
+            utilizador = { nome: "João Baptista Silva", email: "joao.silva@email.cv" };
+            localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
+        }
+        document.getElementById("usuarioNome").textContent = utilizador.nome;
+        document.getElementById("usuarioEmail").textContent = utilizador.email;
+        document.getElementById("usuarioAvatar").textContent = utilizador.nome.charAt(0).toUpperCase();
+    }
+
+    function salvarAgendamento(event) {
+        event.preventDefault();
+        const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+        const esp = document.getElementById("especialidade").value;
+        const med = document.getElementById("medico").value;
+        const data = document.getElementById("dataConsulta").value;
+        const hora = document.getElementById("horaConsulta").value;
+        const obs = document.getElementById("observacoes").value;
+        let consultas = JSON.parse(localStorage.getItem("consultasHAN")) || [];
+        const novaConsulta = {
+            id: consultas.length + 1,
+            pacienteNome: utilizador.nome,
+            pacienteEmail: utilizador.email,
+            especialidade: esp,
+            medico: med,
+            data: data,
+            hora: hora,
+            status: "Pendente",
+            observacoes: obs
+        };
+        consultas.push(novaConsulta);
+        localStorage.setItem("consultasHAN", JSON.stringify(consultas));
+        document.getElementById("mensagemFeedback").innerHTML = `
+            <div class="alert-sucesso">
+                <i class="fa fa-check-circle"></i> Consulta agendada! A redirecionar...
+            </div>
+        `;
+        setTimeout(() => { window.location.href = "consultas.html"; }, 1500);
+    }
+</script>
 </body>
 </html>
