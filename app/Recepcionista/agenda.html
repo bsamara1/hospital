@@ -1,77 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Médica - Rececionista</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<link href="recepcionista-styles.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Médica - Rececionista</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* RESET & BASE STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { display: flex; background: #f5f7fb; height: 100vh; }
+    
+    /* SIDEBAR (Igual a consultas.html) */
+    .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; margin-bottom: 30px; }
+    .logo img { width: 50px; height: 50px; object-fit: contain; }
+    .bottom { margin-top: auto; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; transition: 0.3s; cursor: pointer; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; color: #fff; }
+    .divider { height: 1px; background: rgba(255, 255, 255, 0.15); margin: 12px 0; }
+    .sidebar .logout { color: #ff6b6b; display: flex; align-items: center; gap: 10px; padding: 12px 15px; border-radius: 8px; text-decoration: none; }
+    .logout:hover { background: #163a63; }
+
+    /* MAIN CONTENT AREA */
+    .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    
+    /* HEADER & TOPBAR */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+
+    /* FILTROS DE PESQUISA */
+    .search-row { display: flex; gap: 15px; margin-bottom: 20px; }
+    .search-row input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+    .search-row select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: white; font-size: 14px; min-width: 200px; }
+
+    /* STATS CARDS */
+    .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .stat-card h4 { font-size: 13px; color: #64748b; margin-bottom: 5px; font-weight: 600; }
+    .stat-card p { font-size: 24px; font-weight: bold; color: #0b2a4a; }
+
+    /* AGENDA LAYOUT (Igual à estrutura de listagem de consultas) */
+    .agenda-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 20px; }
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .table-card h3 { font-size: 16px; color: #0b2a4a; margin-bottom: 15px; font-weight: 700; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    
+    /* TABELAS ESTILO CONSULTAS.HTML */
+    .consultas-table { width: 100%; border-collapse: collapse; text-align: left; margin-top: 10px; }
+    .consultas-table th, .consultas-table td { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+    .consultas-table th { background: #f8fafc; color: #475569; font-weight: 600; }
+    .consultas-table tr:hover td { background-color: #f8fafc; }
+
+    /* BADGES (Estilos de estado idênticos) */
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+    .badge.confirmada, .badge.ativo, .badge.disponível { background: #e6f4ea; color: #137333; }
+    .badge.pendente { background: #fef7e0; color: #b06000; }
+    .badge.cancelada { background: #fce8e6; color: #c5221f; }
+
+    /* HORÁRIOS / SLOTS (Grelha Organizada) */
+    .slot-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; padding-top: 5px; }
+    .slot-item { padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: center; }
+    
+    #horariosDisponiveis .slot-item { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+    #horariosOcupadosLista .slot-item { background: #fef2f2; color: #991b1b; border-color: #fca5a5; }
+  </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo">
-    <img src="../assets/img/logo.png" alt="Logo HAN">
-    <span>HAN</span>
-  </div>
-  <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
-  <a href="pacientes.html" data-page="pacientes"><img src="../assets/icons/perfil.png" alt=""> Pacientes</a>
-  <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
-  <a href="agenda.html" data-page="agenda"><img src="../assets/icons/agendar.png" alt=""> Agenda Médica</a>
-  <a href="presencas.html" data-page="presencas"><img src="../assets/icons/presenca.png" alt=""> Confirmar Presença</a>
-  <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
-  <div class="bottom">
-    <div class="divider"></div>
-    <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
-  </div>
-</div>
-
-<div class="main">
-  <div class="header">
-    <h2>Agenda Médica</h2>
-  </div>
-  <div class="header-line"></div>
-
-  <div class="search-row">
-    <input id="agendaData" type="date">
-    <select id="filtroEspecialidade">
-      <option value="">Todas as especialidades</option>
-    </select>
-    <select id="filtroMedico">
-      <option value="">Todos os médicos</option>
-    </select>
-  </div>
-
-  <div class="cards">
-    <div class="card"><h4>Médicos Disponíveis</h4><p id="medicosDisponiveis">0</p></div>
-    <div class="card"><h4>Horários Livres</h4><p id="horariosLivres">0</p></div>
-    <div class="card"><h4>Horários Ocupados</h4><p id="horariosOcupados">0</p></div>
-  </div>
-
-  <div class="agenda-grid">
-    <div class="table-card">
-      <h3>Calendário do Dia</h3>
-      <div id="calendarioDia"></div>
-    </div>
-    <div class="table-card">
-      <h3>Médicos Disponíveis</h3>
-      <div id="listaMedicos"></div>
+  <div class="sidebar">
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="pacientes.html"><i class="fa fa-user"></i> Pacientes</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="agenda.html" class="active"><i class="fa fa-calendar-check"></i> Agenda Médica</a>
+    <a href="presencas.html" data-page="presencas"><i class="fa fa-id-badge"></i> Confirmar Presença</a>
+    
+    <div class="bottom">
+      <div class="divider"></div>
+      <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
     </div>
   </div>
 
-  <div class="agenda-grid">
-    <div class="table-card">
-      <h3>Horários Disponíveis</h3>
-      <div id="horariosDisponiveis" class="slot-list"></div>
+  <div class="main">
+    <div class="header">
+      <h2>Agenda Médica do Dia</h2>
     </div>
-    <div class="table-card">
-      <h3>Horários Ocupados</h3>
-      <div id="horariosOcupadosLista" class="slot-list"></div>
+    <div class="header-line"></div>
+
+    <div class="search-row">
+      <input id="agendaData" type="date">
+      <select id="filtroEspecialidade">
+        <option value="">Carregando especialidades...</option>
+      </select>
+      <select id="filtroMedico">
+        <option value="">Todos os médicos</option>
+      </select>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <h4><i class="fa fa-user-md" style="color: #1e40af;"></i> Médicos Disponíveis</h4>
+        <p id="medicosDisponiveis">0</p>
+      </div>
+      <div class="stat-card">
+        <h4><i class="fa fa-clock" style="color: #16a34a;"></i> Horários Livres</h4>
+        <p id="horariosLivres">0</p>
+      </div>
+      <div class="stat-card">
+        <h4><i class="fa fa-lock" style="color: #dc2626;"></i> Horários Ocupados</h4>
+        <p id="horariosOcupados">0</p>
+      </div>
+    </div>
+
+    <div class="agenda-grid">
+      <div class="table-card">
+        <h3><i class="fa fa-calendar-day" style="color: #475569;"></i> Calendário do Dia</h3>
+        <div id="calendarioDia"></div>
+      </div>
+      <div class="table-card">
+        <h3><i class="fa fa-user-md" style="color: #1e40af;"></i> Médicos Disponíveis</h3>
+        <div id="listaMedicos"></div>
+      </div>
+    </div>
+
+    <div class="agenda-grid">
+      <div class="table-card">
+        <h3><i class="fa fa-check-circle" style="color: #16a34a;"></i> Horários Disponíveis</h3>
+        <div id="horariosDisponiveis" class="slot-list"></div>
+      </div>
+      <div class="table-card">
+        <h3><i class="fa fa-times-circle" style="color: #dc2626;"></i> Horários Ocupados</h3>
+        <div id="horariosOcupadosLista" class="slot-list"></div>
+      </div>
     </div>
   </div>
-</div>
 
-<script src="js/recepcionista-common.js"></script>
-<script src="js/agenda.js"></script>
+  <script src="js/recepcionista-common.js"></script>
+  <script src="js/agenda.js"></script>
 </body>
 </html>
