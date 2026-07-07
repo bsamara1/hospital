@@ -157,10 +157,6 @@
             cursor: pointer;
         }
 
-        .trigger-link:hover {
-            background: #e9edf3;
-        }
-
         /* TABELA CARD RESPONSIVA */
         .table-card {
             background: #fff;
@@ -225,93 +221,16 @@
             height: 100vh;
             position: relative;
         }
-        .side-panel.open {
-            width: 420px;
-        }
-        .panel-header {
-            padding: 25px 20px 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-        .panel-header h3 {
-            font-size: 16px;
-            color: #0b2a4a;
-            font-weight: 700;
-        }
-        .btn-close-panel {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: #94a3b8;
-            cursor: pointer;
-        }
-        .panel-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
+        .side-panel.open { width: 420px; }
+        .panel-header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+        .panel-header h3 { font-size: 16px; color: #0b2a4a; font-weight: 700; }
+        .btn-close-panel { background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; }
+        .panel-content { padding: 20px; overflow-y: auto; flex: 1; }
 
-        /* ALERTAS SYNCED */
-        .alert-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .alert-item h4 {
-            font-size: 13.5px;
-            color: #1e293b;
-            font-weight: 700;
-        }
-        .alert-item p {
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.4;
-        }
-        .alert-item .time {
-            font-size: 11px;
-            color: #94a3b8;
-            text-align: right;
-            margin-top: 2px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .form-group label {
-            font-size: 12.5px;
-            color: #475569;
-            font-weight: 600;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 13.5px;
-            color: #334155;
-            outline: none;
-        }
-        .btn-primary-blue {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #1e40af;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12.5px; color: #475569; font-weight: 600; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #334155; outline: none; }
+        .btn-primary-blue { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #1e40af; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -328,7 +247,7 @@
 <div class="content-container">
     <div class="main">
         <div class="header">
-            <h2>Lista de Pacientes Ativos</h2>
+            <h2>Meus Pacientes Associados</h2>
             <div class="user-box">
                 <div class="trigger-link" onclick="abrirPainel('panelNotificacoes')">
                     <i class="fa fa-bell"></i>
@@ -336,8 +255,9 @@
                 </div>
                 <div class="trigger-link" onclick="abrirPainel('panelPerfil')">
                     <div class="avatar-circle" id="usuarioAvatar">M</div>
-                    <div style="display:flex; flex-direction:column; line-height:1.1;">
-                        <span id="usuarioNome" style="font-weight:700;">Dr. Mendes</span>
+                    <div style="display:flex; flex-direction:column; line-height:1.2;">
+                        <span id="usuarioNome" style="font-weight:700; color:#333; font-size:14px;">Dr. Mendes</span>
+                        <span id="usuarioEmail" style="color:#777; font-size:12px;">mendes@hospital.cv</span>
                     </div>
                 </div>
             </div>
@@ -345,7 +265,7 @@
         <div class="header-line"></div>
 
         <div class="table-card">
-            <h3>Pacientes Sob Sua Responsabilidade</h3>
+            <h3>Lista de Utentes</h3>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -366,16 +286,7 @@
             <button class="btn-close-panel" onclick="fecharPainel('panelNotificacoes')"><i class="fa fa-times"></i></button>
         </div>
         <div class="panel-content">
-            <div class="alert-item">
-                <h4>Fila de Prioridade Modificada</h4>
-                <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>
-                <span class="time">Há 5 min</span>
-            </div>
-            <div class="alert-item">
-                <h4>Consulta Cancelada pela Receção</h4>
-                <p>A marcação de <b>Lolo Medeiros</b> agendada para 10/07 foi cancelada pelo sistema central.</p>
-                <span class="time">Há 1 hora</span>
-            </div>
+            <p style="font-size:13.5px; color:#666;">Sem novos alertas específicos de pacientes.</p>
         </div>
     </div>
 
@@ -411,12 +322,34 @@
         document.querySelectorAll('.side-panel').forEach(p => { if(p.id !== panelId) p.classList.remove('open'); });
         document.getElementById(panelId).classList.toggle('open');
     }
+    
     function fecharPainel(panelId) { document.getElementById(panelId).classList.remove('open'); }
+    
     function salvarPerfilLocal() {
-        const n = document.getElementById("nomePerfil").value;
+        const n = document.getElementById("nomePerfil").value.trim();
+        const e = document.getElementById("emailPerfil").value.trim();
         if(n) document.getElementById("usuarioNome").innerText = n;
+        if(e) document.getElementById("usuarioEmail").innerText = e;
+        
+        let user = JSON.parse(localStorage.getItem("utilizador") || "{}");
+        user.nome = n || "Dr. Mendes";
+        user.email = e || "mendes@hospital.cv";
+        localStorage.setItem("utilizador", JSON.stringify(user));
+        
         alert("Alterações guardadas com sucesso!"); fecharPainel('panelPerfil');
     }
+
+    function aplicarIdentidadeFixa() {
+        document.getElementById("usuarioNome").innerText = "Dr. Mendes";
+        document.getElementById("usuarioEmail").innerText = "mendes@hospital.cv";
+        document.getElementById("usuarioAvatar").innerText = "M";
+        document.getElementById("nomePerfil").value = "Dr. Mendes";
+        document.getElementById("emailPerfil").value = "mendes@hospital.cv";
+    }
+
+    aplicarIdentidadeFixa();
+    document.addEventListener("DOMContentLoaded", aplicarIdentidadeFixa);
+    window.addEventListener("load", aplicarIdentidadeFixa);
 </script>
 <script src="identidade.js"></script>
 </body>

@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* RESET & BASE */
         *{
             margin: 0;
             padding: 0;
@@ -90,7 +89,6 @@
             margin: 12px 0;
         }
 
-        /* ESTRUTURA DOS CONTEÚDOS COM PAINÉIS LATERAIS */
         .content-container {
             flex: 1;
             margin-left: 260px;
@@ -159,8 +157,18 @@
             cursor: pointer;
         }
 
-        .trigger-link:hover {
-            background: #e9edf3;
+        .table-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+        }
+
+        .table-card h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
         }
 
         /* PAINÉIS LATERAIS DIREITOS */
@@ -176,127 +184,16 @@
             height: 100vh;
             position: relative;
         }
-        .side-panel.open {
-            width: 420px;
-        }
-        .panel-header {
-            padding: 25px 20px 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-        }
-        .panel-header h3 {
-            font-size: 16px;
-            color: #0b2a4a;
-            font-weight: 700;
-        }
-        .btn-close-panel {
-            background: none;
-            border: none;
-            font-size: 18px;
-            color: #94a3b8;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-close-panel:hover {
-            color: #334155;
-        }
-        .panel-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
+        .side-panel.open { width: 420px; }
+        .panel-header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+        .panel-header h3 { font-size: 16px; color: #0b2a4a; font-weight: 700; }
+        .btn-close-panel { background: none; border: none; font-size: 18px; color: #94a3b8; cursor: pointer; }
+        .panel-content { padding: 20px; overflow-y: auto; flex: 1; }
 
-        .alert-item {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .alert-item h4 {
-            font-size: 13.5px;
-            color: #1e293b;
-            font-weight: 700;
-        }
-        .alert-item p {
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.4;
-        }
-        .alert-item .time {
-            font-size: 11px;
-            color: #94a3b8;
-            text-align: right;
-            margin-top: 2px;
-        }
-
-        /* FORMULÁRIO CENTRAL */
-        .form-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 650px;
-        }
-        .form-card h3 {
-            font-size: 16px;
-            color: #0b2a4a;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        .form-group {
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .form-group label {
-            font-size: 12.5px;
-            color: #475569;
-            font-weight: 600;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 13.5px;
-            color: #334155;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .form-group input:focus {
-            border-color: #1e40af;
-            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-        }
-        .help-text {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            display: block;
-        }
-        .btn-primary-blue {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #1e40af;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-        .btn-primary-blue:hover {
-            background: #1e3a8a;
-        }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12.5px; color: #475569; font-weight: 600; }
+        .form-group input { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; color: #334155; outline: none; }
+        .btn-primary-blue { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #1e40af; color: #ffffff; font-size: 14px; font-weight: 600; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -313,7 +210,7 @@
 <div class="content-container">
     <div class="main">
         <div class="header">
-            <h2>Definições de Horário Técnico</h2>
+            <h2>Gerir Disponibilidade Clínico</h2>
             <div class="user-box">
                 <div class="trigger-link" onclick="abrirPainel('panelNotificacoes')">
                     <i class="fa fa-bell"></i>
@@ -321,28 +218,18 @@
                 </div>
                 <div class="trigger-link" onclick="abrirPainel('panelPerfil')">
                     <div class="avatar-circle" id="usuarioAvatar">M</div>
-                    <div style="display:flex; flex-direction:column; line-height:1.1;">
-                        <span id="usuarioNome" style="font-weight:700;">Dr. Mendes</span>
+                    <div style="display:flex; flex-direction:column; line-height:1.2;">
+                        <span id="usuarioNome" style="font-weight:700; color:#333; font-size:14px;">Dr. Mendes</span>
+                        <span id="usuarioEmail" style="color:#777; font-size:12px;">mendes@hospital.cv</span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="header-line"></div>
 
-        <div class="form-card">
-            <h3>Atualizar Meus Dias & Turnos Clínicos</h3>
-            <form id="formDisponibilidade" onsubmit="gravarHorarios(event)">
-                <div class="form-group">
-                    <label>Dias Semanais Permitidos</label>
-                    <input type="text" value="Segunda a Sexta-feira" disabled style="background-color:#f8fafc; color:#64748b; cursor:not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>Janela Horária de Atendimento (Formatado para o ficheiro)</label>
-                    <input type="text" id="janelaHoraria" value="09:00,10:00,11:00">
-                </div>
-                <span class="help-text">Insira as horas separadas por vírgula para atualizar o medicos.txt.</span>
-                <button type="submit" class="btn-primary-blue"><i class="fa fa-save"></i> Guardar Alterações</button>
-            </form>
+        <div class="table-card">
+            <h3>Configuração de Horários Semanais</h3>
+            <p style="font-size: 14px; color:#555; margin-top:10px;">Segunda-feira a Sexta-feira: 08:00 - 16:00</p>
         </div>
     </div>
 
@@ -352,16 +239,7 @@
             <button class="btn-close-panel" onclick="fecharPainel('panelNotificacoes')"><i class="fa fa-times"></i></button>
         </div>
         <div class="panel-content">
-            <div class="alert-item">
-                <h4>Fila de Prioridade Modificada</h4>
-                <p>O paciente <b>Carlos Alberto</b> foi priorizado para o seu turno clínico urgente.</p>
-                <span class="time">Há 5 min</span>
-            </div>
-            <div class="alert-item">
-                <h4>Consulta Cancelada pela Receção</h4>
-                <p>A marcação de <b>Lolo Medeiros</b> agendada para 10/07 foi cancelada pelo sistema central.</p>
-                <span class="time">Há 1 hora</span>
-            </div>
+            <p style="font-size:13.5px; color:#666;">Sem novos alertas de horários.</p>
         </div>
     </div>
 
@@ -394,50 +272,37 @@
 
 <script>
     function abrirPainel(panelId) {
-        document.querySelectorAll('.side-panel').forEach(p => {
-            if(p.id !== panelId) p.classList.remove('open');
-        });
+        document.querySelectorAll('.side-panel').forEach(p => { if(p.id !== panelId) p.classList.remove('open'); });
         document.getElementById(panelId).classList.toggle('open');
     }
-
-    function fecharPainel(panelId) {
-        document.getElementById(panelId).classList.remove('open');
-    }
-
+    
+    function fecharPainel(panelId) { document.getElementById(panelId).classList.remove('open'); }
+    
     function salvarPerfilLocal() {
-        const novoNome = document.getElementById("nomePerfil").value.trim();
-        if(novoNome) {
-            document.getElementById("usuarioNome").innerText = novoNome;
-        }
-        alert("Alterações guardadas com sucesso!");
-        fecharPainel('panelPerfil');
+        const n = document.getElementById("nomePerfil").value.trim();
+        const e = document.getElementById("emailPerfil").value.trim();
+        if(n) document.getElementById("usuarioNome").innerText = n;
+        if(e) document.getElementById("usuarioEmail").innerText = e;
+        
+        let user = JSON.parse(localStorage.getItem("utilizador") || "{}");
+        user.nome = n || "Dr. Mendes";
+        user.email = e || "mendes@hospital.cv";
+        localStorage.setItem("utilizador", JSON.stringify(user));
+        
+        alert("Alterações guardadas com sucesso!"); fecharPainel('panelPerfil');
     }
 
-    const API_URL = "http://127.0.0.1:5000";
-    async function gravarHorarios(event) {
-        event.preventDefault();
-        const novosHorarios = document.getElementById("janelaHoraria").value.trim();
-        
-        const dadosAtualizados = {
-            emailOriginal: "mendes@han.pt", 
-            nome: document.getElementById("nomePerfil").value,
-            email: document.getElementById("emailPerfil").value,
-            horarios: novosHorarios
-        };
-        try {
-            const res = await fetch(`${API_URL}/utilizador`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dadosAtualizados)
-            });
-            const dados = await res.json();
-            if (res.ok && dados.sucesso) {
-                alert("Alterações gravadas com sucesso!");
-            } else {
-                alert("Erro do servidor: " + (dados.mensagem || "Utilizador não encontrado."));
-            }
-        } catch (erro) { alert("Não foi possível ligar ao servidor."); }
+    function aplicarIdentidadeFixa() {
+        document.getElementById("usuarioNome").innerText = "Dr. Mendes";
+        document.getElementById("usuarioEmail").innerText = "mendes@hospital.cv";
+        document.getElementById("usuarioAvatar").innerText = "M";
+        document.getElementById("nomePerfil").value = "Dr. Mendes";
+        document.getElementById("emailPerfil").value = "mendes@hospital.cv";
     }
+
+    aplicarIdentidadeFixa();
+    document.addEventListener("DOMContentLoaded", aplicarIdentidadeFixa);
+    window.addEventListener("load", aplicarIdentidadeFixa);
 </script>
 <script src="identidade.js"></script>
 </body>
