@@ -334,7 +334,7 @@
         <div class="header">
             <h2>Gestão de Pacientes</h2>
             <div class="user-box">
-                <a href="consultas.html" style="position:relative; color:inherit; margin-right: 5px; text-decoration: none;">
+                <a href="notificacoes.html" style="position:relative; color:inherit; margin-right: 5px; text-decoration: none;">
                     <i class="fa fa-bell"></i>
                     <span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; padding:1px 5px; border-radius:10px;"></span>
                 </a>
@@ -433,13 +433,12 @@
         </div>
     </div>
 
-    <!-- CARREGAMENTO DOS SCRIPTS EXTERNOS -->
-    <!-- NOTA: Importar o storage.js PRIMEIRO é obrigatório para fornecer as funções globais do Flask e LocalStorage! -->
-    <script src="../Admin/storage.js"></script>
+   <script src="../Admin/storage.js"></script>
     <script src="js/pacientes.js"></script>
+    <script src="js/recepcionista-common.js"></script>
     
     <script>
-        // Funções auxiliares para evitar erros caso o script pacientes.js as chame implicitamente no map
+        
         function escapeHtml(text) {
             if (!text) return "";
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

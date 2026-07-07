@@ -26,53 +26,62 @@ window.addEventListener("DOMContentLoaded", () => {
       const dados = await resposta.json();
 
       if (dados.sucesso) {
+        // --- CASO DE SUCESSO ---
         if (lembrar) {
           localStorage.setItem("email", email);
         } else {
           localStorage.removeItem("email");
         }
 
-        const tipo = String(dados.tipo || "").toLowerCase();
         const utilizador = { ...dados, email };
         localStorage.setItem("utilizador", JSON.stringify(utilizador));
 
-        if (dados.sucesso) {
-          // GUARDA UTILIZADOR LOGADO
-          localStorage.setItem(
-            "utilizadorLogado",
-            JSON.stringify({
-              email: email,
-              nome: dados.nome,
-              tipo: dados.tipo,
-            }),
-          );
+        // GUARDA UTILIZADOR LOGADO PARA O SISTEMA
+        localStorage.setItem(
+          "utilizadorLogado",
+          JSON.stringify({
+            email: email,
+            nome: dados.nome,
+            tipo: dados.tipo,
+          }),
+        );
 
-          // REDIRECIONAR
-          if (dados.tipo === "admin") {
-            window.location.href = "./admin/index.html";
-          } else if (dados.tipo === "rececao") {
-            window.location.href = "./Recepcionista/index.html";
-          } else if (dados.tipo === "medico") {
-            window.location.href = "./medicos/index.html";
-          } else {
-            window.location.href = "./pacientes/index.html";
-          }
+        // REDIRECIONAMENTO CORRETO CONFORME O PERFIL
+        if (dados.tipo === "admin") {
+          window.location.href = "./admin/index.html";
+        } else if (dados.tipo === "rececao") {
+          window.location.href = "./Recepcionista/index.html";
+        } else if (dados.tipo === "medico") {
+          window.location.href = "./medicos/index.html";
+        } else {
+          window.location.href = "./pacientes/index.html";
         }
+
+      } else {
+        // --- CASO DE ERRO ---
+        // Só entra aqui se o backend responder que o sucesso é falso
         document.getElementById("mensagem").style.color = "red";
-        document.getElementById("mensagem").innerHTML = dados.mensagem;
+        document.getElementById("mensagem").innerHTML = dados.mensagem || "Email ou palavra-passe incorretos.";
       }
     } catch (erro) {
       document.getElementById("mensagem").style.color = "red";
-      document.getElementById("mensagem").innerHTML =
-        "Erro ao comunicar com o servidor.";
+      document.getElementById("mensagem").innerHTML = "Erro ao comunicar com o servidor.";
       console.error(erro);
     }
   });
 });
 
 window.addEventListener("load", () => {
-  localStorage.removeItem("email");
-  document.getElementById("email").value = "";
+  const emailGuardado = localStorage.getItem("email");
+  
+  if (emailGuardado) {
+    document.getElementById("email").value = emailGuardado;
+    document.getElementById("lembrar").checked = true;
+  } else {
+    document.getElementById("email").value = "";
+    document.getElementById("lembrar").checked = false;
+  }
+  
+  // Limpa sempre o campo da senha por segurança ao recarregar
   document.getElementById("senha").value = "";
-  document.getElementById("lembrar").checked = false;
 });
