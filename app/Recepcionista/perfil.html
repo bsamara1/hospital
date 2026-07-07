@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administrador - Meu Perfil</title>
+  <title>Recepcao - Meu Perfil</title>
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
@@ -281,26 +281,22 @@
 
 <body>
 
+  
   <div class="sidebar">
     <div class="logo">
       <img src="../assets/img/logo.png" alt="Logo HAN">
       <span>HAN</span>
     </div>
-
-    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
-    <a href="utilizadores.html"><i class="fa fa-users"></i> Utilizadores</a>
-    <a href="medicos.html" ><i class="fa fa-user-md"></i> Médicos</a>
-    <a href="especialidades.html"><i class="fa fa-stethoscope"></i> Especialidades</a>
-    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
-    <a href="prioridades.html"><i class="fa fa-users"></i> Prioridades</a>
-    <a href="seguranca.html"><i class="fa fa-shield-alt"></i> Segurança & Logs</a>
-
+    <a href="index.html" data-page="index" ><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="pacientes.html" data-page="pacientes"><i class="fa fa-user"></i> Pacientes</a>
+    <a href="consultas.html" data-page="consultas"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="agenda.html" data-page="agenda"><i class="fa fa-calendar-check"></i> Agenda Médica</a>
+    <a href="presencas.html" data-page="presencas"><i class="fa fa-id-badge"></i> Confirmar Presença</a>
     <div class="bottom">
       <div class="divider"></div>
       <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
     </div>
   </div>
-
   <div class="main">
 
     <div class="header">
@@ -387,7 +383,7 @@
     </div>
   </div>
 
-  <script src="storage.js"></script>
+  <script src="../Recepcionista/js/storage.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -416,38 +412,38 @@
     }
 
     function carregarPerfil() {
-  const utilizador = JSON.parse(localStorage.getItem("utilizador"));
+      const utilizador = JSON.parse(localStorage.getItem("utilizador"));
 
-  if (!utilizador || !utilizador.email) {
-    window.location.href = "../login.html";
-    return;
-  }
-
-  // 1. Carregamento veloz inicial via Cache Local (LocalStorage)
-  // Corrigido: Removido o uso da variável 'dados' que ainda não existia aqui
-  document.getElementById("nomePerfil").value = utilizador.nome || "Administrador";
-  document.getElementById("emailPerfil").value = utilizador.email || "";
-  document.getElementById("telefonePerfil").value = utilizador.telefone || "";
-  document.getElementById("biPerfil").value = utilizador.bi || ""; // Corrigido para utilizador.bi
-
-  // 2. Vai buscar os dados atualizados ao servidor em tempo real
-  fetch(`${API_URL}/utilizador?email=${encodeURIComponent(utilizador.email)}`)
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao obter dados");
-      return res.json();
-    })
-    .then(dados => {
-      // Corrigido: Garante que as propriedades batem certo com o que o servidor devolve
-      if (dados) {
-        document.getElementById("nomePerfil").value = dados.nome || "";
-        document.getElementById("emailPerfil").value = dados.email || "";
-        document.getElementById("telefonePerfil").value = dados.telefone || "";
-        // Nota: Verifique se o seu backend envia 'bi' ou 'bii'. O padrão esperado abaixo é 'bi'
-        document.getElementById("biPerfil").value = dados.bi || dados.bii || ""; 
+      if (!utilizador || !utilizador.email) {
+        window.location.href = "../login.html";
+        return;
       }
-    })
-    .catch(err => console.warn("Aviso: Modo offline ativo. Dados carregados do LocalStorage.", err));
-}
+
+      // 1. Carregamento veloz inicial via Cache Local (LocalStorage)
+      // Corrigido: Removido o uso da variável 'dados' que ainda não existia aqui
+      document.getElementById("nomePerfil").value = utilizador.nome || "Administrador";
+      document.getElementById("emailPerfil").value = utilizador.email || "";
+      document.getElementById("telefonePerfil").value = utilizador.telefone || "";
+      document.getElementById("biPerfil").value = utilizador.bi || ""; // Corrigido para utilizador.bi
+
+      // 2. Vai buscar os dados atualizados ao servidor em tempo real
+      fetch(`${API_URL}/utilizador?email=${encodeURIComponent(utilizador.email)}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Erro ao obter dados");
+          return res.json();
+        })
+        .then(dados => {
+          // Corrigido: Garante que as propriedades batem certo com o que o servidor devolve
+          if (dados) {
+            document.getElementById("nomePerfil").value = dados.nome || "";
+            document.getElementById("emailPerfil").value = dados.email || "";
+            document.getElementById("telefonePerfil").value = dados.telefone || "";
+            // Nota: Verifique se o seu backend envia 'bi' ou 'bii'. O padrão esperado abaixo é 'bi'
+            document.getElementById("biPerfil").value = dados.bi || dados.bii || "";
+          }
+        })
+        .catch(err => console.warn("Aviso: Modo offline ativo. Dados carregados do LocalStorage.", err));
+    }
 
     function salvarPerfil() {
       const utilizador = JSON.parse(localStorage.getItem("utilizador"));
@@ -494,84 +490,84 @@
     }
 
     function alterarPalavraPasse() {
-  const utilizador = JSON.parse(localStorage.getItem("utilizador"));
-  
-  // Verifica se a sessão do utilizador existe
-  if (!utilizador || !utilizador.email) {
-    window.location.href = "../login.html";
-    return;
-  }
+      const utilizador = JSON.parse(localStorage.getItem("utilizador"));
 
-  const senhaAtual = document.getElementById("atualPassword").value;
-  const novaSenha = document.getElementById("novaPassword").value;
-  const confirmarSenha = document.getElementById("confirmarPassword").value;
-
-  // 1. Validação de campos vazios
-  if (!senhaAtual || !novaSenha || !confirmarSenha) {
-    alert("Por favor, preencha todos os campos da palavra-passe.");
-    return;
-  }
-
-  // 2. Validação de igualdade
-  if (novaSenha !== confirmarSenha) {
-    alert("A nova palavra-passe e a confirmação não coincidem!");
-    return;
-  }
-
-  // 3. Validação de tamanho mínimo (Segurança recomendada)
-  if (novaSenha.length < 6) {
-    alert("A nova palavra-passe deve ter pelo menos 6 caracteres.");
-    return;
-  }
-
-  // Desativar o botão temporariamente para evitar múltiplos cliques
-  const botao = document.querySelector("button[onclick='alterarPalavraPasse()']");
-  if (botao) {
-    botao.disabled = true;
-    botao.innerText = "A guardar...";
-  }
-
-  // 4. Envio dos dados para o Servidor
-  fetch(`${API_URL}/alterar_senha`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email: utilizador.email,
-      senha_atual: senhaAtual,
-      nova_senha: novaSenha
-    })
-  })
-    .then(res => {
-      if (!res.ok) throw new Error("Erro na resposta do servidor");
-      return res.json();
-    })
-    .then(data => {
-      // O seu backend deve devolver um objeto com { sucesso: true } ou { sucesso: false, mensagem: "..." }
-      if (data.sucesso) {
-        alert("Palavra-passe alterada com sucesso!");
-        
-        // Limpa os campos do formulário por segurança
-        document.getElementById("atualPassword").value = "";
-        document.getElementById("novaPassword").value = "";
-        document.getElementById("confirmarPassword").value = "";
-      } else {
-        alert(data.mensagem || "Erro ao alterar palavra-passe. Verifique a senha atual.");
+      // Verifica se a sessão do utilizador existe
+      if (!utilizador || !utilizador.email) {
+        window.location.href = "../login.html";
+        return;
       }
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Erro ao contactar o servidor. Verifique a sua ligação.");
-    })
-    .finally(() => {
-      // Reativar o botão após a resposta do servidor
+
+      const senhaAtual = document.getElementById("atualPassword").value;
+      const novaSenha = document.getElementById("novaPassword").value;
+      const confirmarSenha = document.getElementById("confirmarPassword").value;
+
+      // 1. Validação de campos vazios
+      if (!senhaAtual || !novaSenha || !confirmarSenha) {
+        alert("Por favor, preencha todos os campos da palavra-passe.");
+        return;
+      }
+
+      // 2. Validação de igualdade
+      if (novaSenha !== confirmarSenha) {
+        alert("A nova palavra-passe e a confirmação não coincidem!");
+        return;
+      }
+
+      // 3. Validação de tamanho mínimo (Segurança recomendada)
+      if (novaSenha.length < 6) {
+        alert("A nova palavra-passe deve ter pelo menos 6 caracteres.");
+        return;
+      }
+
+      // Desativar o botão temporariamente para evitar múltiplos cliques
+      const botao = document.querySelector("button[onclick='alterarPalavraPasse()']");
       if (botao) {
-        botao.disabled = false;
-        botao.innerText = "Alterar Palavra-passe";
+        botao.disabled = true;
+        botao.innerText = "A guardar...";
       }
-    });
-}
+
+      // 4. Envio dos dados para o Servidor
+      fetch(`${API_URL}/alterar_senha`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: utilizador.email,
+          senha_atual: senhaAtual,
+          nova_senha: novaSenha
+        })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Erro na resposta do servidor");
+          return res.json();
+        })
+        .then(data => {
+          // O seu backend deve devolver um objeto com { sucesso: true } ou { sucesso: false, mensagem: "..." }
+          if (data.sucesso) {
+            alert("Palavra-passe alterada com sucesso!");
+
+            // Limpa os campos do formulário por segurança
+            document.getElementById("atualPassword").value = "";
+            document.getElementById("novaPassword").value = "";
+            document.getElementById("confirmarPassword").value = "";
+          } else {
+            alert(data.mensagem || "Erro ao alterar palavra-passe. Verifique a senha atual.");
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          alert("Erro ao contactar o servidor. Verifique a sua ligação.");
+        })
+        .finally(() => {
+          // Reativar o botão após a resposta do servidor
+          if (botao) {
+            botao.disabled = false;
+            botao.innerText = "Alterar Palavra-passe";
+          }
+        });
+    }
 
     function toggleVisibilidadeSenha(idInput, icone) {
       const input = document.getElementById(idInput);

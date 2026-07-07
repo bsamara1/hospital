@@ -42,17 +42,39 @@ async function atualizarBadgeNotificacoes() {
     const badge = document.getElementById("notifBadge");
     if (!badge) return;
 
-    const consultas = await loadConsultas();
-    const relevantes = consultas.filter(c => c.estado === "pendente" || c.estado === "cancelada");
+    try {
+        // Carrega os dados em paralelo (igual ao notificacoes.js)
+        const [consultas, pacientes, medicos] = await Promise.all([
+            loadConsultas(),
+            loadPacientes(),
+            loadMedicos()
+        ]);
 
-    if (relevantes.length > 0) {
-        badge.innerText = relevantes.length > 9 ? "9+" : relevantes.length;
-        badge.style.display = "inline-block";
-    } else {
-        badge.style.display = "none";
+        let totalReal = 0;
+
+        // 1. Contar consultas pendentes ou canceladas
+        totalReal += consultas.filter(c => c.estado === "cancelada" || c.estado === "pendente").length;
+
+        // 2. Contar médicos indisponíveis
+        totalReal += medicos.filter(m => m.status && m.status !== "ativo").length;
+
+        // 3. Contar novos pacientes (os últimos 5 sempre geram 5 notificações)
+        totalReal += pacientes.slice(-5).length;
+
+        // 4. Contar o aviso fixo do administrador
+        totalReal += 1;
+
+        // Atualiza o elemento visual
+        if (totalReal > 0) {
+            badge.innerText = totalReal > 9 ? "9+" : totalReal;
+            badge.style.display = "inline-block";
+        } else {
+            badge.style.display = "none";
+        }
+    } catch (error) {
+        console.error("Erro ao recalcular badge global:", error);
     }
 }
-
 // =========================================================================
 // COMUNICAÇÃO COM AS FONTES DE DADOS (API COM FALLBACK PARA TXT)
 // =========================================================================

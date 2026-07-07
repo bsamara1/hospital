@@ -88,3 +88,18 @@ function renderNotificacoes() {
 }
 
 window.addEventListener("DOMContentLoaded", initNotificacoes);
+
+function renderNotificacoes() {
+    // ... (todo o seu código atual da função) ...
+
+    // Adicione isto na última linha da função para sincronizar o badge com os itens visíveis:
+    if (typeof atualizarBadgeNotificacoes === "function") {
+        const lista = filtro ? notificacoes.filter(n => n.tipo === filtro) : notificacoes;
+        // Passando a quantidade atual filtrada diretamente para o componente visual
+        const badge = document.getElementById("notifBadge");
+        if (badge) {
+            badge.innerText = lista.length > 9 ? "9+" : lista.length;
+            badge.style.display = lista.length > 0 ? "inline-block" : "none";
+        }
+    }
+}

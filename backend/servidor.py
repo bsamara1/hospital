@@ -9,8 +9,10 @@ import time
 import unicodedata
 from datetime import datetime
 
-load_dotenv()
-
+# Força o Python a ler o .env na raiz do projeto
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+dotenv_path = os.path.join(BASE_DIR, ".env")
+load_dotenv(dotenv_path=dotenv_path)
 app = Flask(__name__)
 CORS(app)
 
@@ -558,7 +560,7 @@ def criar_conta():
     telefone = dados.get("telefone", "").strip()
     email = dados.get("email", "").strip().lower()
     senha = dados.get("senha", "")
-    type_user = "utilizador"
+    type_user = "Paciente"
 
     for u in ler_utilizadores_com_linhas():
         if u["bi"].upper() == bi and bi != "":
