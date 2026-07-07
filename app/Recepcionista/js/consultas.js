@@ -13,10 +13,21 @@ async function initConsultas() {
     }
     
     try {
+<<<<<<< HEAD
+        // Carrega os dados das funções globais[cite: 1]
+        [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
+        
+        // Debug para verificar no Console do Navegador (F12) se os dados estão corretos
+        console.log("Pacientes carregados:", pacientes);
+        console.log("Médicos carregados:", medicos);
+    } catch (error) {
+        console.error("Erro ao carregar dados iniciais:", error);
+=======
         // Carrega os dados das funções de persistência global existentes no seu sistema
         [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
     } catch (error) {
         console.error("Erro ao carregar dados iniciais de persistência local:", error);
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     }
 
     const pesquisaInput = document.getElementById("pesquisaConsulta");
@@ -39,6 +50,24 @@ async function initConsultas() {
     renderTabela();
 }
 
+<<<<<<< HEAD
+// 1. FILTRO DE PACIENTES (Seguro contra variações do campo 'tipo' ou 'role')
+function preencherSelectPacientes() {
+    const select = document.getElementById("consultaPaciente");
+    if (!select) return;
+    
+    // Filtra se tipo for "paciente" ou assume todos se a propriedade não existir
+    const apenasPacientes = pacientes.filter(p => {
+        if (!p.tipo) return true; 
+        return p.tipo.toLowerCase() === "paciente";
+    });
+    
+    select.innerHTML = '<option value="">Selecionar paciente</option>' +
+        apenasPacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
+}
+
+// 2. FILTRO DE ESPECIALIDADES DINÂMICAS (Vindas do arquivo de médicos)
+=======
 // 1. FILTRO DE PACIENTES - Carrega de utilizadores.txt subindo duas pastas (../../)
 async function preencherSelectPacientes() {
     const select = document.getElementById("consultaPaciente");
@@ -112,24 +141,37 @@ async function carregarMedicosETxt() {
 }
 
 // 2. FILTRO DE ESPECIALIDADES DINÂMICAS 
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function preencherSelectEspecialidades() {
     const select = document.getElementById("consultaEspecialidade");
     if (!select) return;
     
+<<<<<<< HEAD
+    // Obtém especialidades únicas vindas dos médicos carregados
+=======
     // Obtém especialidades sem repetições extraídas do JSON de médicos
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     const cacheEspecialidades = [...new Set(medicos.map(m => m.especialidade).filter(Boolean))];
     
     select.innerHTML = '<option value="">Selecionar especialidade</option>' +
         cacheEspecialidades.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
 }
 
+<<<<<<< HEAD
+// 3. FLUXO DEPENDENTE: FILTRA MÉDICOS APENAS PELA ESPECIALIDADE SELECIONADA[cite: 5]
+=======
 // 3. FLUXO DEPENDENTE: FILTRA MÉDICOS APENAS PELA ESPECIALIDADE SELECIONADA
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function preencherMedicosModal() {
     const esp = document.getElementById("consultaEspecialidade").value;
     const selectMed = document.getElementById("consultaMedico");
     const selectHora = document.getElementById("consultaHora");
     if (!selectMed) return;
     
+<<<<<<< HEAD
+    // Limpa o seletor de horários até que o médico seja determinado
+=======
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     if (selectHora) {
         selectHora.innerHTML = '<option value="">Selecione o horário...</option>';
     }
@@ -139,11 +181,19 @@ function preencherMedicosModal() {
         return;
     }
     
+<<<<<<< HEAD
+    // Filtra apenas médicos ativos daquela especialidade[cite: 5]
+    const filtrados = medicos.filter(m => m.especialidade === esp && (m.status === "ativo" || !m.status));
+    
+    if (filtrados.length === 0) {
+        selectMed.innerHTML = '<option value="">Nenhum médico ativo disponível</option>';
+=======
     // Filtra médicos pertencentes à especialidade que estejam ativos
     const filtrados = medicos.filter(m => m.especialidade === esp && (m.status === "ativo" || !m.status));
     
     if (filtrados.length === 0) {
         selectMed.innerHTML = '<option value="">Nenhum médico disponível</option>';
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
         return;
     }
     
@@ -151,7 +201,11 @@ function preencherMedicosModal() {
         filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
 }
 
+<<<<<<< HEAD
+// 4. FLUXO DEPENDENTE: CARREGA OS HORÁRIOS ESPECÍFICOS E CONFIGURADOS DO MÉDICO[cite: 5]
+=======
 // 4. FLUXO DEPENDENTE: CARREGA OS HORÁRIOS ESPECÍFICOS E CONFIGURADOS DO MÉDICO
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function carregarHorariosDoMedico() {
     const nomeMed = document.getElementById("consultaMedico").value;
     const selectHora = document.getElementById("consultaHora");
@@ -162,13 +216,25 @@ function carregarHorariosDoMedico() {
         return;
     }
 
+<<<<<<< HEAD
+    // Procura o objeto completo do médico para extrair sua string de horários[cite: 5]
     const medicoObj = medicos.find(m => m.nome === nomeMed);
     
     if (medicoObj && medicoObj.horarios) {
+        // Divide a string por vírgulas (ex: "08:00, 09:00, 10:00")[cite: 5]
+=======
+    const medicoObj = medicos.find(m => m.nome === nomeMed);
+    
+    if (medicoObj && medicoObj.horarios) {
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
         const horas = medicoObj.horarios.split(",");
         selectHora.innerHTML = '<option value="">Selecione o horário...</option>' +
             horas.map(h => `<option value="${h.trim()}">${h.trim()}</option>`).join("");
     } else {
+<<<<<<< HEAD
+        // Fallback preventivo caso o médico não tenha horários definidos
+=======
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
         selectHora.innerHTML = `
             <option value="">Selecionar horário</option>
             <option value="08:00">08:00</option>
@@ -237,23 +303,39 @@ function renderTabela() {
     `).join("");
 }
 
+<<<<<<< HEAD
+// 7. MODAL: NOVA CONSULTA (RESETA CAMPOS E RECONSTRÓI SELETORES)
+=======
 // 7. MODAL: NOVA CONSULTA
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function abrirModalMarcar() {
     consultaEmEdicao = null;
     document.getElementById("modalTitulo").innerText = "Marcar Consulta";
     document.getElementById("consultaPaciente").value = "";
     document.getElementById("consultaEspecialidade").value = "";
     
+<<<<<<< HEAD
+    // Força o bloqueio sequencial inicial
     document.getElementById("consultaMedico").innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
     document.getElementById("consultaHora").innerHTML = '<option value="">Selecione o horário...</option>';
     
+    // Limpa as checkboxes de sintomas
+=======
+    document.getElementById("consultaMedico").innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
+    document.getElementById("consultaHora").innerHTML = '<option value="">Selecione o horário...</option>';
+    
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     document.querySelectorAll('input[name="sintoma"]').forEach(cb => cb.checked = false);
     
     document.getElementById("consultaData").value = "";
     document.getElementById("modalConsulta").style.display = "flex";
 }
 
+<<<<<<< HEAD
+// 8. MODAL: REAGENDAMENTO (PREENCHE EM FLUXO DE ACORDO COM O HISTÓRICO)
+=======
 // 8. MODAL: REAGENDAMENTO
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function abrirModalReagendar(id) {
     const consulta = consultas.find(c => c.id === id);
     if (!consulta) return;
@@ -263,6 +345,10 @@ function abrirModalReagendar(id) {
     document.getElementById("consultaPaciente").value = consulta.paciente;
     document.getElementById("consultaEspecialidade").value = consulta.especialidade || "";
     
+<<<<<<< HEAD
+    // Executa a cascata de filtros para remontar as dependências corretas[cite: 5]
+=======
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     preencherMedicosModal();
     document.getElementById("consultaMedico").value = consulta.medico;
     
@@ -270,6 +356,10 @@ function abrirModalReagendar(id) {
     document.getElementById("consultaData").value = consulta.data;
     document.getElementById("consultaHora").value = consulta.hora;
     
+<<<<<<< HEAD
+    // Remarca os sintomas guardados anteriormente se existirem
+=======
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     document.querySelectorAll('input[name="sintoma"]').forEach(cb => {
         cb.checked = consulta.sintomas && consulta.sintomas.includes(cb.value);
     });
@@ -282,7 +372,11 @@ function fecharModal() {
     consultaEmEdicao = null;
 }
 
+<<<<<<< HEAD
+// 9. SUBMISSÃO COM VÍNCULO AUTOMÁTICO DE EMAIL ADQUIRIDO DE PACIENTES[cite: 4, 6]
+=======
 // 9. SUBMISSÃO COM VÍNCULO DE EMAIL ADQUIRIDO
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 async function guardarConsulta() {
     const paciente = document.getElementById("consultaPaciente").value;
     const medico = document.getElementById("consultaMedico").value;
@@ -295,9 +389,17 @@ async function guardarConsulta() {
         return;
     }
 
+<<<<<<< HEAD
+    // Procura o e-mail correspondente do paciente nos registos carregados de utilizadores[cite: 6]
     const pacienteEncontrado = pacientes.find(p => p.nome && p.nome.trim().toLowerCase() === paciente.trim().toLowerCase());
     const emailPaciente = pacienteEncontrado && pacienteEncontrado.email ? pacienteEncontrado.email : "";
 
+    // Recolha de sintomas da triagem caso existam no DOM
+=======
+    const pacienteEncontrado = pacientes.find(p => p.nome && p.nome.trim().toLowerCase() === paciente.trim().toLowerCase());
+    const emailPaciente = pacienteEncontrado && pacienteEncontrado.email ? pacienteEncontrado.email : "";
+
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
     const checkboxes = document.querySelectorAll('input[name="sintoma"]:checked');
     const sintomas = checkboxes.length ? Array.from(checkboxes).map(cb => cb.value) : [];
     const prioridadeCalculada = (sintomas.includes("dor-peito") || sintomas.includes("falta-ar")) ? "Alta" : "Média";
@@ -326,7 +428,11 @@ async function guardarConsulta() {
                 sintomas: sintomas
             });
         }
+<<<<<<< HEAD
+        consultas = await loadConsultas(); // Recarrega da persistência texto[cite: 4]
+=======
         if (typeof loadConsultas === "function") consultas = await loadConsultas();
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
         fecharModal();
         renderTabela();
     } catch (error) {
@@ -352,7 +458,11 @@ async function cancelarConsulta(id) {
     } catch (error) { alert(error.message); }
 }
 
+<<<<<<< HEAD
+// 11. DETALHES CLÍNICOS DA CONSULTA E TRIAGEM (MÉTODO 100% OPERACIONAL AGORA)
+=======
 // 11. DETALHES CLÍNICOS DA CONSULTA
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 function verDetalhes(id) {
     const c = consultas.find(item => item.id === id);
     if (!c) return;
@@ -384,6 +494,17 @@ function estadoBadge(estado) {
     const map = { pendente: "pendente", confirmada: "confirmada", cancelada: "cancelada", presente: "presente", realizada: "realizada" };
     const cls = map[estado] || "pendente";
     return `<span class="badge ${cls}">${typeof capitalize === "function" ? capitalize(estado) : estado}</span>`;
+<<<<<<< HEAD
+}
+
+// 12. AUXILIARES DE TRATAMENTO DE TEXTO
+function escapeHtml(string) {
+    if (!string) return "";
+    return String(string).replace(/[&<>"']/g, function (s) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[s];
+    });
+=======
+>>>>>>> 19f80a80c609dcc5c18aff62c1893b3a150ecc54
 }
 
 // Auxiliar de divisão robusta de strings
