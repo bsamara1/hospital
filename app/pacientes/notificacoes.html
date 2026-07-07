@@ -228,6 +228,14 @@ cursor:pointer;
     background: #1e40af;
     color: #fff;
 }
+.notif-item.confirmada .notif-icon {
+    background: #2e7d32;
+    color: #fff;
+}
+.notif-item.cancelada .notif-icon {
+    background: #c62828;
+    color: #fff;
+}
 
 .notif-details {
     flex: 1;
@@ -309,11 +317,159 @@ cursor:pointer;
     </div>
 
     <div class="notif-container">
-        <div class="notif-list" id="caixaNotificacoes">
-            </div>
+        <div class="notif-list" id="caixaNotificacoes"></div>
     </div>
 </div>
 
 <script src="../js/consultas.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Inicializar dados de sessão simulados para o paciente caso não existam
+        if (!localStorage.getItem('utilizadorLogado')) {
+            localStorage.setItem('utilizadorLogado', JSON.stringify({
+                nome: "João Baptista Silva",
+                email: "joao.silva@email.cv"
+            }));
+        }
+
+        // Criar chaves de controlo de leitura se não existirem
+        if (!localStorage.getItem('notificacoesLidas')) {
+            localStorage.setItem('notificacoesLidas', JSON.stringify([]));
+        }
+
+        carregarDadosPerfil();
+        gerarNotificacoesDinamicas();
+    });
+
+    function carregarDadosPerfil() {
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        if (utilizador) {
+            document.getElementById('usuarioNome').textContent = utilizador.nome;
+            document.getElementById('usuarioEmail').textContent = utilizador.email;
+            if (utilizador.nome) {
+                document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
+            }
+        }
+    }
+
+    function gerarNotificacoesDinamicas() {
+        const caixa = document.getElementById("caixaNotificacoes");
+        if (!caixa) return;
+        caixa.innerHTML = "";
+
+        const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        const lidas = JSON.parse(localStorage.getItem('notificacoesLidas')) || [];
+
+        if (!utilizador) return;
+
+        // Filtrar consultas do utilizador conectado
+        const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
+
+        if (minhasConsultas.length === 0) {
+            caixa.innerHTML = `<p style="text-align:center; padding:30px; color:#888;">Não existem notificações disponíveis de momento.</p>`;
+            atualizarBadgeSino(0);
+            return;
+        }
+
+        let contagemNaoLidas = 0;
+
+        // Inverter a ordem para mostrar os eventos mais recentes primeiro
+        minhasConsultas.reverse().forEach(c => {
+            const statusLimpo = (c.status || 'Pendente').toLowerCase();
+            const idNotificacao = `notif_${c.id}_${statusLimpo}`;
+            const estaLida = lidas.includes(idNotificacao);
+
+            if (!estaLida) {
+                contagemNaoLidas++;
+            }
+
+            // Customização da mensagem de acordo com a resposta do Hospital
+            let titulo = "Nova Consulta Registada";
+            let descricao = `A sua marcação de triagem para <b>${c.especialidade}</b> com o profissional <b>${c.medico}</b> foi registada com sucesso e aguarda validação da receção.`;
+            let iconClass = "fa-calendar-plus";
+            let itemExtraClass = "";
+
+            if (statusLimpo === 'confirmada') {
+                titulo = "Consulta Confirmada!";
+                descricao = `Boas notícias! A sua consulta de <b>${c.especialidade}</b> com o profissional <b>${c.medico}</b> marcada para o dia <b>${reformatarData(c.data)}</b> às <b>${c.hora}</b> foi confirmada.`;
+                iconClass = "fa-calendar-check";
+                itemExtraClass = "confirmada";
+            } else if (statusLimpo === 'cancelada') {
+                titulo = "Consulta Cancelada";
+                descricao = `Atenção: A sua solicitação de consulta de <b>${c.especialidade}</b> com <b>${c.medico}</b> foi cancelada. Por favor, verifique a sua agenda ou tente remarcar.`;
+                iconClass = "fa-calendar-times";
+                itemExtraClass = "cancelada";
+            }
+
+            const classNaoLida = estaLida ? "" : "nao-lida";
+
+            caixa.innerHTML += `
+                <div class="notif-item ${classNaoLida} ${itemExtraClass}" id="${idNotificacao}">
+                    <div class="notif-icon">
+                        <i class="fa ${iconClass}"></i>
+                    </div>
+                    <div class="notif-details">
+                        <span class="notif-title">${titulo}</span>
+                        <span class="notif-desc">${descricao}</span>
+                        <span class="notif-time">Atualizado em tempo real</span>
+                    </div>
+                    ${!estaLida ? `<button class="btn-ler-individual" onclick="marcarComoLida('${idNotificacao}')" title="Marcar como lida"><i class="fa fa-circle"></i></button>` : '<span style="color:#cbd5e1; font-size:12px; padding:5px;"><i class="fa fa-check"></i></span>'}
+                </div>
+            `;
+        });
+
+        atualizarBadgeSino(contagemNaoLidas);
+    }
+
+    function marcarComoLida(id) {
+        let lidas = JSON.parse(localStorage.getItem('notificacoesLidas')) || [];
+        if (!lidas.includes(id)) {
+            lidas.push(id);
+            localStorage.setItem('notificacoesLidas', JSON.stringify(lidas));
+        }
+        gerarNotificacoesDinamicas();
+    }
+
+    function marcarTodasNotificacoesLidas() {
+        const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        if (!utilizador) return;
+
+        let lidas = JSON.parse(localStorage.getItem('notificacoesLidas')) || [];
+
+        const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
+        minhasConsultas.forEach(c => {
+            const statusLimpo = (c.status || 'Pendente').toLowerCase();
+            const idNotificacao = `notif_${c.id}_${statusLimpo}`;
+            if (!lidas.includes(idNotificacao)) {
+                lidas.push(idNotificacao);
+            }
+        });
+
+        localStorage.setItem('notificacoesLidas', JSON.stringify(lidas));
+        gerarNotificacoesDinamicas();
+    }
+
+    function atualizarBadgeSino(quantidade) {
+        const badge = document.getElementById("notifBadge");
+        if (!badge) return;
+        
+        if (quantidade > 0) {
+            badge.textContent = quantidade;
+            badge.style.display = "inline-block";
+        } else {
+            badge.style.display = "none";
+        }
+    }
+
+    function reformatarData(dataStr) {
+        if (dataStr && dataStr.includes("-")) {
+            const partes = dataStr.split("-");
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+        return dataStr;
+    }
+</script>
 </body>
 </html>

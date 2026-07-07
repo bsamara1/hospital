@@ -8,7 +8,6 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
-
 /* RESET */
 *{
 margin:0;
@@ -211,6 +210,7 @@ font-weight:600;
 display:inline-block;
 background:#fff2cc;
 color:#7f6000;
+text-transform: uppercase;
 }
 
 .badge.confirmada{
@@ -269,28 +269,50 @@ color:#c65911;
                         <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="listaMinhasConsultas">
-                    </tbody>
+                <tbody id="listaMinhasConsultas"></tbody>
             </table>
         </div>
     </div>
 </div>
 
-<script src="../js/consultas.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // Inicializar dados de sessão fictícios para o paciente se não existirem
+        if (!localStorage.getItem('utilizadorLogado')) {
+            localStorage.setItem('utilizadorLogado', JSON.stringify({
+                nome: "João Baptista Silva",
+                email: "joao.silva@email.cv"
+            }));
+        }
+
+        carregarDadosPerfil();
         carregarHistoricoConsultas();
     });
 
+    function carregarDadosPerfil() {
+        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+        if (utilizador) {
+            document.getElementById('usuarioNome').textContent = utilizador.nome;
+            document.getElementById('usuarioEmail').textContent = utilizador.email;
+            if (utilizador.nome) {
+                document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
+            }
+        }
+    }
+
     function carregarHistoricoConsultas() {
         const tbody = document.getElementById("listaMinhasConsultas");
+        if (!tbody) return;
+        
         tbody.innerHTML = "";
 
-        const consultas = JSON.parse(localStorage.getItem('consultas')) || [];
+        // Puxar a chave partilhada de consultas do hospital
+        const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
         const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
 
         if (!utilizador) return;
 
+        // Filtrar registos apenas associados a este paciente logado
         const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
 
         if (minhasConsultas.length === 0) {
@@ -299,21 +321,25 @@ color:#c65911;
         }
 
         minhasConsultas.forEach(c => {
-            const badgeClass = c.estado === 'confirmada' ? 'badge confirmada' : (c.estado === 'cancelada' ? 'badge cancelada' : 'badge');
+            const estadoLimpo = (c.status || 'Pendente').toLowerCase();
+            
+            let badgeClass = 'badge'; 
+            if (estadoLimpo === 'confirmada') badgeClass = 'badge confirmada';
+            if (estadoLimpo === 'cancelada') badgeClass = 'badge cancelada';
             
             let dataFormatada = c.data;
-            if(c.data.includes("-")) {
+            if (c.data && c.data.includes("-")) {
                 const partes = c.data.split("-");
-                dataFormatada = `\${partes[2]}/\${partes[1]}/\${partes[0]}`;
+                dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
             }
 
             tbody.innerHTML += `
                 <tr>
-                    <td><b>\${c.medico}</b></td>
-                    <td>\${dataFormatada}</td>
-                    <td>\${c.hora}</td>
-                    <td>\${c.especialidade}</td>
-                    <td><span class="\${badgeClass}">\${c.estado.toUpperCase()}</span></td>
+                    <td><b>${c.medico}</b></td>
+                    <td>${dataFormatada}</td>
+                    <td>${c.hora}</td>
+                    <td>${c.especialidade}</td>
+                    <td><span class="${badgeClass}">${estadoLimpo}</span></td>
                 </tr>
             `;
         });
