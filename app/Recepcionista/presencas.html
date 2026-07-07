@@ -1,69 +1,114 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confirmar Presença - Rececionista</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
-  body { display: flex; background: #f5f7fb; height: 100vh; }
-  .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; position: fixed; height: 100vh; }
-  .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; margin-bottom: 30px; }
-  .logo img { width: 50px; height: 50px; }
-  .sidebar a { color: white; text-decoration: none; padding: 12px 15px; display: flex; align-items: center; gap: 10px; border-radius: 8px; margin: 5px 0; }
-  .sidebar a.active { background: #163a63; }
-  .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-  .header-line { height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
-  .cards { display: flex; gap: 20px; margin-bottom: 25px; }
-  .card { background: white; padding: 20px; flex: 1; border-radius: 12px; border: 1px solid #e2e8f0; }
-  .table-card { background: white; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; }
-  table { width: 100%; border-collapse: collapse; text-align: left; }
-  th, td { padding: 14px; border-bottom: 1px solid #e2e8f0; }
-  th { background: #f8fafc; }
-  .presence-done { color: #16a34a; font-weight: bold; }
-  button.confirm-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Presença - Rececionista</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* RESET & BASE STYLES */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+    body { display: flex; background: #f5f7fb; height: 100vh; }
+    
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: #0b2a4a; color: #fff; display: flex; flex-direction: column; padding: 20px; height: 100vh; position: fixed; }
+    .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: bold; margin-bottom: 30px; }
+    .logo img { width: 50px; height: 50px; object-fit: contain; }
+    .bottom { margin-top: auto; }
+    .sidebar a { color: white; text-decoration: none; padding: 12px 15px; margin: 5px 0; display: flex; align-items: center; gap: 10px; border-radius: 8px; font-size: 15px; transition: 0.3s; cursor: pointer; }
+    .sidebar a:hover, .sidebar a.active { background: #163a63; color: #fff; }
+    .divider { height: 1px; background: rgba(255, 255, 255, 0.15); margin: 12px 0; }
+    .sidebar .logout { color: #ff6b6b; display: flex; align-items: center; gap: 10px; padding: 12px 15px; border-radius: 8px; text-decoration: none; }
+    .logout:hover { background: #163a63; }
+
+    /* MAIN CONTENT AREA */
+    .main { flex: 1; padding: 25px; margin-left: 260px; overflow: auto; }
+    
+    /* HEADER & TOPBAR */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+    .header-line { margin-left: -25px; margin-right: -25px; height: 1px; background: rgba(0,0,0,0.08); margin-bottom: 25px; }
+    
+    /* FILTROS DE PESQUISA */
+    .search-row { display: flex; gap: 15px; margin-bottom: 20px; }
+    .search-row input { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; }
+
+    /* STATS CARDS */
+    .stats-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    .stat-card h4 { font-size: 13px; color: #64748b; margin-bottom: 5px; font-weight: 600; }
+    .stat-card p { font-size: 24px; font-weight: bold; color: #0b2a4a; }
+
+    /* TABELA DE GESTÃO */
+    .table-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle; }
+    th { background: #f8fafc; color: #475569; font-weight: 600; }
+    tr:hover td { background-color: #f8fafc; }
+    
+    /* STATUS BADGES */
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; text-transform: capitalize; font-weight: 600; display: inline-block; }
+    .badge.confirmada { background: #d4edda; color: #155724; }
+    .badge.pendente { background: #fff3cd; color: #856404; }
+    .badge.presente { background: #cfe2ff; color: #084298; }
+
+    /* BOTÕES DE AÇÃO */
+    td button { border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; color: white; transition: 0.2s; }
+    button.confirm { background: #16a34a; }
+    button.confirm:hover { background: #15803d; }
+  </style>
 </head>
 <body>
 
-<div class="sidebar">
-  <div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
-  <a href="index.html" data-page="index"><i class="fa fa-chart-pie"></i> Painel Principal</a>
-  <a href="pacientes.html" data-page="pacientes"><i class="fa fa-user"></i> Pacientes</a>
-  <a href="consultas.html" data-page="consultas"><i class="fa fa-calendar-alt"></i> Consultas</a>
-  <a href="agenda.html" data-page="agenda"><i class="fa fa-calendar-check"></i> Agenda Médica</a>
-  <a href="presencas.html" data-page="presencas" class="active"><i class="fa fa-id-badge"></i> Confirmar Presença</a>
-</div>
-
-<div class="main">
-  <div class="header"><h2>Confirmar Presença</h2></div>
-  <div class="header-line"></div>
-
-  <div class="cards">
-    <div class="card"><h4>Consultas de Hoje</h4><p id="totalHoje">0</p></div>
-    <div class="card"><h4>Aguardam Chamada</h4><p id="aguardam">0</p></div>
-    <div class="card"><h4>Presentes na Sala</h4><p id="totalPresentes">0</p></div>
+  <div class="sidebar">
+    <div class="logo"><img src="../assets/img/logo.png" alt="Logo"> HAN</div>
+    <a href="index.html"><i class="fa fa-chart-pie"></i> Painel Principal</a>
+    <a href="pacientes.html"><i class="fa fa-user"></i> Pacientes</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="agenda.html"><i class="fa fa-calendar-check"></i> Agenda Médica</a>
+    <a href="presencas.html" class="active"><i class="fa fa-id-badge"></i> Confirmar Presença</a>
+    
+    <div class="bottom">
+      <div class="divider"></div>
+      <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
+    </div>
   </div>
 
-  <div class="table-card">
-    <h3>Pacientes de Hoje</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Paciente</th>
-          <th>Consulta / Especialidade</th>
-          <th>Hora Prevista</th>
-          <th>Estado na Sala</th>
-        </tr>
-      </thead>
-      <tbody id="tabelaPresencas"></tbody>
-    </table>
-  </div>
-</div>
+  <div class="main">
+    <div class="header">
+      <h2>Sala de Espera - Controlo de Presenças</h2>
+    </div>
+    <div class="header-line"></div>
 
-<script src="js/recepcionista-common.js"></script>
-<script src="js/presencas.js"></script>
+    <div class="search-row">
+      <input id="pesquisaPresenca" type="text" placeholder="Pesquisar paciente por nome ou médico...">
+    </div>
+
+    <div class="stats-container">
+      <div class="stat-card"><h4>Consultas de Hoje</h4><p id="totalHoje">0</p></div>
+      <div class="stat-card"><h4>Aguardam Chamada</h4><p id="aguardam">0</p></div>
+      <div class="stat-card"><h4>Presentes na Sala</h4><p id="totalPresentes">0</p></div>
+    </div>
+
+    <div class="table-card">
+      <table id="tabelaDados">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Médico Alocado</th>
+            <th>Especialidade</th>
+            <th>Data da Consulta</th>
+            <th>Hora Prevista</th>
+            <th>Estado Atual</th>
+            <th>Ações da Receção</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaPresencas"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../../storage.js"></script>
+  <script src="js/recepcionista-common.js"></script>
+  <script src="js/presencas.js"></script>
 </body>
 </html>

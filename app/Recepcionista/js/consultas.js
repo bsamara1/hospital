@@ -13,14 +13,10 @@ async function initConsultas() {
     }
     
     try {
-        // Carrega os dados das funções globais[cite: 1]
+        // Carrega os dados das funções de persistência global existentes no seu sistema
         [consultas, pacientes, medicos] = await Promise.all([loadConsultas(), loadPacientes(), loadMedicos()]);
-        
-        // Debug para verificar no Console do Navegador (F12) se os dados estão corretos
-        console.log("Pacientes carregados:", pacientes);
-        console.log("Médicos carregados:", medicos);
     } catch (error) {
-        console.error("Erro ao carregar dados iniciais:", error);
+        console.error("Erro ao carregar dados iniciais de persistência local:", error);
     }
 
     const pesquisaInput = document.getElementById("pesquisaConsulta");
@@ -29,7 +25,9 @@ async function initConsultas() {
     if (pesquisaInput) pesquisaInput.addEventListener("input", renderTabela);
     if (filtroSelect) filtroSelect.addEventListener("change", renderTabela);
 
-    preencherSelectPacientes();
+    // 1º Carrega os pacientes do TXT, depois lê as especialidades e monta a tabela
+    await preencherSelectPacientes();
+    await carregarMedicosETxt(); // Nova função unificada para garantir sincronismo
     preencherSelectEspecialidades();
 
     const pacienteFiltroExterno = localStorage.getItem("filtroConsultaPaciente");
@@ -41,41 +39,97 @@ async function initConsultas() {
     renderTabela();
 }
 
-// 1. FILTRO DE PACIENTES (Seguro contra variações do campo 'tipo' ou 'role')
-function preencherSelectPacientes() {
+// 1. FILTRO DE PACIENTES - Carrega de utilizadores.txt subindo duas pastas (../../)
+async function preencherSelectPacientes() {
     const select = document.getElementById("consultaPaciente");
     if (!select) return;
     
-    // Filtra se tipo for "paciente" ou assume todos se a propriedade não existir
-    const apenasPacientes = pacientes.filter(p => {
-        if (!p.tipo) return true; 
-        return p.tipo.toLowerCase() === "paciente";
-    });
-    
-    select.innerHTML = '<option value="">Selecionar paciente</option>' +
-        apenasPacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
+    select.innerHTML = '<option value="">Selecionar paciente</option>';
+
+    try {
+        // CORREÇÃO DE ROTA: Sair de app/recepcionista/ para ler utilizadores.txt na raíz
+        const resposta = await fetch('../../utilizadores.txt'); 
+        if (!resposta.ok) throw new Error("Não foi possível carregar o ficheiro de utilizadores.");
+        
+        const texto = await resposta.text();
+        const linhas = texto.split('\n');
+        
+        let novosPacientes = [];
+
+        linhas.forEach(linha => {
+            if (!linha.trim()) return; 
+            
+            const dados = lineSplitter(linha); // Evita falhas com espaços extras
+            if (dados.length < 2) return;
+
+            const nomePaciente = dados[0].trim();
+            const cargo = dados[dados.length - 1].trim(); 
+            const emailPaciente = dados[5] ? dados[5].trim() : "";
+
+            // Filtra rigorosamente pelo perfil "Paciente"
+            if (cargo.toLowerCase() === 'paciente' && nomePaciente) {
+                const option = document.createElement('option');
+                option.value = nomePaciente;
+                option.textContent = nomePaciente;
+                select.appendChild(option);
+
+                novosPacientes.push({
+                    nome: nomePaciente,
+                    email: emailPaciente,
+                    tipo: "Paciente"
+                });
+            }
+        });
+
+        if (novosPacientes.length > 0) {
+            pacientes = novosPacientes;
+        }
+
+    } catch (erro) {
+        console.error("Erro ao processar utilizadores.txt, a usar fallback de memória:", erro);
+        if (pacientes && pacientes.length > 0) {
+            const apenasPacientes = pacientes.filter(p => p.tipo && p.tipo.toLowerCase() === "paciente");
+            select.innerHTML = '<option value="">Selecionar paciente</option>' +
+                apenasPacientes.map(p => `<option value="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</option>`).join("");
+        }
+    }
 }
 
-// 2. FILTRO DE ESPECIALIDADES DINÂMICAS (Vindas do arquivo de médicos)
+// Auxiliar para ler medicos.txt da raíz de forma síncrona
+async function carregarMedicosETxt() {
+    try {
+        // CORREÇÃO DE ROTA: Buscar medicos.txt recuando duas pastas
+        const resposta = await fetch('../../medicos.txt');
+        if (resposta.ok) {
+            const jsonDados = await resposta.json();
+            if (Array.isArray(jsonDados) && jsonDados.length > 0) {
+                medicos = jsonDados;
+            }
+        }
+    } catch (e) {
+        console.warn("Ficheiro medicos.txt não lido via fetch (JSON), a manter array 'medicos' global.", e);
+    }
+}
+
+// 2. FILTRO DE ESPECIALIDADES DINÂMICAS 
 function preencherSelectEspecialidades() {
     const select = document.getElementById("consultaEspecialidade");
     if (!select) return;
     
-    // Obtém especialidades únicas vindas dos médicos carregados
+    // Obtém especialidades sem repetições extraídas do JSON de médicos
     const cacheEspecialidades = [...new Set(medicos.map(m => m.especialidade).filter(Boolean))];
     
     select.innerHTML = '<option value="">Selecionar especialidade</option>' +
         cacheEspecialidades.map(e => `<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join("");
 }
 
-// 3. FLUXO DEPENDENTE: FILTRA MÉDICOS APENAS PELA ESPECIALIDADE SELECIONADA[cite: 5]
+// 3. FLUXO DEPENDENTE: FILTRA MÉDICOS APENAS PELA ESPECIALIDADE SELECIONADA
 function preencherMedicosModal() {
     const esp = document.getElementById("consultaEspecialidade").value;
     const selectMed = document.getElementById("consultaMedico");
     const selectHora = document.getElementById("consultaHora");
     if (!selectMed) return;
     
-    // Limpa o seletor de horários até que o médico seja determinado
     if (selectHora) {
         selectHora.innerHTML = '<option value="">Selecione o horário...</option>';
     }
@@ -85,11 +139,11 @@ function preencherMedicosModal() {
         return;
     }
     
-    // Filtra apenas médicos ativos daquela especialidade[cite: 5]
+    // Filtra médicos pertencentes à especialidade que estejam ativos
     const filtrados = medicos.filter(m => m.especialidade === esp && (m.status === "ativo" || !m.status));
     
     if (filtrados.length === 0) {
-        selectMed.innerHTML = '<option value="">Nenhum médico ativo disponível</option>';
+        selectMed.innerHTML = '<option value="">Nenhum médico disponível</option>';
         return;
     }
     
@@ -97,7 +151,7 @@ function preencherMedicosModal() {
         filtrados.map(m => `<option value="${escapeHtml(m.nome)}">${escapeHtml(m.nome)}</option>`).join("");
 }
 
-// 4. FLUXO DEPENDENTE: CARREGA OS HORÁRIOS ESPECÍFICOS E CONFIGURADOS DO MÉDICO[cite: 5]
+// 4. FLUXO DEPENDENTE: CARREGA OS HORÁRIOS ESPECÍFICOS E CONFIGURADOS DO MÉDICO
 function carregarHorariosDoMedico() {
     const nomeMed = document.getElementById("consultaMedico").value;
     const selectHora = document.getElementById("consultaHora");
@@ -108,16 +162,13 @@ function carregarHorariosDoMedico() {
         return;
     }
 
-    // Procura o objeto completo do médico para extrair sua string de horários[cite: 5]
     const medicoObj = medicos.find(m => m.nome === nomeMed);
     
     if (medicoObj && medicoObj.horarios) {
-        // Divide a string por vírgulas (ex: "08:00, 09:00, 10:00")[cite: 5]
         const horas = medicoObj.horarios.split(",");
         selectHora.innerHTML = '<option value="">Selecione o horário...</option>' +
             horas.map(h => `<option value="${h.trim()}">${h.trim()}</option>`).join("");
     } else {
-        // Fallback preventivo caso o médico não tenha horários definidos
         selectHora.innerHTML = `
             <option value="">Selecionar horário</option>
             <option value="08:00">08:00</option>
@@ -186,25 +237,23 @@ function renderTabela() {
     `).join("");
 }
 
-// 7. MODAL: NOVA CONSULTA (RESETA CAMPOS E RECONSTRÓI SELETORES)
+// 7. MODAL: NOVA CONSULTA
 function abrirModalMarcar() {
     consultaEmEdicao = null;
     document.getElementById("modalTitulo").innerText = "Marcar Consulta";
     document.getElementById("consultaPaciente").value = "";
     document.getElementById("consultaEspecialidade").value = "";
     
-    // Força o bloqueio sequencial inicial
     document.getElementById("consultaMedico").innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
     document.getElementById("consultaHora").innerHTML = '<option value="">Selecione o horário...</option>';
     
-    // Limpa as checkboxes de sintomas
     document.querySelectorAll('input[name="sintoma"]').forEach(cb => cb.checked = false);
     
     document.getElementById("consultaData").value = "";
     document.getElementById("modalConsulta").style.display = "flex";
 }
 
-// 8. MODAL: REAGENDAMENTO (PREENCHE EM FLUXO DE ACORDO COM O HISTÓRICO)
+// 8. MODAL: REAGENDAMENTO
 function abrirModalReagendar(id) {
     const consulta = consultas.find(c => c.id === id);
     if (!consulta) return;
@@ -214,7 +263,6 @@ function abrirModalReagendar(id) {
     document.getElementById("consultaPaciente").value = consulta.paciente;
     document.getElementById("consultaEspecialidade").value = consulta.especialidade || "";
     
-    // Executa a cascata de filtros para remontar as dependências corretas[cite: 5]
     preencherMedicosModal();
     document.getElementById("consultaMedico").value = consulta.medico;
     
@@ -222,7 +270,6 @@ function abrirModalReagendar(id) {
     document.getElementById("consultaData").value = consulta.data;
     document.getElementById("consultaHora").value = consulta.hora;
     
-    // Remarca os sintomas guardados anteriormente se existirem
     document.querySelectorAll('input[name="sintoma"]').forEach(cb => {
         cb.checked = consulta.sintomas && consulta.sintomas.includes(cb.value);
     });
@@ -235,7 +282,7 @@ function fecharModal() {
     consultaEmEdicao = null;
 }
 
-// 9. SUBMISSÃO COM VÍNCULO AUTOMÁTICO DE EMAIL ADQUIRIDO DE PACIENTES[cite: 4, 6]
+// 9. SUBMISSÃO COM VÍNCULO DE EMAIL ADQUIRIDO
 async function guardarConsulta() {
     const paciente = document.getElementById("consultaPaciente").value;
     const medico = document.getElementById("consultaMedico").value;
@@ -248,11 +295,9 @@ async function guardarConsulta() {
         return;
     }
 
-    // Procura o e-mail correspondente do paciente nos registos carregados de utilizadores[cite: 6]
     const pacienteEncontrado = pacientes.find(p => p.nome && p.nome.trim().toLowerCase() === paciente.trim().toLowerCase());
     const emailPaciente = pacienteEncontrado && pacienteEncontrado.email ? pacienteEncontrado.email : "";
 
-    // Recolha de sintomas da triagem caso existam no DOM
     const checkboxes = document.querySelectorAll('input[name="sintoma"]:checked');
     const sintomas = checkboxes.length ? Array.from(checkboxes).map(cb => cb.value) : [];
     const prioridadeCalculada = (sintomas.includes("dor-peito") || sintomas.includes("falta-ar")) ? "Alta" : "Média";
@@ -281,7 +326,7 @@ async function guardarConsulta() {
                 sintomas: sintomas
             });
         }
-        consultas = await loadConsultas(); // Recarrega da persistência texto[cite: 4]
+        if (typeof loadConsultas === "function") consultas = await loadConsultas();
         fecharModal();
         renderTabela();
     } catch (error) {
@@ -293,7 +338,7 @@ async function guardarConsulta() {
 async function confirmarConsulta(id) {
     try {
         await atualizarConsulta(id, { estado: "confirmada" });
-        consultas = await loadConsultas();
+        if (typeof loadConsultas === "function") consultas = await loadConsultas();
         renderTabela();
     } catch (error) { alert(error.message); }
 }
@@ -302,12 +347,12 @@ async function cancelarConsulta(id) {
     if (!confirm("Deseja cancelar esta consulta?")) return;
     try {
         await atualizarConsulta(id, { estado: "cancelada" });
-        consultas = await loadConsultas();
+        if (typeof loadConsultas === "function") consultas = await loadConsultas();
         renderTabela();
     } catch (error) { alert(error.message); }
 }
 
-// 11. DETALHES CLÍNICOS DA CONSULTA E TRIAGEM (MÉTODO 100% OPERACIONAL AGORA)
+// 11. DETALHES CLÍNICOS DA CONSULTA
 function verDetalhes(id) {
     const c = consultas.find(item => item.id === id);
     if (!c) return;
@@ -341,7 +386,11 @@ function estadoBadge(estado) {
     return `<span class="badge ${cls}">${typeof capitalize === "function" ? capitalize(estado) : estado}</span>`;
 }
 
-// 12. AUXILIARES DE TRATAMENTO DE TEXTO
+// Auxiliar de divisão robusta de strings
+function lineSplitter(linha) {
+    return linha.split(';');
+}
+
 function escapeHtml(string) {
     if (!string) return "";
     return String(string).replace(/[&<>"']/g, function (s) {
@@ -349,4 +398,5 @@ function escapeHtml(string) {
     });
 }
 
+// Ouvinte global
 window.addEventListener("DOMContentLoaded", initConsultas);

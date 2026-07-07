@@ -45,12 +45,26 @@
     "especialidade": "Clínica Geral",
     "data": "2026-07-17",
     "hora": "08:00",
-    "estado": "pendente",
+    "estado": "presente",
     "sintomas": [
       "dor-peito",
       "falta-ar",
       "febre-alta",
       "tosse"
+    ],
+    "prioridade": "alta"
+  },
+  {
+    "id": 1783432105525,
+    "paciente": "samara tavares",
+    "medico": "Dr. Sousa",
+    "especialidade": "Ortopedia",
+    "data": "2026-07-11",
+    "hora": "08:30",
+    "estado": "pendente",
+    "sintomas": [
+      "dor-peito",
+      "febre-alta"
     ],
     "prioridade": "alta"
   }
