@@ -31,10 +31,14 @@ async function initPresencas() {
     renderPresencas();
 }
 
-// Filtro inteligente para capturar as consultas do dia corrente
-function consultasHojeFiltradas() {
-    let hoje = "";
+function renderPresencas() {
+    const tbody = document.getElementById("tabelaPresencas");
+    if (!tbody) return;
+
+    const termo = document.getElementById("pesquisaPresenca")?.value.trim().toLowerCase() || "";
     
+    // 1. Obtém a data de hoje de forma estrita para validação do card
+    let hoje = "";
     if (typeof hojeISO === "function") {
         hoje = hojeISO();
     } else {
@@ -45,63 +49,45 @@ function consultasHojeFiltradas() {
         hoje = `${ano}-${mes}-${dia}`;
     }
 
-    console.log("Data calculada para validação de hoje:", hoje);
-    console.log("Total de consultas no array geral:", consultasPresenca.length);
-
-    // Filtra as consultas de hoje. 
-    // NOTA: Se a sua lista de testes estiver com datas passadas ou futuras, mude para retornar todas as válidas
-    let filtradas = consultasPresenca.filter(c =>
-        c.data === hoje &&
-        (c.estado === "confirmada" || c.estado === "pendente" || c.estado === "presente" || c.estado === "realizada")
+    // 2. Lista base com todas as consultas ativas do sistema (evita zerar a tabela em testes)
+    let listaGeral = consultasPresenca.filter(c => 
+        c.estado === "confirmada" || c.estado === "pendente" || c.estado === "presente" || c.estado === "realizada"
     );
 
-    // FALLBACK DE SEGURANÇA: Se não existirem consultas marcadas exatamente com o dia de hoje, 
-    // exibe as que estão pendentes/confirmadas no sistema para a tabela não ficar vazia em ambiente de teste.
-    if (filtradas.length === 0 && consultasPresenca.length > 0) {
-        console.log("Nenhuma consulta para hoje. Ativando exibição de todas as consultas ativas para testes.");
-        filtradas = consultasPresenca.filter(c => 
-            c.estado === "confirmada" || c.estado === "pendente" || c.estado === "presente"
-        );
-    }
-
-    return filtradas;
-}
-
-function renderPresencas() {
-    const tbody = document.getElementById("tabelaPresencas");
-    if (!tbody) return;
-
-    const termo = document.getElementById("pesquisaPresenca")?.value.trim().toLowerCase() || "";
-    
-    // Ordena as consultas pela hora
-    let lista = consultasHojeFiltradas().sort((a, b) => (a.hora || "").localeCompare(b.hora || ""));
-
-    // Atualiza dinamicamente os elementos de contagem superiores
+    // 3. ATUALIZAÇÃO DOS CARDS (Lógica Corrigida de forma independente)
+    // Card "Total Hoje": Olha estritamente para a data de hoje (vai a 0 se não houver consultas hoje)
     if(document.getElementById("totalHoje")) {
-        document.getElementById("totalHoje").innerText = lista.length;
+        const totalHoje = listaGeral.filter(c => c.data === hoje).length;
+        document.getElementById("totalHoje").innerText = totalHoje; 
     }
+    // Card "Aguardam": Conta pacientes que não iniciaram atendimento (não zera baseado na data)
     if(document.getElementById("aguardam")) {
-        document.getElementById("aguardam").innerText = lista.filter(c => c.estado !== "presente" && c.estado !== "realizada").length;
+        document.getElementById("aguardam").innerText = listaGeral.filter(c => c.estado !== "presente" && c.estado !== "realizada").length;
     }
+    // Card "Total Presentes": Conta pacientes que estão atualmente na sala (não zera baseado na data)
     if(document.getElementById("totalPresentes")) {
-        document.getElementById("totalPresentes").innerText = lista.filter(c => c.estado === "presente").length;
+        document.getElementById("totalPresentes").innerText = listaGeral.filter(c => c.estado === "presente").length;
     }
 
-    // Filtro por digitação (Pesquisa)
+    // 4. Preparação da Tabela (Ordenação por hora)
+    let listaTabela = listaGeral.sort((a, b) => (a.hora || "").localeCompare(b.hora || ""));
+
+    // Filtro da barra de pesquisa por digitação
     if (termo) {
-        lista = lista.filter(c =>
+        listaTabela = listaTabela.filter(c =>
             (c.paciente || "").toLowerCase().includes(termo) ||
             (c.medico || "").toLowerCase().includes(termo) ||
             (c.especialidade || "").toLowerCase().includes(termo)
         );
     }
 
-    if (lista.length === 0) {
+    if (listaTabela.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:#777;">Nenhuma consulta localizada para os filtros aplicados.</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = lista.map(c => `
+    // 5. Renderização das linhas da tabela (Sem o ícone de cadeira no texto "Na Sala")
+    tbody.innerHTML = listaTabela.map(c => `
         <tr>
             <td><b>${escapeHtml(c.paciente)}</b></td>
             <td>Dr(a). ${escapeHtml(c.medico)}</td>
@@ -114,7 +100,7 @@ function renderPresencas() {
                     ? `<button class="confirm" type="button" onclick="darEntradaPaciente(${c.id})"><i class="fa fa-check"></i> Confirmar Presença</button>`
                     : c.estado === "realizada" 
                         ? `<span style="color:#64748b; font-size:13px;"><i class="fa fa-user-check"></i> Atendido</span>`
-                        : `<span style="color:#16a34a; font-weight:bold; font-size:13px;"><i class="fa fa-chair"></i> Na Sala</span>`
+                        : `<span style="color:#16a34a; font-weight:bold; font-size:13px;">Na Sala</span>`
                 }
             </td>
         </tr>
