@@ -200,5 +200,8 @@ rececao@hospital.cv;LOGIN_SUCESSO;2026-07-08 07:09:12
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-08 07:09:16
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-08 07:09:20
 >>>>>>> c7023a5cddc42bfd2cd61c0824a4726e0d6e36c9
+<<<<<<< HEAD
 >>>>>>> 31b24ff6aced55142d60c58acc46ed364cb0d776
 btavares.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-08 11:24:41
+=======
+>>>>>>> 804a904f750a0e7534b65ef66c9e24389c0336c9
