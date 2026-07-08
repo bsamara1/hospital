@@ -8,19 +8,86 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
 <style>
+/* RESET & BASE */
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
-body{display:flex;background:#f5f7fb;min-height:100vh;}
-.sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
-.sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
-.sidebar .logo img{width:50px;height:50px;object-fit:contain;}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;font-size:16px;
-transition: 0.3s ease, transform 0.2s ease;}
-.sidebar a:hover,.sidebar a.active{background:#163a63;transform: translateX(5px);}
-.sidebar a:active{transform: scale(0.98) translateX(5px);}
-.sidebar .bottom{margin-top:auto;}
-.logout{color:#ff6b6b;}
-.divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
-.main{flex:1;padding:25px;overflow:auto;}
+body{display:flex;background:#f5f7fb;height:100vh;overflow: hidden;}
+
+/* SIDEBAR */
+.sidebar{
+width: 260px;
+background: #0b2a4a;
+color: #fff;
+display: flex;
+flex-direction: column;
+padding: 20px;
+height: 100vh;
+position: fixed;
+z-index: 10;
+}
+
+.logo{
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 22px;
+font-weight: bold;
+color: #fff;
+margin-bottom: 30px;
+}
+
+.logo span {
+font-size: 32px;
+font-weight: bold;
+}
+
+.logo img {
+width: 50px;
+height: 50px;
+object-fit: contain;
+}
+
+.sidebar a {
+color: white;
+text-decoration: none;
+padding: 12px 15px;
+margin: 5px 0;
+display: flex;
+align-items: center;
+gap: 10px;
+border-radius: 8px;
+transition: 0.3s;
+font-size: 18px;
+cursor: pointer;
+}
+
+.sidebar a:hover, .sidebar a.active {
+background: #163a63;
+}
+
+.bottom{
+margin-top: auto;
+}
+
+.sidebar .logout {
+color: #ff6b6b;
+font-size: 16px;
+}
+
+.divider {
+height: 1px;
+background: rgba(255,255,255,0.15);
+margin: 12px 0;
+}
+
+/* MAIN CONTENT */
+.main{
+flex:1;
+margin-left: 260px;
+padding:25px;
+overflow-y:auto;
+height: 100vh;
+}
+
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
 .header-line{margin-left:-25px;margin-right:-25px;height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
 .header h2{font-size:20px;color:#333;}
@@ -50,7 +117,6 @@ transition: 0.3s ease, transform 0.2s ease;}
 .medico-actions{display:flex;justify-content:flex-end;margin-top:auto;padding-top:10px;}
 .medico-actions button{padding:10px 16px;border:none;border-radius:10px;background:#054a93;color:#fff;font-weight:600;font-size:13px;cursor:pointer;transition:0.2s, transform 0.1s;}
 .medico-actions button:hover{opacity:0.95;transform:scale(1.02);}
-.medico-actions button:active{transform:scale(0.98);}
 
 input#pesquisaMedico{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;outline:none;font-size:14px;transition:border-color 0.2s;}
 input#pesquisaMedico:focus{border-color:#054a93;}
@@ -74,177 +140,171 @@ input#pesquisaMedico:focus{border-color:#054a93;}
 </head>
 <body>
 <div class="sidebar">
-    <div class="logo"><img src="../assets/img/logo.png" alt="Logo HAN"><span>HAN</span></div>
-    <a href="index.html" data-page="index"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
-    <a href="marcar_consulta.html" data-page="marcar consulta"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
-    <a href="consultas.html" data-page="consultas"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
-    <a href="medicos.html" data-page="medicos" class="active"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
-    <a href="notificacoes.html" data-page="notificacoes"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
-    <a href="perfil.html" data-page="perfil"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
-    <div class="bottom">
-        <div class="divider"></div>
-        <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
-    </div>
+<div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
+<a href="index.html"><i class="fa fa-home"></i> Painel Principal</a>
+<a href="marcar_consulta.html"><i class="fa fa-notes-medical"></i> Marcar Consulta / Triagem</a>
+<a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+<a href="medicos.html" class="active"><i class="fa fa-user-md"></i> Corpo Médico</a>
+<a href="notificacoes.html"><i class="fa fa-bell"></i> Notificações</a>
+<a href="perfil.html"><i class="fa fa-user"></i> Meu Perfil</a>
+<div class="bottom"><div class="divider"></div><a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a></div>
 </div>
-<div class="main">
-    <div class="header">
-        <h2>Corpo Médico Disponível</h2>
-        <div class="user-box">
-            <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
-            <a href="perfil.html" class="user-profile-link">
-            <div class="avatar-circle" id="usuarioAvatar">P</div>
-            <div class="user-info">
-                <span id="usuarioNome">Pacientes</span>
-                <span id="usuarioEmail"></span>
-            </div>
-        </a>
-        </div>
-    </div>
-    <div class="header-line"></div>
-    
-    <div class="table-card">
-        <input id="pesquisaMedico" placeholder="Pesquisar por nome de médico, especialidade ou horários disponíveis..." oninput="renderMedicos()">
-    </div>
-    
-    <div class="table-card">
-        <h3>Lista de Profissionais</h3>
-        <div id="listaMedicos" class="medicos-grid"></div>
-    </div>
 
-    <div id="modalAgenda" class="modal" style="display:none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalMedicoNome">Agenda do Médico</h3>
-                <button class="modal-close" onclick="fecharModalMedico()">×</button>
-            </div>
-            <div class="modal-body" id="modalMedicoDetalhes"></div>
-            <div class="modal-footer">
-                <button class="btn-agendar" onclick="redirecionarParaMarcacao()">Marcar Consulta</button>
-                <button onclick="fecharModalMedico()">Fechar</button>
-            </div>
-        </div>
-    </div>
+<div class="main">
+<div class="header">
+<h2>Corpo Médico Disponível</h2>
+<div class="user-box">
+<a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;"><i class="fa fa-bell"></i><span id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#dc3545; color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; line-height:1.4;"></span></a>
+<a href="perfil.html" class="user-profile-link">
+<div class="avatar-circle" id="usuarioAvatar">P</div>
+<div class="user-info">
+<span id="usuarioNome">Pacientes</span>
+<span id="usuarioEmail"></span>
+</div>
+</a>
+</div>
+</div>
+<div class="header-line"></div>
+
+<div class="table-card">
+<input id="pesquisaMedico" placeholder="Pesquisar por nome de médico, especialidade ou horários disponíveis..." oninput="renderMedicos()">
+</div>
+
+<div class="table-card">
+<h3>Lista de Profissionais</h3>
+<div id="listaMedicos" class="medicos-grid"></div>
+</div>
+
+<div id="modalAgenda" class="modal" style="display:none;">
+<div class="modal-content">
+<div class="modal-header">
+<h3 id="modalMedicoNome">Agenda do Médico</h3>
+<button class="modal-close" onclick="fecharModalMedico()">×</button>
+</div>
+<div class="modal-body" id="modalMedicoDetalhes"></div>
+<div class="modal-footer">
+<button class="btn-agendar" onclick="redirecionarParaMarcacao()">Marcar Consulta</button>
+<button onclick="fecharModalMedico()">Fechar</button>
+</div>
+</div>
+</div>
 </div>
 
 <script src="../js/consultas.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // Inicializar dados de sessão simulados para o paciente caso não existam
-        if (!localStorage.getItem('utilizadorLogado')) {
-            localStorage.setItem('utilizadorLogado', JSON.stringify({
-                nome: "João Baptista Silva",
-                email: "joao.silva@email.cv"
-            }));
-        }
+document.addEventListener("DOMContentLoaded", () => {
+if (!localStorage.getItem('utilizadorLogado')) {
+localStorage.setItem('utilizadorLogado', JSON.stringify({
+nome: "João Baptista Silva",
+email: "joao.silva@email.cv"
+}));
+}
 
-        carregarDadosPerfil();
-        renderMedicos();
-    });
+carregarDadosPerfil();
+renderMedicos();
+});
 
-    function carregarDadosPerfil() {
-        const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
-        if (utilizador) {
-            document.getElementById('usuarioNome').textContent = utilizador.nome;
-            document.getElementById('usuarioEmail').textContent = utilizador.email;
-            if (utilizador.nome) {
-                document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
-            }
-        }
-    }
+function carregarDadosPerfil() {
+const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
+if (utilizador) {
+document.getElementById('usuarioNome').textContent = utilizador.nome;
+document.getElementById('usuarioEmail').textContent = utilizador.email;
+if (utilizador.nome) {
+document.getElementById('usuarioAvatar').textContent = utilizador.nome.charAt(0).toUpperCase();
+}
+}
+}
 
-    function renderMedicos() {
-        const grid = document.getElementById("listaMedicos");
-        if (!grid) return;
-        grid.innerHTML = "";
+function renderMedicos() {
+const grid = document.getElementById("listaMedicos");
+if (!grid) return;
+grid.innerHTML = "";
 
-        const termoPesquisa = document.getElementById("pesquisaMedico").value.toLowerCase();
+const termoPesquisa = document.getElementById("pesquisaMedico").value.toLowerCase();
 
-        // Variável 'medicosHospital' herdada diretamente do teu script externo ../js/consultas.js
-        if (typeof medicosHospital === 'undefined') {
-            grid.innerHTML = `<p style="color:red; grid-column: 1/-1;">Erro: A base de dados de médicos não foi carregada corretamente.</p>`;
-            return;
-        }
+if (typeof medicosHospital === 'undefined') {
+grid.innerHTML = `<p style="color:red; grid-column: 1/-1;">Erro: A base de dados de médicos não foi carregada corretamente.</p>`;
+return;
+}
 
-        // Filtrar apenas médicos ativos e que correspondam ao termo de busca
-        const medicosFiltrados = medicosHospital.filter(m => {
-            const statusAtivo = (m.status || '').toLowerCase() === 'ativo';
-            const correspondeNome = (m.nome || '').toLowerCase().includes(termoPesquisa);
-            const correspondeEspecialidade = (m.especialidade || '').toLowerCase().includes(termoPesquisa);
-            const correspondeHorarios = (m.horarios || '').toLowerCase().includes(termoPesquisa);
-            
-            return statusAtivo && (correspondeNome || correspondeEspecialidade || correspondeHorarios);
-        });
+const medicosFiltrados = medicosHospital.filter(m => {
+const statusAtivo = (m.status || '').toLowerCase() === 'ativo';
+const correspondeNome = (m.nome || '').toLowerCase().includes(termoPesquisa);
+const correspondeEspecialidade = (m.especialidade || '').toLowerCase().includes(termoPesquisa);
+const correspondeHorarios = (m.horarios || '').toLowerCase().includes(termoPesquisa);
 
-        if (medicosFiltrados.length === 0) {
-            grid.innerHTML = `<p style="color:#888; grid-column: 1/-1; text-align:center; padding: 20px;">Nenhum médico encontrado com os critérios de pesquisa.</p>`;
-            return;
-        }
+return statusAtivo && (correspondeNome || correspondeEspecialidade || correspondeHorarios);
+});
 
-        medicosFiltrados.forEach(m => {
-            // Dividir os horários para exibição rápida em tags
-            const listaHoras = m.horarios ? m.horarios.split(',') : [];
-            let tagsHorarios = listaHoras.slice(0, 3).map(h => `<span class="medico-tag">${h.trim()}</span>`).join('');
-            if (listaHoras.length > 3) {
-                tagsHorarios += `<span class="medico-tag">+${listaHoras.length - 3} h</span>`;
-            }
+if (medicosFiltrados.length === 0) {
+grid.innerHTML = `<p style="color:#888; grid-column: 1/-1; text-align:center; padding: 20px;">Nenhum médico encontrado com os critérios de pesquisa.</p>`;
+return;
+}
 
-            grid.innerHTML += `
-                <div class="medico-card">
-                    <div class="medico-info">
-                        <span class="medico-nome">${m.nome}</span>
-                        <span class="medico-especialidade">${m.especialidade}</span>
-                        <div class="medico-meta" style="margin-top: 5px;">
-                            <i class="fa fa-envelope"></i> ${m.email || 'N/D'}
-                        </div>
-                        <div class="medico-meta">
-                            <i class="fa fa-phone"></i> ${m.telefone || 'N/D'}
-                        </div>
-                        <div style="margin-top:8px;">
-                            <small style="color:#64748b; font-weight:600; display:block; margin-bottom:4px;">Horários Disponíveis:</small>
-                            <div class="medico-tags">${tagsHorarios || '<span class="medico-tag">Sem horários</span>'}</div>
-                        </div>
-                    </div>
-                    <div class="medico-actions">
-                        <button onclick="abrirModalMedico(${m.id})"><i class="fa fa-calendar-alt"></i> Ver Agenda</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
+medicosFiltrados.forEach(m => {
+const listaHoras = m.horarios ? m.horarios.split(',') : [];
+let tagsHorarios = listaHoras.slice(0, 3).map(h => `<span class="medico-tag">${h.trim()}</span>`).join('');
+if (listaHoras.length > 3) {
+tagsHorarios += `<span class="medico-tag">+${listaHoras.length - 3} h</span>`;
+}
 
-    function abrirModalMedico(id) {
-        const medico = medicosHospital.find(m => m.id === id);
-        if (!medico) return;
+grid.innerHTML += `
+<div class="medico-card">
+<div class="medico-info">
+<span class="medico-nome">${m.nome}</span>
+<span class="medico-especialidade">${m.especialidade}</span>
+<div class="medico-meta" style="margin-top: 5px;">
+<i class="fa fa-envelope"></i> ${m.email || 'N/D'}
+</div>
+<div class="medico-meta">
+<i class="fa fa-phone"></i> ${m.telefone || 'N/D'}
+</div>
+<div style="margin-top:8px;">
+<small style="color:#64748b; font-weight:600; display:block; margin-bottom:4px;">Horários Disponíveis:</small>
+<div class="medico-tags">${tagsHorarios || '<span class="medico-tag">Sem horários</span>'}</div>
+</div>
+</div>
+<div class="medico-actions">
+<button onclick="abrirModalMedico(${m.id})"><i class="fa fa-calendar-alt"></i> Ver Agenda</button>
+</div>
+</div>
+`;
+});
+}
 
-        document.getElementById("modalMedicoNome").textContent = `Agenda Avançada: ${medico.nome}`;
-        
-        const listaHoras = medico.horarios ? medico.horarios.split(',') : [];
-        const badgesHorarios = listaHoras.map(h => `<span class="medico-tag" style="background:#e2f0d9; color:#385723; font-weight:600; padding:6px 12px;">${h.trim()}</span>`).join(' ');
+function abrirModalMedico(id) {
+const medico = medicosHospital.find(m => m.id === id);
+if (!medico) return;
 
-        const corpoModal = document.getElementById("modalMedicoDetalhes");
-        corpoModal.innerHTML = `
-            <div class="modal-section">
-                <p><strong>Especialidade:</strong> <span>${medico.especialidade}</span></p>
-                <p><strong>Contacto Direto:</strong> <span>${medico.telefone || 'Não disponível'}</span></p>
-                <p><strong>E-mail Clínico:</strong> <span>${medico.email || 'Não disponível'}</span></p>
-                <p><strong>Género:</strong> <span>${medico.genero || 'Não especificado'}</span></p>
-            </div>
-            <div>
-                <h4 style="font-size:14px; margin-bottom:8px; color:#1e293b;">Todos os Turnos de Atendimento:</h4>
-                <div class="medico-tags">${badgesHorarios || 'Nenhum horário configurado.'}</div>
-            </div>
-        `;
+document.getElementById("modalMedicoNome").textContent = `Agenda Avançada: ${medico.nome}`;
 
-        document.getElementById("modalAgenda").style.display = "flex";
-    }
+const listaHoras = medico.horarios ? medico.horarios.split(',') : [];
+const badgesHorarios = listaHoras.map(h => `<span class="medico-tag" style="background:#e2f0d9; color:#385723; font-weight:600; padding:6px 12px;">${h.trim()}</span>`).join(' ');
 
-    function fecharModalMedico() {
-        document.getElementById("modalAgenda").style.display = "none";
-    }
+const corpoModal = document.getElementById("modalMedicoDetalhes");
+corpoModal.innerHTML = `
+<div class="modal-section">
+<p><strong>Especialidade:</strong> <span>${medico.especialidade}</span></p>
+<p><strong>Contacto Direto:</strong> <span>${medico.telefone || 'Não disponível'}</span></p>
+<p><strong>E-mail Clínico:</strong> <span>${medico.email || 'Não disponível'}</span></p>
+<p><strong>Género:</strong> <span>${medico.genero || 'Não especificado'}</span></p>
+</div>
+<div>
+<h4 style="font-size:14px; margin-bottom:8px; color:#1e293b;">Todos os Turnos de Atendimento:</h4>
+<div class="medico-tags">${badgesHorarios || 'Nenhum horário configurado.'}</div>
+</div>
+`;
 
-    function redirecionarParaMarcacao() {
-        window.location.href = "marcar_consulta.html";
-    }
+document.getElementById("modalAgenda").style.display = "flex";
+}
+
+function fecharModalMedico() {
+document.getElementById("modalAgenda").style.display = "none";
+}
+
+function redirecionarParaMarcacao() {
+window.location.href = "marcar_consulta.html";
+}
 </script>
 </body>
 </html>
