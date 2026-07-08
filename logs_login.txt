@@ -194,3 +194,17 @@ rececao@hospital.cv;LOGIN_SUCESSO;2026-07-08 07:09:12
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-08 07:09:16
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-08 07:09:20
 >>>>>>> c7023a5cddc42bfd2cd61c0824a4726e0d6e36c9
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:02
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:31
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:33
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:34
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:34
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:35
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:36
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:36
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:15:58
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:16:10
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:16:12
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:16:15
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:16:16
+nedir@gmail.com;LOGIN_FALHOU;2026-07-08 11:16:16
