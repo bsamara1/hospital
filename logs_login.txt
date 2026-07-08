@@ -141,3 +141,7 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-07 17:19:29
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-07 17:20:56
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-07 17:26:46
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-07 17:29:56
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-07 18:06:47
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-07 18:06:48
+alytavares@gmail.com;LOGIN_SUCESSO;2026-07-07 18:09:57
+rececao@hospital.cv;LOGIN_SUCESSO;2026-07-07 18:10:16

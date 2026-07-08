@@ -6,6 +6,6 @@ Dr. Carlos Semedo;100000003;1988-11-05;Masculino;9933333;carlos.semedo@hospital.
 Dr. lili;100000004;1992-02-14;Feminino;9944444;lili@hospital.cv;1234;medico
 Dr. Carla Semedo da Rosa;2090384334;1984-10-05;Feminino;987654;carlarosa@gmail.com;1234;medico
 Dr.liliana;12345632;1990-06-12;Feminino;987654;liliana@hospital.cv;1234;medico
-samara tavares;98764532;2017-02-02;Feminino;9876543;btavares.l23@us.edu.cv;hospita;Paciente
+samara tavares;98764532;2017-02-02;Feminino;9876543;btavares.l23@us.edu.cv;lopes;Paciente
 Lili Lopes;8765432;2013-02-07;Feminino;87654;iiili@hospital.cv;1234;Paciente
 Mileyda Lopes;8765432;2005-08-24;Feminino;87654;mileydalopes7@gmail.com;maira;Paciente
