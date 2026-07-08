@@ -192,6 +192,9 @@ input#pesquisaMedico:focus{border-color:#054a93;}
 
 <script src="../js/consultas.js"></script>
 <script>
+// Variável global para reter a referência do médico que está com o modal aberto
+let medicoSelecionadoId = null;
+
 document.addEventListener("DOMContentLoaded", () => {
 if (!localStorage.getItem('utilizadorLogado')) {
 localStorage.setItem('utilizadorLogado', JSON.stringify({
@@ -276,6 +279,8 @@ function abrirModalMedico(id) {
 const medico = medicosHospital.find(m => m.id === id);
 if (!medico) return;
 
+medicoSelecionadoId = id; // Armazena o ID do médico selecionado
+
 document.getElementById("modalMedicoNome").textContent = `Agenda Avançada: ${medico.nome}`;
 
 const listaHoras = medico.horarios ? medico.horarios.split(',') : [];
@@ -300,9 +305,20 @@ document.getElementById("modalAgenda").style.display = "flex";
 
 function fecharModalMedico() {
 document.getElementById("modalAgenda").style.display = "none";
+medicoSelecionadoId = null;
 }
 
 function redirecionarParaMarcacao() {
+if (medicoSelecionadoId && typeof medicosHospital !== 'undefined') {
+const medico = medicosHospital.find(m => m.id === medicoSelecionadoId);
+if (medico) {
+const pacote = {
+especialidade: medico.especialidade,
+medico: medico.nome
+};
+localStorage.setItem('dadosReagendamentoTemp', JSON.stringify(pacote));
+}
+}
 window.location.href = "marcar_consulta.html";
 }
 </script>

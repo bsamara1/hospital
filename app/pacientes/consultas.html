@@ -39,7 +39,7 @@ body{ display:flex; background:#f5f7fb; height:100vh; overflow: hidden; }
 /* TABELA */
 .table-container { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 20px; }
 table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-th, td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; }
+th, td { padding: 12px 15px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
 th { background: #f8fafc; color: #475569; font-weight: 600; }
 tr:hover { background: #f8fafc; }
 
@@ -48,12 +48,45 @@ tr:hover { background: #f8fafc; }
 .badge.pendente { background: #fef3c7; color: #d97706; }
 .badge.confirmada { background: #dcfce7; color: #15803d; }
 .badge.cancelada { background: #fee2e2; color: #b91c1c; }
+
+/* BOTÕES DE AÇÃO */
+.btn-action {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+}
+
+.btn-reagendar {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+.btn-reagendar:hover {
+    background: #bae6fd;
+    transform: translateY(-1px);
+}
+
+.btn-cancelar {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+.btn-cancelar:hover {
+    background: #fca5a5;
+    transform: translateY(-1px);
+}
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-<div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
+<div class="logo"><img src="image_1c229e.png" alt="Logo"><span>HAN</span></div>
 <a href="index.html"><i class="fa fa-home"></i> Painel Principal</a>
 <a href="marcar_consulta.html"><i class="fa fa-notes-medical"></i> Marcar Consulta / Triagem</a>
 <a href="consultas.html" class="active"><i class="fa fa-calendar-alt"></i> Consultas</a>
@@ -92,10 +125,11 @@ tr:hover { background: #f8fafc; }
 <th>Horário</th>
 <th>Sintomas Informados</th>
 <th>Estado</th>
+<th>Ações</th>
 </tr>
 </thead>
 <tbody id="listaMinhasConsultas">
-<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">A carregar histórico...</td></tr>
+<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">A carregar histórico...</td></tr>
 </tbody>
 </table>
 </div>
@@ -103,6 +137,7 @@ tr:hover { background: #f8fafc; }
 
 <script>
 const API_URL = "http://127.0.0.1:5000";
+let todasConsultasCarregadas = []; // Guardará o array global para busca rápida
 
 document.addEventListener("DOMContentLoaded", () => {
     carregarDadosSessao();
@@ -125,7 +160,6 @@ async function carregarHistoricoConsultas() {
     const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
     if (!tbody || !utilizador) return;
 
-    // Normaliza o email do utilizador logado para a comparação
     const emailUtilizadorLogado = utilizador.email.trim().toLowerCase();
 
     let consultasServidor = [];
@@ -135,18 +169,14 @@ async function carregarHistoricoConsultas() {
         const resposta = await fetch(`${API_URL}/consultas`);
         if (resposta.ok) {
             consultasServidor = await resposta.json();
-            console.log("Consultas vindas do servidor:", consultasServidor);
         }
     } catch (erro) {
-        console.warn("API Offline. Exibindo apenas dados locais do navegador.");
+        console.warn("API Offline. Exibindo dados locais do navegador.");
     }
 
-    // Unifica os dados do servidor e do localStorage
-    let todasConsultas = [...consultasServidor, ...consultasLocais];
+    todasConsultasCarregadas = [...consultasServidor, ...consultasLocais];
 
-    // Filtra garantindo compatibilidade com chaves Maiúsculas/Minúsculas do back-end
-    const minhasConsultas = todasConsultas.filter(c => {
-        // Tenta apanhar o email do objeto independente se foi salvo como pacienteEmail, PacienteEmail, ou email
+    const minhasConsultas = todasConsultasCarregadas.filter(c => {
         const emailConsulta = c.pacienteEmail || c.PacienteEmail || c.email || c.paciente_email || "";
         return emailConsulta.trim().toLowerCase() === emailUtilizadorLogado;
     });
@@ -154,30 +184,45 @@ async function carregarHistoricoConsultas() {
     tbody.innerHTML = "";
 
     if (minhasConsultas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Ainda não efetuou nenhuma marcação de consulta.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Ainda não efetuou nenhuma marcação de consulta.</td></tr>`;
         return;
     }
 
-    // Renderiza as linhas
-    minhasConsultas.forEach(c => {
-        // Mapeamento flexível de propriedades para aceitar maiúsculas/minúsculas do txt
+    minhasConsultas.forEach((c, index) => {
         const medico = c.medico || c.Medico || "Não especificado";
         const especialidade = c.especialidade || c.Especialidade || "Geral";
         const dataRaw = c.data || c.Data || "";
         const hora = c.hora || c.Hora || "--:--";
         const sintomas = c.sintomas || c.Sintomas || "Nenhum";
         const estadoRaw = c.estado || c.Estado || c.status || 'Pendente';
+        
+        // Garante que existe um ID mapeável (seja da API ou o index gerado)
+        const idConsulta = c.id || `local-${index}`; 
+        c.id = idConsulta; // Uniformiza no objeto local temporário
 
         const estadoLimpo = estadoRaw.toLowerCase();
         let badgeClass = 'badge pendente'; 
         if (estadoLimpo === 'confirmada' || estadoLimpo === 'confirmado') badgeClass = 'badge confirmada';
         if (estadoLimpo === 'cancelada' || estadoLimpo === 'cancelado') badgeClass = 'badge cancelada';
 
-        // Formata a data de AAAA-MM-DD para DD/MM/AAAA
         let dataFormatada = dataRaw;
         if (dataRaw && dataRaw.includes("-")) {
             const partes = dataRaw.split("-");
             dataFormatada = `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        let botoesAcao = "";
+        if (estadoLimpo === 'cancelada' || estadoLimpo === 'cancelado') {
+            botoesAcao = `<span style="color:#b91c1c; font-weight:700; font-size:13px;"><i class="fa fa-times-circle"></i> Cancelada</span>`;
+        } else {
+            botoesAcao = `
+                <button class="btn-action btn-reagendar" onclick="reagendarConsulta('${idConsulta}')">
+                    <i class="fa fa-clock-rotate-left"></i> Reagendar
+                </button>
+                <button class="btn-action btn-cancelar" onclick="cancelarConsulta('${idConsulta}')">
+                    <i class="fa fa-ban"></i> Cancelar
+                </button>
+            `;
         }
 
         tbody.innerHTML += `
@@ -188,13 +233,45 @@ async function carregarHistoricoConsultas() {
                 </td>
                 <td>${dataFormatada}</td>
                 <td><i class="fa fa-clock" style="color:#94a3b8; font-size:13px; margin-right:4px;"></i> ${hora}</td>
-                <td style="max-width:250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${sintomas}">
+                <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${sintomas}">
                     ${sintomas}
                 </td>
                 <td><span class="${badgeClass}">${estadoLimpo}</span></td>
+                <td>${botoesAcao}</td>
             </tr>
         `;
     });
+}
+
+function cancelarConsulta(id) {
+    if (confirm("Tem a certeza que deseja cancelar esta consulta?")) {
+        let consultasLocais = JSON.parse(localStorage.getItem('consultasHAN')) || [];
+        let index = consultasLocais.findIndex(c => String(c.id) === String(id));
+        
+        if (index !== -1) {
+            consultasLocais[index].estado = 'Cancelada';
+            consultasLocais[index].status = 'Cancelada';
+            localStorage.setItem('consultasHAN', JSON.stringify(consultasLocais));
+        }
+
+        alert("A sua consulta foi cancelada com sucesso!");
+        carregarHistoricoConsultas();
+    }
+}
+
+// ATUALIZADO: Salva os dados atuais para o formulário ler
+function reagendarConsulta(id) {
+    // Encontra o objeto completo da consulta selecionada
+    const consultaParaReagendar = todasConsultasCarregadas.find(c => String(c.id) === String(id));
+    
+    if (consultaParaReagendar) {
+        // Guarda o ID para substituição e o objeto completo para autofill
+        localStorage.setItem('substituirConsultaID', id);
+        localStorage.setItem('dadosReagendamentoTemp', JSON.stringify(consultaParaReagendar));
+        
+        alert("A redirecionar... O formulário será preenchido com os dados atuais desta consulta.");
+        window.location.href = "marcar_consulta.html";
+    }
 }
 </script>
 </body>
