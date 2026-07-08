@@ -13,7 +13,6 @@ def start_backend():
     e encerra-o no final da sessão."""
     # IMPORTANTE: Altera 'app.py' para o caminho correto do teu ficheiro Flask se necessário
     # Exemplo: "backend/app.py" ou "src/main.py"
-    
     process = subprocess.Popen(["python", "app.py"])
     
     # Dá 2 segundos para o servidor arrancar antes de o Playwright/Requests avançarem
