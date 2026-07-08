@@ -5,7 +5,7 @@
 
 ## 1. RESUMO EXECUTIVO
 
-A equipe de QA realizou testes completos na plataforma digital de marcação de consultas do Hospital Agostinho Neto. Foram executados 25 casos de teste, cobrindo marcação, reagendamento, cancelamento, triagem e segurança.
+A equipe de QA realizou testes completos na plataforma digital de marcação de consultas do Hospital Agostinho Neto. Foram executados 11 casos de teste, cobrindo marcação, reagendamento, cancelamento, triagem e segurança.
 
 ---
 
