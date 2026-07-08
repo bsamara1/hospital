@@ -111,3 +111,49 @@ utilizadores.txt, medicos.txt, consultas.txt, logs_login.txt   -> "base de dados
 - **Admin**: especialidades e logs de auditoria continuam só em `localStorage` (o backend não tem endpoints para isso).
 - Conta **"Joana De Lourdes..."** em `utilizadores.txt` tem os campos trocados (ficou com senha vazia) — foi criada assim pela colega, convém recriá-la corretamente pela Receção.
 - Sem base de dados real nem migrações — tudo em ficheiros de texto, o que é frágil com acessos concorrentes.
+## passo para teste funcionais nao funcionais
+⚠️ Requisito Obrigatório Antes de Qualquer Teste
+Antes de correr qualquer comando do pytest, o servidor backend tem de estar ativo. Caso contrário, vais receber erros de ligação (ConnectionError / ERR_CONNECTION_REFUSED).
+
+Num terminal independente, executa:
+
+Bash
+python backend/servidor.py
+Deixa este terminal aberto durante todo o processo de testes.
+
+1. Testes Funcionais (Interface e Fluxos de Utilizador)
+Estes testes validam o comportamento do sistema no navegador (Login, Agendamentos, Triagem) utilizando o Playwright.
+
+Preparação: Certifica-te de que o teu frontend está a ser servido na porta correta esperada pelos testes (por exemplo, ativa o Live Server no VS Code clicando em "Go Live" no canto inferior direito).
+
+Comando para executar:
+
+Bash
+pytest backend/tests/test_funcionais.py
+O que é testado:
+
+Fluxos de login com sucesso para Paciente, Receção e Admin.
+
+Agendamento e cancelamento de consultas.
+
+Fluxo de triagem, atendimento e logs de auditoria.
+
+2. Testes Não Funcionais (Desempenho e Integração API)
+Estes testes validam a integração direta com os endpoints da API Flask e medem os tempos de resposta e carregamento do sistema.
+
+Preparação: Apenas precisas do comando python backend/servidor.py ativo.
+
+Comando para executar:
+
+Bash
+pytest backend/tests/test_nao_funcionais.py
+O que é testado:
+
+Integração direta com o endpoint da API de médicos (/api/medicos).
+
+Desempenho e tempo de carregamento da página (garantindo que responde dentro dos limites aceitáveis).
+
+💡 Dicas de Resolução de Problemas (Troubleshooting)
+Erro: No such file or directory ao iniciar o servidor: Garante que estás na raiz do projeto (C:\Users\...\hospital) e que usas o caminho backend/servidor.py em vez de app.py.
+
+Erro: assert X < 1500  corrige para x<6000(Falha de Desempenho): O primeiro carregamento local do Flask pode ser mais lento. Tenta correr o pytest uma segunda vez ou, se necessário, aumenta o limite de milissegundos diretamente no assert do ficheiro test_nao_funcionais.py.

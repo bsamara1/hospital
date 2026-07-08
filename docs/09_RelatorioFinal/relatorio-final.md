@@ -101,5 +101,4 @@ A equipe de QA realizou testes completos na plataforma digital de marcação de 
 | Tech Lead | Equipe Dev | 14/07/2026 |
 | Product Owner | Direção Clínica | 14/07/2026 |
 
----
 

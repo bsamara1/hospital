@@ -81,7 +81,7 @@ def test_ct06_triagem_e_atendimento(page: Page):
     assert "consultas" in page.url or "Recepcionista" in page.url or token_existe is not None or page.url == f"{BASE_URL}/login.html"
 
 def test_ct07_visualizacao_logs_auditoria(page: Page):
-    """CT07 - Acesso aos logs de auditoria pelo Administrador"""
+    """CT07 - Acesso aos logs de auditoria pelo administrador"""
     page.goto(f"{BASE_URL}/login.html")
     page.fill("input[type='email']", "admin@hospital.cv")
     page.fill("input[type='password']", "123456")
