@@ -1,18 +1,78 @@
-<form id="recuperarForm">
+<!DOCTYPE html>
+<html lang="pt">
 
-    <label>Email</label>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <input
-        type="email"
-        id="email"
-        placeholder="Digite o seu email"
-        required>
+    <title>Recuperar Palavra-passe - Hospital Agostinho Neto</title>
 
-    <button type="submit">
-        Recuperar palavra-passe
-    </button>
+    <link rel="stylesheet" href="css/style.css">
+</head>
 
-</form>
+<body>
 
-<p id="mensagem"></p>
+<div class="container">
+
+    <!-- LADO ESQUERDO -->
+    <div class="left-panel">
+
+        <div class="logo-box">
+            <div class="branding">
+                <img src="../app/assets/img/logo.png" class="logo">
+
+                <h1>
+                    HAN
+                    <p>Hospital Agostinho Neto</p>
+                    <p>Sistema de Gestão Hospitalar</p>
+                </h1>
+            </div>
+        </div>
+
+        <img src="../app/assets/img/hospital.png" class="illustration">
+
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="right-panel">
+
+        <div class="login-card">
+
+            <h2>Recuperar Palavra-passe</h2>
+
+            <p>
+                Introduza o email associado à sua conta.
+            </p>
+
+            <form id="recuperarForm">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Digite o seu email"
+                    required>
+
+                <button type="submit">
+                    Recuperar Palavra-passe
+                </button>
+
+            </form>
+
+            <p class="conta">
+                <a href="login.html">Voltar ao Login</a>
+            </p>
+
+            <p id="mensagem"></p>
+
+        </div>
+
+    </div>
+
+</div>
+
 <script src="js/recuperar.js"></script>
+
+</body>
+</html>

@@ -75,7 +75,7 @@
     "especialidade": "Clínica Geral",
     "data": "2026-07-18",
     "hora": "08:00",
-    "estado": "pendente",
+    "estado": "presente",
     "sintomas": [
       "dor-peito",
       "falta-ar",

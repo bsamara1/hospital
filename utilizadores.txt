@@ -12,3 +12,4 @@ Mileyda Lopes;8765432;2005-08-24;Feminino;87654;mileydalopes7@gmail.com;maira;Pa
 nedir;0987645;2026-06-08;Masculino;9876543;nedirtavares2001@gmail.com;87654321;Paciente
 Mileyda Lopes;8765432;2005-08-24;Feminino;87654;mileydalopes7@gmail.com;maira;Paciente
 Mileida Tavares;24082005F001O;2005-08-24;Feminino;9876183;mlopes.l23@us.edu.cv;1234;Paciente
+Suraia Gomes;112233445566;2005-10-20;Feminino;1234567;epereira.l23@us.edu.cv;1122;Paciente

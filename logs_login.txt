@@ -111,3 +111,5 @@ rececao@us.edu.cv;LOGIN_FALHOU;2026-07-08 15:20:27
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-08 15:20:53
 epereira.l23@us.edu.cv;LOGIN_FALHOU;2026-07-08 15:26:43
 btavares.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-08 15:27:51
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-08 15:37:42
+epereira.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-08 15:39:12

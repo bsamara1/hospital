@@ -1,26 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
-    <title>Verificar Código</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Verificar Código - Hospital Agostinho Neto</title>
+
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<h2>Verificação do Código</h2>
+<div class="container">
 
-<input type="text" id="codigo" placeholder="Código de verificação">
+    <!-- LADO ESQUERDO -->
+    <div class="left-panel">
 
-<button id="verificar">Verificar</button>
+        <div class="logo-box">
+            <div class="branding">
 
-<p id="mensagem"></p>
+                <img src="../app/assets/img/logo.png" class="logo">
 
-<div id="novaSenha" style="display:none;">
+                <h1>
+                    HAN
+                    <p>Hospital Agostinho Neto</p>
+                    <p>Sistema de Gestão Hospitalar</p>
+                </h1>
 
-    <input type="password" id="senha1" placeholder="Nova palavra-passe">
+            </div>
+        </div>
 
-    <input type="password" id="senha2" placeholder="Confirmar palavra-passe">
+        <img src="../app/assets/img/hospital.png" class="illustration">
 
-    <button id="guardarSenha">Guardar Palavra-passe</button>
+    </div>
+
+    <!-- LADO DIREITO -->
+    <div class="right-panel">
+
+        <div class="login-card">
+
+            <h2>Verificação do Código</h2>
+
+            <p>
+                Introduza o código enviado para o seu email.
+            </p>
+
+            <input
+                type="text"
+                id="codigo"
+                placeholder="Código de verificação">
+
+            <button id="verificar">
+                Verificar
+            </button>
+
+            <p id="mensagem"></p>
+
+            <div id="novaSenha" style="display:none; margin-top:20px;">
+
+                <label>Nova Palavra-passe</label>
+
+                <input
+                    type="password"
+                    id="senha1"
+                    placeholder="Nova palavra-passe">
+
+                <label>Confirmar Palavra-passe</label>
+
+                <input
+                    type="password"
+                    id="senha2"
+                    placeholder="Confirmar palavra-passe">
+
+                <button id="guardarSenha">
+                    Guardar Palavra-passe
+                </button>
+
+            </div>
+
+            <p class="conta">
+                <a href="login.html">Voltar ao Login</a>
+            </p>
+
+        </div>
+
+    </div>
 
 </div>
 
