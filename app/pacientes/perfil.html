@@ -7,17 +7,84 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:"Segoe UI",sans-serif;}
-body{display:flex;background:#f8fafc;min-height:100vh;}
-.sidebar{width:260px;background:#0b2a4a;color:#fff;display:flex;flex-direction:column;padding:20px;}
-.sidebar .logo{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:bold;margin-bottom:30px;}
-.sidebar .logo img{width:50px;height:50px;object-fit:contain;}
-.sidebar a{color:white;text-decoration:none;padding:12px 15px;margin:5px 0;display:flex;align-items:center;gap:10px;border-radius:8px;transition: 0.3s ease, transform 0.2s ease;font-size:16px;}
-.sidebar a:hover,.sidebar a.active{background:#163a63;transform: translateX(5px);}
-.sidebar a:active{transform: scale(0.98) translateX(5px);}
-.sidebar .bottom{margin-top:auto;}
-.logout{color:#ff6b6b;}
-.divider{height:1px;background:rgba(255,255,255,0.15);margin:12px 0;}
-.main{flex:1;padding:25px;overflow:auto;}
+body{display:flex;background:#f8fafc;min-height:100vh;overflow: hidden;}
+
+/* SIDEBAR */
+.sidebar{
+width: 260px;
+background: #0b2a4a;
+color: #fff;
+display: flex;
+flex-direction: column;
+padding: 20px;
+height: 100vh;
+position: fixed;
+z-index: 10;
+}
+
+.logo{
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 22px;
+font-weight: bold;
+color: #fff;
+margin-bottom: 30px;
+}
+
+.logo span {
+font-size: 32px;
+font-weight: bold;
+}
+
+.logo img {
+width: 50px;
+height: 50px;
+object-fit: contain;
+}
+
+.sidebar a {
+color: white;
+text-decoration: none;
+padding: 12px 15px;
+margin: 5px 0;
+display: flex;
+align-items: center;
+gap: 10px;
+border-radius: 8px;
+transition: 0.3s;
+font-size: 18px;
+cursor: pointer;
+}
+
+.sidebar a:hover, .sidebar a.active {
+background: #163a63;
+}
+
+.bottom{
+margin-top: auto;
+}
+
+.sidebar .logout {
+color: #ff6b6b;
+font-size: 16px;
+}
+
+.divider {
+height: 1px;
+background: rgba(255,255,255,0.15);
+margin: 12px 0;
+}
+
+/* MAIN CONTENT */
+.main{
+flex:1;
+margin-left: 260px;
+padding:25px;
+overflow-y:auto;
+height: 100vh;
+}
+
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
 .header-line{margin-left:-25px;margin-right:-25px;height:1px;background:rgba(0,0,0,0.08);margin-bottom:25px;}
 .header h2{font-size:20px;color:#333;}
@@ -56,15 +123,15 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 <body>
 <div class="sidebar">
     <div class="logo"><img src="../assets/img/logo.png" alt="Logo"><span>HAN</span></div>
-    <a href="index.html"><img src="../assets/icons/casa.png" alt=""> Painel Principal</a>
-    <a href="marcar_consulta.html"><img src="../assets/icons/marcar_consulta.png" alt=""> Marcar Consulta / Triagem</a>
-    <a href="consultas.html"><img src="../assets/icons/agendar.png" alt=""> Consultas</a>
-    <a href="medicos.html"><img src="../assets/icons/medico.png" alt=""> Corpo Médico</a>
-    <a href="notificacoes.html"><img src="../assets/icons/notificacao.png" alt=""> Notificações</a>
-    <a href="perfil.html" class="active"><img src="../assets/icons/perfil.png" alt=""> Meu Perfil</a>
+    <a href="index.html"><i class="fa fa-home"></i> Painel Principal</a>
+    <a href="marcar_consulta.html"><i class="fa fa-notes-medical"></i> Marcar Consulta / Triagem</a>
+    <a href="consultas.html"><i class="fa fa-calendar-alt"></i> Consultas</a>
+    <a href="medicos.html"><i class="fa fa-user-md"></i> Corpo Médico</a>
+    <a href="notificacoes.html"><i class="fa fa-bell"></i> Notificações</a>
+    <a href="perfil.html" class="active"><i class="fa fa-user"></i> Meu Perfil</a>
     <div class="bottom">
         <div class="divider"></div>
-        <a class="logout" href="../login.html"><img src="../assets/icons/sair.png" alt=""> Terminar sessão</a>
+        <a class="logout" href="../login.html"><i class="fa fa-sign-out-alt"></i> Terminar sessão</a>
     </div>
 </div>
 <div class="main">
@@ -85,7 +152,7 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
     
     <div class="profile-container">
         <div id="mensagemSucesso" class="alert-sucesso">
-            <i class="fa fa-check-circle"></i> Perfil atualizado com sucesso localmente!
+            <i class="fa fa-check-circle"></i> Perfil updated com sucesso localmente!
         </div>
 
         <div class="form-group">
@@ -111,7 +178,6 @@ body{display:flex;background:#f8fafc;min-height:100vh;}
 <script src="../js/consultas.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // Garantir sessão simulada base inicial se por acaso aceder diretamente
     if (!localStorage.getItem('utilizadorLogado')) {
         localStorage.setItem('utilizadorLogado', JSON.stringify({
             nome: "João Baptista Silva",
@@ -129,12 +195,10 @@ function carregarDadosFormulario() {
     const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
     if (!utilizador) return;
 
-    // Atualiza cabeçalho superior direito
     document.getElementById("usuarioNome").textContent = utilizador.nome;
     document.getElementById("usuarioEmail").textContent = utilizador.email;
     document.getElementById("usuarioAvatar").textContent = utilizador.nome ? utilizador.nome.charAt(0).toUpperCase() : "P";
 
-    // Preenche os campos de input do formulário central
     document.getElementById("nomePerfil").value = utilizador.nome || "";
     document.getElementById("emailPerfil").value = utilizador.email || "";
     document.getElementById("telefonePerfil").value = utilizador.telefone || "+238 ";
@@ -159,13 +223,11 @@ function salvarPerfil() {
 
     const emailAntigo = utilizador.email;
 
-    // 1. Atualizar dados do objeto de sessão ativa
     utilizador.nome = novoNome;
     utilizador.email = novoEmail;
     utilizador.telefone = novoTelefone;
     localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
 
-    // 2. Sincronizar dados antigos na base global 'consultasHAN' para manter a integridade dos dados
     let consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
     let houveAlteracaoConsultas = false;
 
@@ -180,11 +242,9 @@ function salvarPerfil() {
         localStorage.setItem('consultasHAN', JSON.stringify(consultas));
     }
 
-    // Mostrar feedback visual elegante ao utilizador
     const alerta = document.getElementById("mensagemSucesso");
     alerta.style.display = "block";
     
-    // Atualizar componentes dinâmicos em tempo real sem quebrar a navegação
     carregarDadosFormulario();
 
     setTimeout(() => {
