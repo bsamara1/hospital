@@ -8,10 +8,7 @@ Dr. Carla Semedo da Rosa;2090384334;1984-10-05;Feminino;987654;carlarosa@gmail.c
 Dr.liliana;12345632;1990-06-12;Feminino;987654;liliana@hospital.cv;1234;medico
 samara tavares;98764532;2017-02-02;Feminino;9876543;btavares.l23@us.edu.cv;lopes;Paciente
 Lili Lopes;8765432;2013-02-07;Feminino;87654;iiili@hospital.cv;1234;Paciente
-<<<<<<< HEAD
 Mileyda Lopes;8765432;2005-08-24;Feminino;87654;mileydalopes7@gmail.com;maira;PacienteEdilca Semedo;9876543;2006-02-08;Feminino;98776554434;epereira.l23@us.edu.cv;teste;Paciente
 nedir;0987645;2026-06-08;Masculino;9876543;nedirtavares2001@gmail.com;87654321;Paciente
-=======
 Mileyda Lopes;8765432;2005-08-24;Feminino;87654;mileydalopes7@gmail.com;maira;Paciente
->>>>>>> f7b6f27a5d22df08272617b2add2817506b9daf9
 Mileida Tavares;24082005F001O;2005-08-24;Feminino;9876183;mlopes.l23@us.edu.cv;1234;Paciente

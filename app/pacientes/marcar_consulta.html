@@ -476,41 +476,14 @@
 
         const hoje = new Date().toISOString().split('T')[0];
         document.getElementById('dataConsulta').min = hoje;
-
-        // NOVA IMPLEMENTAÇÃO: Executa o Autofill se os dados existirem no localStorage
-        const dadosAgendamentoRapido = localStorage.getItem('dadosReagendamentoTemp');
-        if (dadosAgendamentoRapido) {
-            const rascunho = JSON.parse(dadosAgendamentoRapido);
-            
-            const campoEspecialidade = document.getElementById("especialidade");
-            if (campoEspecialidade && rascunho.especialidade) {
-                campoEspecialidade.value = rascunho.especialidade;
-                
-                // Dispara o evento de mudança para listar os médicos daquela especialidade
-                atualizarMenuMedicos();
-
-                const campoMedico = document.getElementById("medico");
-                if (campoMedico && rascunho.medico) {
-                    campoMedico.value = rascunho.medico;
-                    
-                    // Dispara o evento para desbloquear os horários daquele médico específico
-                    atualizarHorariosPorMedico();
-                }
-            }
-            // Limpa o item temporário do armazenamento
-            localStorage.removeItem('dadosReagendamentoTemp');
-        }
     });
 
     function popularMenuEspecialidades() {
         const selectEsp = document.getElementById("especialidade");
         if (!selectEsp) return;
-
         selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>';
-
         const medicosAtivos = baseMedicos.filter(m => m.status === "ativo");
         const especialidadesUnicas = [...new Set(medicosAtivos.map(m => m.especialidade))];
-
         especialidadesUnicas.forEach(esp => {
             const opt = document.createElement("option");
             opt.value = esp;
@@ -523,25 +496,18 @@
         const selectEsp = document.getElementById("especialidade");
         const selectMed = document.getElementById("medico");
         const selectHora = document.getElementById("horaConsulta");
-
         if (!selectEsp || !selectMed) return;
-
         const escolha = selectEsp.value;
-
         selectHora.innerHTML = '<option value="">Selecione o médico primeiro...</option>';
         selectHora.disabled = true;
-
         if (!escolha) {
             selectMed.innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
             selectMed.disabled = true;
             return;
         }
-
         selectMed.disabled = false;
         selectMed.innerHTML = '<option value="">Selecione o médico...</option>';
-
         const medicosFiltrados = baseMedicos.filter(m => m.especialidade === escolha && m.status === "ativo");
-
         medicosFiltrados.forEach(medico => {
             const opt = document.createElement("option");
             opt.value = medico.nome;
@@ -553,23 +519,17 @@
     function atualizarHorariosPorMedico() {
         const selectMed = document.getElementById("medico");
         const selectHora = document.getElementById("horaConsulta");
-
         if (!selectMed || !selectHora) return;
-
         const nomeMedicoSelecionado = selectMed.value;
-
         if (!nomeMedicoSelecionado) {
             selectHora.innerHTML = '<option value="">Selecione o médico primeiro...</option>';
             selectHora.disabled = true;
             return;
         }
-
         const medicoEncontrado = baseMedicos.find(m => m.nome === nomeMedicoSelecionado);
-
         if (medicoEncontrado && medicoEncontrado.horarios) {
             selectHora.disabled = false;
             selectHora.innerHTML = '<option value="">Selecione o horário...</option>';
-            
             const listaHorarios = medicoEncontrado.horarios.split(",");
             listaHorarios.forEach(hora => {
                 const opt = document.createElement("option");
@@ -597,22 +557,10 @@
     function atualizarBadgeNotificacoes() {
         const consultas = JSON.parse(localStorage.getItem('consultasHAN')) || [];
         const utilizador = JSON.parse(localStorage.getItem('utilizadorLogado'));
-        const lidas = JSON.parse(localStorage.getItem('notificacoesLidas')) || [];
         const badge = document.getElementById("notifBadge");
-
         if (!utilizador || !badge) return;
-
         const minhasConsultas = consultas.filter(c => c.pacienteEmail === utilizador.email);
-        let naoLidas = 0;
-
-        minhasConsultas.forEach(c => {
-            const statusLimpo = (c.status || 'Pendente').toLowerCase();
-            const idNotificacao = `notif_${c.id}_${statusLimpo}`;
-            if (!lidas.includes(idNotificacao)) {
-                naoLidas++;
-            }
-        });
-
+        let naoLidas = minhasConsultas.filter(c => (c.status || 'Pendente').toLowerCase() === 'pendente').length;
         if (naoLidas > 0) {
             badge.textContent = naoLidas;
             badge.style.display = "inline-block";
@@ -621,9 +569,11 @@
         }
     }
 
+    // LÓGICA DE INTEGRAÇÃO PARTILHADA
     function salvarAgendamento(event) {
         event.preventDefault();
-        const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+        const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado")) || { nome: "João Baptista Silva", email: "joao.silva@email.cv" };
+        
         const esp = document.getElementById("especialidade").value;
         const med = document.getElementById("medico").value;
         const data = document.getElementById("dataConsulta").value;
@@ -633,26 +583,32 @@
         const checkboxes = document.querySelectorAll('input[name="sintoma"]:checked');
         const sintomasSelecionados = Array.from(checkboxes).map(cb => cb.value);
 
+        // Aceder à mesma lista global
         let consultas = JSON.parse(localStorage.getItem("consultasHAN")) || [];
+        
+        // Criar o objeto estruturado que a Rececionista espera ler
         const novaConsulta = {
-            id: consultas.length + 1,
+            id: Date.now(), // ID único temporal
             pacienteNome: utilizador.nome,
             pacienteEmail: utilizador.email,
             especialidade: esp,
             medico: med,
             data: data,
             hora: hora,
-            status: "Pendente",
+            status: "Pendente", // Estado inicial dinâmico
             sintomas: sintomasSelecionados,
             observacoes: obs
         };
+        
         consultas.push(novaConsulta);
-        localStorage.setItem("consultasHAN", JSON.stringify(consultas));
+        localStorage.setItem("consultasHAN", JSON.stringify(consultas)); // Salva na BD local partilhada
+        
         document.getElementById("mensagemFeedback").innerHTML = `
             <div class="alert-sucesso">
-                <i class="fa fa-check-circle"></i> Consulta agendada! A redirecionar...
+                <i class="fa fa-check-circle"></i> Consulta enviada para a Receção! A redirecionar...
             </div>
         `;
+        
         setTimeout(() => { window.location.href = "consultas.html"; }, 1500);
     }
 </script>
