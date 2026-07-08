@@ -349,7 +349,7 @@ font-size: 13.5px;
 
 <div class="main">
 <div class="header">
-<h2>Nova Marcação com Triagem Clinical</h2>
+<h2>Nova Marcação com Triagem Hospitalar</h2>
 <div class="user-box">
 <a href="notificacoes.html" style="position:relative; text-decoration:none; color:inherit;">
 <i class="fa fa-bell"></i>
@@ -395,13 +395,8 @@ font-size: 13.5px;
 </div>
 <div class="form-group">
 <label for="horaConsulta">Horário</label>
-<select id="horaConsulta" class="form-control" required>
-<option value="">Selecione o horário...</option>
-<option value="08:00">08:00</option>
-<option value="09:00">09:00</option>
-<option value="10:00">10:00</option>
-<option value="11:00">11:00</option>
-<option value="14:00">14:00</option>
+<select id="horaConsulta" class="form-control" required disabled>
+<option value="">Selecione o médico primeiro...</option>
 </select>
 </div>
 </div>
@@ -461,108 +456,156 @@ Selecione abaixo os sintomas atuais. O sistema irá calcular a sua prioridade.
 </div>
 
 <script>
+// Base de dados de médicos mapeada diretamente a partir do arquivo medicos.txt com os seus respectivos horários reais
 const baseMedicos = [
-{ "id": 1, "nome": "Dr. Mendes", "especialidade": "Cardiologia", "status": "ativo" },
-{ "id": 2, "nome": "Dr. Sousa", "especialidade": "Ortopedia", "status": "ativo" },
-{ "id": 3, "nome": "Dr. Carlos Semedo", "especialidade": "Clínica Geral", "status": "ativo" },
-{ "id": 4, "nome": "Dr. lili", "especialidade": "Dermatologia", "status": "ativo" },
-{ "id": 5, "nome": "Dr. Carla Semedo da Rosa", "especialidade": "Ginecologia", "status": "ativo" },
-{ "id": 6, "nome": "Dr.liliana", "especialidade": "Clínica Geral", "status": "ativo" },
-{ "id": 1783357638429, "nome": "sdfg", "especialidade": "Clínica Geral", "status": "ativo" }
+  { "id": 1, "nome": "Dr. Mendes", "especialidade": "Cardiologia", "status": "ativo", "horarios": "09:00,10:00,11:00,14:00" },
+  { "id": 2, "nome": "Dr. Sousa", "especialidade": "Ortopedia", "status": "ativo", "horarios": "08:30,09:30,13:00,15:00" },
+  { "id": 3, "nome": "Dr. Carlos Semedo", "especialidade": "Clínica Geral", "status": "ativo", "horarios": "10:00,11:00,12:00,13:00,14:00" },
+  { "id": 4, "nome": "Dr. lili", "especialidade": "Dermatologia", "status": "ativo", "horarios": "08:00,09:00,10:00" },
+  { "id": 5, "nome": "Dr. Carla Semedo da Rosa", "especialidade": "Ginecologia", "status": "ativo", "horarios": "08:00,09:30,11:00" },
+  { "id": 6, "nome": "Dr.liliana", "especialidade": "Clínica Geral", "status": "ativo", "horarios": "08:00,09:00,10:00,11:00" },
+  { "id": 1783357638429, "nome": "sdfg", "especialidade": "Clínica Geral", "status": "ativo", "horarios": "08:00,10:00,14:00" }
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-carregarDadosSessao();
-popularMenuEspecialidades();
+    carregarDadosSessao();
+    popularMenuEspecialidades();
 
-const campoEspecialidade = document.getElementById("especialidade");
-if (campoEspecialidade) {
-campoEspecialidade.addEventListener("change", atualizarMenuMedicos);
-}
+    const campoEspecialidade = document.getElementById("especialidade");
+    if (campoEspecialidade) {
+        campoEspecialidade.addEventListener("change", atualizarMenuMedicos);
+    }
 
-const hoje = new Date().toISOString().split('T')[0];
-const inputData = document.getElementById('dataConsulta');
-if(inputData) inputData.min = hoje;
+    const campoMedico = document.getElementById("medico");
+    if (campoMedico) {
+        campoMedico.addEventListener("change", atualizarHorariosPorMedico);
+    }
+
+    const hoje = new Date().toISOString().split('T')[0];
+    const inputData = document.getElementById('dataConsulta');
+    if(inputData) inputData.min = hoje;
 });
 
 function popularMenuEspecialidades() {
-const selectEsp = document.getElementById("especialidade");
-if (!selectEsp) return;
-selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>';
-const especialidadesUnicas = [...new Set(baseMedicos.filter(m => m.status === "ativo").map(m => m.especialidade))];
-especialidadesUnicas.forEach(esp => {
-const opt = document.createElement("option");
-opt.value = esp;
-opt.textContent = esp;
-selectEsp.appendChild(opt);
-});
+    const selectEsp = document.getElementById("especialidade");
+    if (!selectEsp) return;
+    selectEsp.innerHTML = '<option value="">Selecione a especialidade...</option>';
+    const especialidadesUnicas = [...new Set(baseMedicos.filter(m => m.status === "ativo").map(m => m.especialidade))];
+    especialidadesUnicas.forEach(esp => {
+        const opt = document.createElement("option");
+        opt.value = esp;
+        opt.textContent = esp;
+        selectEsp.appendChild(opt);
+    });
 }
 
 function atualizarMenuMedicos() {
-const selectEsp = document.getElementById("especialidade");
-const selectMed = document.getElementById("medico");
-if (!selectEsp || !selectMed) return;
-const escolha = selectEsp.value;
-if (!escolha) {
-selectMed.innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
-selectMed.disabled = true;
-return;
-}
-selectMed.disabled = false;
-selectMed.innerHTML = '<option value="">Selecione o médico...</option>';
+    const selectEsp = document.getElementById("especialidade");
+    const selectMed = document.getElementById("medico");
+    const selectHora = document.getElementById("horaConsulta");
+    if (!selectEsp || !selectMed) return;
+    
+    const escolha = selectEsp.value;
+    
+    // Limpar campos dependentes
+    selectHora.innerHTML = '<option value="">Selecione o médico primeiro...</option>';
+    selectHora.disabled = true;
 
-baseMedicos.filter(m => m.especialidade === escolha && m.status === "ativo").forEach(medico => {
-const opt = document.createElement("option");
-opt.value = medico.nome;
-opt.textContent = medico.nome;
-selectMed.appendChild(opt);
-});
+    if (!escolha) {
+        selectMed.innerHTML = '<option value="">Selecione primeiro a especialidade...</option>';
+        selectMed.disabled = true;
+        return;
+    }
+    selectMed.disabled = false;
+    selectMed.innerHTML = '<option value="">Selecione o médico...</option>';
+
+    baseMedicos.filter(m => m.especialidade === escolha && m.status === "ativo").forEach(medico => {
+        const opt = document.createElement("option");
+        opt.value = medico.nome;
+        opt.textContent = medico.nome;
+        selectMed.appendChild(opt);
+    });
+}
+
+function atualizarHorariosPorMedico() {
+    const selectMed = document.getElementById("medico");
+    const selectHora = document.getElementById("horaConsulta");
+    if (!selectMed || !selectHora) return;
+
+    const nomeMedicoSelecionado = selectMed.value;
+
+    if (!nomeMedicoSelecionado) {
+        selectHora.innerHTML = '<option value="">Selecione o médico primeiro...</option>';
+        selectHora.disabled = true;
+        return;
+    }
+
+    // Encontra o médico correspondente na base de dados
+    const medicoEncontrado = baseMedicos.find(m => m.nome === nomeMedicoSelecionado);
+
+    if (medicoEncontrado && medicoEncontrado.horarios) {
+        selectHora.disabled = false;
+        selectHora.innerHTML = '<option value="">Selecione o horário...</option>';
+        
+        // Separa a string de horários do médico (ex: "10:00,11:00" vira ["10:00", "11:00"])
+        const listaHorarios = medicoEncontrado.horarios.split(",");
+        
+        listaHorarios.forEach(hora => {
+            const opt = document.createElement("option");
+            opt.value = hora.trim();
+            opt.textContent = hora.trim();
+            selectHora.appendChild(opt);
+        });
+    } else {
+        selectHora.innerHTML = '<option value="">Nenhum horário disponível para este médico...</option>';
+        selectHora.disabled = true;
+    }
 }
 
 function carregarDadosSessao() {
-let utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-if (!utilizador) {
-utilizador = { nome: "João Baptista Silva", email: "joao.silva@email.cv" };
-localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
-}
-document.getElementById("usuarioNome").textContent = utilizador.nome;
-document.getElementById("usuarioEmail").textContent = utilizador.email;
-document.getElementById("usuarioAvatar").textContent = utilizador.nome.charAt(0).toUpperCase();
+    let utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+    if (!utilizador) {
+        utilizador = { nome: "João Baptista Silva", email: "joao.silva@email.cv" };
+        localStorage.setItem("utilizadorLogado", JSON.stringify(utilizador));
+    }
+    document.getElementById("usuarioNome").textContent = utilizador.nome;
+    document.getElementById("usuarioEmail").textContent = utilizador.email;
+    document.getElementById("usuarioAvatar").textContent = utilizador.nome.charAt(0).toUpperCase();
 }
 
 function salvarAgendamento(event) {
-event.preventDefault();
-const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
-const esp = document.getElementById("especialidade").value;
-const med = document.getElementById("medico").value;
-const data = document.getElementById("dataConsulta").value;
-const hora = document.getElementById("horaConsulta").value;
-const obs = document.getElementById("observacoes").value;
+    event.preventDefault();
+    const utilizador = JSON.parse(localStorage.getItem("utilizadorLogado"));
+    const esp = document.getElementById("especialidade").value;
+    const med = document.getElementById("medico").value;
+    const data = document.getElementById("dataConsulta").value;
+    const hora = document.getElementById("horaConsulta").value;
+    const obs = document.getElementById("observacoes").value;
 
-const checkboxes = document.querySelectorAll('input[name="sintoma"]:checked');
-const sintomasSelecionados = Array.from(checkboxes).map(cb => cb.value);
+    const checkboxes = document.querySelectorAll('input[name="sintoma"]:checked');
+    const sintomasSelecionados = Array.from(checkboxes).map(cb => cb.value);
 
-let consultas = JSON.parse(localStorage.getItem("consultasHAN")) || [];
-const novaConsulta = {
-id: consultas.length + 1,
-pacienteNome: utilizador.nome,
-pacienteEmail: utilizador.email,
-especialidade: esp,
-medico: med,
-data: data,
-hora: hora,
-status: "Pendente",
-sintomas: sintomasSelecionados,
-observacoes: obs
-};
-consultas.push(novaConsulta);
-localStorage.setItem("consultasHAN", JSON.stringify(consultas));
-document.getElementById("mensagemFeedback").innerHTML = `
-<div class="alert-sucesso">
-<i class="fa fa-check-circle"></i> Consulta agendada! A redirecionar...
-</div>
-`;
-setTimeout(() => { window.location.href = "consultas.html"; }, 1500);
+    let consultas = JSON.parse(localStorage.getItem("consultasHAN")) || [];
+    const novaConsulta = {
+        id: consultas.length + 1,
+        pacienteNome: utilizador.nome,
+        pacienteEmail: utilizador.email,
+        especialidade: esp,
+        medico: med,
+        data: data,
+        hora: hora,
+        status: "Pendente",
+        sintomas: sintomasSelecionados,
+        observacoes: obs
+    };
+    consultas.push(novaConsulta);
+    localStorage.setItem("consultasHAN", JSON.stringify(consultas));
+    document.getElementById("mensagemFeedback").innerHTML = `
+        <div class="alert-sucesso">
+            <i class="fa fa-check-circle"></i> Consulta agendada! A redirecionar...
+        </div>
+    `;
+    setTimeout(() => { window.location.href = "consultas.html"; }, 1500);
 }
 </script>
 </body>
