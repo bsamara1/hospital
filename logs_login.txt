@@ -90,4 +90,5 @@ admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:36:35
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:36:36
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-06 12:51:10
 admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 12:57:18
-admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 14:57:23
+admin@hospital.cv;LOGIN_SUCESSO;2026-07-06 14:57:23mlopes.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-08 15:53:34
+mileydalopes7@gmail.com;LOGIN_SUCESSO;2026-07-08 15:55:56
