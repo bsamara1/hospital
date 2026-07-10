@@ -307,3 +307,4 @@ alytavares@gmail.com;LOGIN_SUCESSO;2026-07-08 15:09:35
 rececao@hospital.cv;LOGIN_SUCESSO;2026-07-08 15:09:45
 alytavares@gmail.com;LOGIN_SUCESSO;2026-07-08 15:10:40
 >>>>>>> f2b41bc (commit)
+btavares.l23@us.edu.cv;LOGIN_SUCESSO;2026-07-10 15:12:17
