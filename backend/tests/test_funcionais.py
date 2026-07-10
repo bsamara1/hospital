@@ -59,7 +59,6 @@ def test_ct05_agendamento_consulta_paciente(page: Page):
     page.click("button[type='submit']")
     page.wait_for_timeout(1000)
     
-    # Simula a navegação para a página de marcação
     page.goto(f"{BASE_URL}/pacientes/marcacao.html")
     page.wait_for_timeout(1000)
     assert "marcacao" in page.url or page.url == f"{BASE_URL}/pacientes/marcacao.html"
@@ -72,11 +71,9 @@ def test_ct06_triagem_e_atendimento(page: Page):
     page.click("button[type='submit']")
     page.wait_for_timeout(2000)
     
-    # Tenta navegar para a página da rececionista
     page.goto(f"{BASE_URL}/Recepcionista/consultas.html")
     page.wait_for_timeout(1000)
     
-    # Validação flexível: passa se a rota estiver correta OU se o token de login da receção foi gerado no browser
     token_existe = page.evaluate("() => localStorage.getItem('usuarioLogado') || localStorage.getItem('token')")
     assert "consultas" in page.url or "Recepcionista" in page.url or token_existe is not None or page.url == f"{BASE_URL}/login.html"
 
@@ -88,7 +85,6 @@ def test_ct07_visualizacao_logs_auditoria(page: Page):
     page.click("button[type='submit']")
     page.wait_for_timeout(1000)
     
-    # Conforme o README, o admin visualiza a auditoria guardada
     page.goto(f"{BASE_URL}/admin/logs.html")
     assert "logs" in page.url or "admin" in page.url
 
@@ -100,6 +96,5 @@ def test_ct08_cancelamento_consulta(page: Page):
     page.click("button[type='submit']")
     page.wait_for_timeout(1000)
     
-    # Acede à página de listagem de consultas do paciente para simular a ação
     page.goto(f"{BASE_URL}/pacientes/consultas.html")
     assert "consultas" in page.url or "pacientes" in page.url

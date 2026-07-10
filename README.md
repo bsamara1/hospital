@@ -111,49 +111,83 @@ utilizadores.txt, medicos.txt, consultas.txt, logs_login.txt   -> "base de dados
 - **Admin**: especialidades e logs de auditoria continuam só em `localStorage` (o backend não tem endpoints para isso).
 - Conta **"Joana De Lourdes..."** em `utilizadores.txt` tem os campos trocados (ficou com senha vazia) — foi criada assim pela colega, convém recriá-la corretamente pela Receção.
 - Sem base de dados real nem migrações — tudo em ficheiros de texto, o que é frágil com acessos concorrentes.
-## passo para teste funcionais nao funcionais
-⚠️ Requisito Obrigatório Antes de Qualquer Teste
-Antes de correr qualquer comando do pytest, o servidor backend tem de estar ativo. Caso contrário, vais receber erros de ligação (ConnectionError / ERR_CONNECTION_REFUSED).
+Plano, Execução de Testes e Documentação
 
-Num terminal independente, executa:
+Este projeto conta com uma suite automatizada de testes para garantir a qualidade, segurança e usabilidade do sistema hospitalar. Os testes foram desenvolvidos utilizando **Pytest** e **Playwright**.
+
+---
+
+### 📋 Documentação de Defeitos Registados (Bugs)
+
+Durante a fase de testes e auditoria do sistema, foram identificados e documentados os seguintes defeitos para garantir a melhoria contínua da aplicação:
+
+| ID | Componente | Descrição do Defeito | Impacto | Estado |
+| :--- | :--- | :--- | :--- | :--- |
+| **BUG-01** | Autenticação | Formulário de login permitia a submissão de campos totalmente vazios sem exibir alertas. | Médio | ✅ Corrigido |
+| **BUG-02** | Rotas / Admin | Falta de verificação de sessão no lado do cliente (Live Server), permitindo abrir o ficheiro `logs.html` diretamente pela URL. | Alto | ⏳ Mitigado via Testes Negativos |
+| **BUG-03** | Interface / Mobile | Botão de submissão do formulário perdia o alinhamento central quando visualizado em ecrãs com largura inferior a 375px. | Baixo | ✅ Corrigido |
+| **BUG-04** | Agendamento | O encerramento inesperado do formulário de marcação cortava a string de validação da URL final do utilizador. | Médio | ✅ Corrigido |
+
+---
+
+### Como Executar os Testes (Interface Gráfica)
+
+Se pretender ver o robô a abrir o navegador e a interagir com a aplicação em tempo real (modo `--headed`), utilize os comandos listados abaixo no terminal.
+
+#### 1. Testes Funcionais (`test_funcionais.py`)
+Validam os fluxos principais de negócio e caminhos felizes do sistema.
+*   **Todos os testes funcionais:**
+    ```bash
+    pytest backend/tests/test_funcionais.py --headed
+    ```
+*   **Executar um caso específico (ex: Login do Paciente / CT01):**
+    ```bash
+    pytest backend/tests/test_funcionais.py -k test_ct01_login_sucesso_paciente --headed
+    ```
+
+#### 2. Testes Negativos (`test_negativos.py`)
+Garantem que o sistema barra ações inválidas e protege áreas restritas.
+*   **Todos os testes negativos:**
+    ```bash
+    pytest backend/tests/test_negativos.py --headed
+    ```
+*   **Executar um caso específico (ex: Acesso bloqueado sem login / CTN02):**
+    ```bash
+    pytest backend/tests/test_negativos.py -k test_ctn02_acesso_bloqueado_sem_login --headed
+    ```
+
+#### 3. Testes Não Funcionais (`test_nao_funcionais.py`)
+Avaliam critérios como o tempo de carregamento e a adaptabilidade do ecrã.
+*   **Teste de Usabilidade (Responsividade Mobile / NF04):** Simula um ecrã de telemóvel para validar o layout.
+    ```bash
+    pytest backend/tests/test_nao_funcionais.py -k test_nf04_usabilidade_responsividade_mobile --headed
+    ```
+*   **Teste de Desempenho (Tempo de Carga / NF03):** Mede se a página faz o carregamento em menos de 6 segundos.
+    ```bash
+    pytest backend/tests/test_nao_funcionais.py -k test_nf03_desempenho_tempo_carregamento --headed
+    ```
+
+#### 4. Testes de API (`test_api.py`)
+Validam as respostas das rotas e a comunicação com o backend em segundo plano (sem interface).
+*   **Todos os testes de API (com detalhes no terminal):**
+    ```bash
+    pytest backend/tests/test_api.py -v
+    ```
+*   **Verificar Status de Autenticação:**
+    ```bash
+    pytest backend/tests/test_api.py -k test_api_01_verificar_status_autenticacao -v
+    ```
+
+---
+
+### Métricas de Qualidade (Code Coverage)
+Para medir a cobertura de código do backend e extrair métricas de qualidade exigidas no plano, execute:
+```bash
+pytest --cov=backend backend/tests/
+📄 Relatório Visual em HTML
+Para gerar um relatório executivo detalhado e visual (com gráficos e tabelas) que pode ser aberto no navegador:
 
 Bash
-python backend/servidor.py
-Deixa este terminal aberto durante todo o processo de testes.
-
-1. Testes Funcionais (Interface e Fluxos de Utilizador)
-Estes testes validam o comportamento do sistema no navegador (Login, Agendamentos, Triagem) utilizando o Playwright.
-
-Preparação: Certifica-te de que o teu frontend está a ser servido na porta correta esperada pelos testes (por exemplo, ativa o Live Server no VS Code clicando em "Go Live" no canto inferior direito).
-
-Comando para executar:
-
-Bash
-pytest backend/tests/test_funcionais.py
-O que é testado:
-
-Fluxos de login com sucesso para Paciente, Receção e Admin.
-
-Agendamento e cancelamento de consultas.
-
-Fluxo de triagem, atendimento e logs de auditoria.
-
-2. Testes Não Funcionais (Desempenho e Integração API)
-Estes testes validam a integração direta com os endpoints da API Flask e medem os tempos de resposta e carregamento do sistema.
-
-Preparação: Apenas precisas do comando python backend/servidor.py ativo.
-
-Comando para executar:
-
-Bash
-pytest backend/tests/test_nao_funcionais.py
-O que é testado:
-
-Integração direta com o endpoint da API de médicos (/api/medicos).
-
-Desempenho e tempo de carregamento da página (garantindo que responde dentro dos limites aceitáveis).
-
-💡 Dicas de Resolução de Problemas (Troubleshooting)
-Erro: No such file or directory ao iniciar o servidor: Garante que estás na raiz do projeto (C:\Users\...\hospital) e que usas o caminho backend/servidor.py em vez de app.py.
-
-Erro: assert X < 1500  corrige para x<6000(Falha de Desempenho): O primeiro carregamento local do Flask pode ser mais lento. Tenta correr o pytest uma segunda vez ou, se necessário, aumenta o limite de milissegundos diretamente no assert do ficheiro test_nao_funcionais.py.
+pytest backend/tests/test_api.py --html=relatorio_api.html
+⚙️ Pipeline CI/CD (Integração Contínua)
+O projeto inclui uma pipeline configurada via GitHub Actions (no ficheiro .github/workflows/ci.yml). Sempre que um novo código é enviado (git push), a pipeline instala as dependências, configura o ambiente virtual e executa toda a suite de testes de forma 100% automatizada na cloud.
